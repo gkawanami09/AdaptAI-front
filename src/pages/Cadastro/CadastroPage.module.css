@@ -1,0 +1,106 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.passwordToggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+}
+
+.passwordToggle svg {
+  width: 16px;
+  height: 16px;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0;
+  color: var(--text-muted);
+  font-family: var(--sans);
+  font-size: 12px;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.loginHint {
+  margin-top: 18px;
+  text-align: center;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.loginHint a {
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.loginHint a:hover {
+  text-decoration: underline;
+}
+
+.terms {
+  margin-top: 12px;
+  text-align: center;
+  font-family: var(--sans);
+  font-size: 11px;
+  line-height: 150%;
+  color: var(--text-muted);
+}
+
+.terms a {
+  color: var(--text-muted);
+  text-decoration: underline;
+}
+
+.terms a:hover {
+  color: var(--primary);
+}
+
+.featureChips {
+  display: flex;
+  gap: 10px;
+}
+
+.featureChip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 92px;
+  padding: 14px 10px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(6px);
+  text-align: center;
+}
+
+.featureChipIcon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.featureChipLabel {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 130%;
+  color: rgba(255, 255, 255, 0.9);
+}

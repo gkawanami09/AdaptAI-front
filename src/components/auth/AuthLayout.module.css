@@ -1,0 +1,117 @@
+.page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  min-height: 100svh;
+  width: 100%;
+  text-align: left;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 32px;
+  background: var(--bg);
+}
+
+.panelContent {
+  width: 100%;
+  max-width: 320px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.brandLogo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #fff;
+}
+
+.brandLogo svg {
+  width: 15px;
+  height: 15px;
+}
+
+.brandName {
+  font-family: var(--heading);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.heading {
+  margin-bottom: 24px;
+}
+
+.heading h1 {
+  font-family: var(--heading);
+  margin: 0 0 6px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.heading p {
+  font-family: var(--sans);
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.showcasePanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 48px;
+  background: linear-gradient(155deg, #4d3fc7 0%, var(--primary) 55%, #8b7ff0 100%);
+  color: #fff;
+
+  @media (max-width: 900px) {
+    display: none;
+  }
+}
+
+.mascot {
+  width: 170px;
+  height: auto;
+  filter: drop-shadow(0 16px 24px rgba(0, 0, 0, 0.2));
+}
+
+.bubble {
+  max-width: 340px;
+  padding: 20px 24px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(6px);
+  text-align: center;
+}
+
+.bubbleTitle {
+  font-family: var(--heading);
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.bubbleText {
+  font-family: var(--sans);
+  margin: 0;
+  font-size: 14px;
+  line-height: 150%;
+  color: rgba(255, 255, 255, 0.85);
+}

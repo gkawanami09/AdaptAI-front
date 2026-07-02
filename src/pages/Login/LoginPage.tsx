@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
+import { Link } from 'react-router-dom'
 import { TextField } from '../../components/ui/TextField'
 import { Button } from '../../components/ui/Button'
-import { AdaMascot } from '../../components/AdaMascot'
+import { AuthLayout } from '../../components/auth/AuthLayout'
 import { ArrowRightIcon, BoltIcon, EyeIcon, EyeOffIcon, FireIcon } from '../../components/ui/icons'
 import styles from './LoginPage.module.css'
 
@@ -24,82 +25,12 @@ export function LoginPage() {
   }
 
   return (
-    <div className={styles.loginPage}>
-      <section className={styles.loginPanel}>
-        <div className={styles.loginPanelContent}>
-          <div className={styles.brand}>
-            <span className={styles.brandLogo}>
-              <BoltIcon />
-            </span>
-            <span className={styles.brandName}>AdaptAI</span>
-          </div>
-
-          <div className={styles.loginHeading}>
-            <h1>Bem-vindo de volta</h1>
-            <p>Continue sua jornada de estudos.</p>
-          </div>
-
-          <form className={styles.loginForm} onSubmit={handleSubmit} noValidate>
-            <TextField
-              id="email"
-              name="email"
-              type="email"
-              label="E-mail"
-              placeholder="seu@email.com"
-              autoComplete="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              required
-            />
-
-            <div className={styles.loginFormPassword}>
-              <TextField
-                id="password"
-                name="password"
-                type={showPassword ? 'text' : 'password'}
-                label="Senha"
-                placeholder="Sua senha"
-                autoComplete="current-password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                required
-                endAdornment={
-                  <button
-                    type="button"
-                    className={styles.passwordToggle}
-                    onClick={() => setShowPassword((value) => !value)}
-                    aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
-                  >
-                    {showPassword ? <EyeOffIcon /> : <EyeIcon />}
-                  </button>
-                }
-              />
-              <a className={styles.forgotPassword} href="/esqueci-senha">
-                Esqueci minha senha
-              </a>
-            </div>
-
-            <Button type="submit" icon={<ArrowRightIcon />} disabled={isSubmitting}>
-              Entrar na conta
-            </Button>
-          </form>
-
-          <p className={styles.signupHint}>
-            Não tem conta? <a href="/cadastro">Criar conta grátis</a>
-          </p>
-        </div>
-      </section>
-
-      <section className={styles.showcasePanel}>
-        <AdaMascot className={styles.adaMascot} />
-
-        <div className={styles.adaBubble}>
-          <p className={styles.adaBubbleTitle}>Olá! Sou a Ada 👋</p>
-          <p className={styles.adaBubbleText}>
-            Sua tutora de IA. Estou aqui para te ajudar a conquistar sua vaga na universidade!
-          </p>
-        </div>
-
+    <AuthLayout
+      title="Bem-vindo de volta"
+      subtitle="Continue sua jornada de estudos."
+      bubbleTitle="Olá! Sou a Ada 👋"
+      bubbleText="Sua tutora de IA. Estou aqui para te ajudar a conquistar sua vaga na universidade!"
+      showcaseExtra={
         <div className={styles.adaStats}>
           <span className={styles.adaStatsItem}>
             <FireIcon /> 8 dias de ofensiva
@@ -109,7 +40,56 @@ export function LoginPage() {
             <BoltIcon /> 1.240 XP
           </span>
         </div>
-      </section>
-    </div>
+      }
+    >
+      <form className={styles.loginForm} onSubmit={handleSubmit} noValidate>
+        <TextField
+          id="email"
+          name="email"
+          type="email"
+          label="E-mail"
+          placeholder="seu@email.com"
+          autoComplete="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          required
+        />
+
+        <div className={styles.loginFormPassword}>
+          <TextField
+            id="password"
+            name="password"
+            type={showPassword ? 'text' : 'password'}
+            label="Senha"
+            placeholder="Sua senha"
+            autoComplete="current-password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            required
+            endAdornment={
+              <button
+                type="button"
+                className={styles.passwordToggle}
+                onClick={() => setShowPassword((value) => !value)}
+                aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+              >
+                {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+              </button>
+            }
+          />
+          <Link className={styles.forgotPassword} to="/esqueci-senha">
+            Esqueci minha senha
+          </Link>
+        </div>
+
+        <Button type="submit" icon={<ArrowRightIcon />} disabled={isSubmitting}>
+          Entrar na conta
+        </Button>
+      </form>
+
+      <p className={styles.signupHint}>
+        Não tem conta? <Link to="/cadastro">Criar conta grátis</Link>
+      </p>
+    </AuthLayout>
   )
 }
