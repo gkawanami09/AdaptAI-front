@@ -1,7 +1,9 @@
 :root {
   --text: #6b6375;
   --text-h: #08060d;
+  --text-muted: #8b8794;
   --bg: #fff;
+  --surface: #fff;
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
   --accent: #aa3bff;
@@ -11,8 +13,13 @@
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --primary: #6c5ce7;
+  --primary-dark: #4d42a6;
+  --primary-bg: rgba(108, 92, 231, 0.1);
+  --primary-border: rgba(108, 92, 231, 0.4);
+
+  --sans: 'Nunito Sans', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: 'Baloo 2', system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
   font: 18px/145% var(--sans);
@@ -34,7 +41,9 @@
   :root {
     --text: #9ca3af;
     --text-h: #f3f4f6;
+    --text-muted: #7d8493;
     --bg: #16171d;
+    --surface: #1c1d25;
     --border: #2e303a;
     --code-bg: #1f2028;
     --accent: #c084fc;
@@ -43,6 +52,11 @@
     --social-bg: rgba(47, 48, 58, 0.5);
     --shadow:
       rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+
+    --primary: #8b7ff0;
+    --primary-dark: #6c5ce7;
+    --primary-bg: rgba(139, 127, 240, 0.15);
+    --primary-border: rgba(139, 127, 240, 0.4);
   }
 
   #social .button-icon {
@@ -51,11 +65,7 @@
 }
 
 #root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
+  width: 100%;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
