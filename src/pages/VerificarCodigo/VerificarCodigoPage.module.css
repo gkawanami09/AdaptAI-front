@@ -1,0 +1,112 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.codeField {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.codeLabel {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+.resendHint {
+  margin-top: 20px;
+  text-align: center;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.resendButton {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 700;
+  color: var(--primary);
+  cursor: pointer;
+}
+
+.resendButton:disabled {
+  color: var(--text-muted);
+  cursor: default;
+}
+
+.resendButton:not(:disabled):hover {
+  text-decoration: underline;
+}
+
+.backHint {
+  margin-top: 12px;
+  text-align: center;
+  font-family: var(--sans);
+  font-size: 13px;
+}
+
+.backHint a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.backHint a:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.stepIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+}
+
+.stepIcon svg {
+  width: 12px;
+  height: 12px;
+  color: #fff;
+}
+
+.stepIcon--done {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: transparent;
+}
+
+.stepIcon--current {
+  border-color: #fff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15);
+}
+
+.step--current {
+  color: #fff;
+  font-weight: 700;
+}

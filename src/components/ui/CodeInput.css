@@ -1,0 +1,31 @@
+.code-input {
+  display: flex;
+  gap: 10px;
+}
+
+.code-input__box {
+  width: 44px;
+  height: 52px;
+  box-sizing: border-box;
+  font: inherit;
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text-h);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.code-input__box:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-bg);
+}
+
+.code-input__box--error {
+  border-color: #ef4444;
+}
