@@ -1,0 +1,72 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 32px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.brandLogo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #fff;
+}
+
+.brandLogo svg {
+  width: 15px;
+  height: 15px;
+}
+
+.brandName {
+  font-family: var(--heading);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.userArea {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.userName {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.logoutButton {
+  font: inherit;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.logoutButton:hover {
+  color: var(--primary);
+  border-color: var(--primary-border);
+}
