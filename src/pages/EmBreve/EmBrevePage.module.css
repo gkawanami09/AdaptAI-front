@@ -1,0 +1,18 @@
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 48px 32px;
+}
+
+.page h1 {
+  font-family: var(--heading);
+  font-size: 26px;
+  margin: 0 0 12px;
+}
+
+.page p {
+  font-family: var(--sans);
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 150%;
+}

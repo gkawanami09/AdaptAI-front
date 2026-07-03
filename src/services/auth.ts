@@ -6,7 +6,20 @@ import type { UserProfile } from '../types/auth'
 const MOCK_PROFILE: UserProfile = {
   nome: 'Usuário de Teste',
   nivelAcesso: 'admin',
-  telasPermitidas: ['dashboard'],
+  nivel: 12,
+  xp: 4820,
+  telasPermitidas: [
+    'dashboard',
+    'plano-de-estudos',
+    'aulas',
+    'questoes',
+    'simulados',
+    'redacao',
+    'chat',
+    'progresso',
+    'conquistas',
+    'configuracoes',
+  ],
 }
 
 export function isMockAuthEnabled(): boolean {

@@ -1,0 +1,8 @@
+.shell {
+  min-height: 100svh;
+}
+
+.content {
+  min-width: 0;
+  margin-left: var(--sidebar-width-collapsed);
+}

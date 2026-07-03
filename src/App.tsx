@@ -5,9 +5,11 @@ import { LoginPage } from './pages/Login/LoginPage'
 import { CadastroPage } from './pages/Cadastro/CadastroPage'
 import { VerificarCodigoPage } from './pages/VerificarCodigo/VerificarCodigoPage'
 import { DashboardPage } from './pages/Dashboard/DashboardPage'
+import { EmBrevePage } from './pages/EmBreve/EmBrevePage'
 
 import { Header } from './components/layout/Header'
 import { Loading } from './components/ui/Loading'
+import shellStyles from './components/layout/AppShell.module.css'
 
 import { fetchCurrentUser, isMockAuthEnabled } from './services/auth'
 import { getCookie, removeCookie, TOKEN_COOKIE_NAME } from './utils/cookies'
@@ -58,10 +60,12 @@ function LayoutComHeader() {
   const perfil = useOutletContext<UserProfile | null>()
 
   return (
-    <>
+    <div className={shellStyles.shell}>
       <Header perfil={perfil} />
-      <Outlet context={perfil} />
-    </>
+      <div className={shellStyles.content}>
+        <Outlet context={perfil} />
+      </div>
+    </div>
   )
 }
 
@@ -91,10 +95,35 @@ function App() {
             <Route path="/dashboard" element={<DashboardPage />} />
           </Route>
 
-          {/* Novas telas autenticadas entram aqui, seguindo o mesmo padrão:
-              <Route element={<PermissaoDaPagina idPagina="id-da-tela" />}>
-                <Route path="/rota" element={<SuaPagina />} />
-              </Route> */}
+          {/* Telas ainda não implementadas — apontam para um placeholder até
+              cada uma ganhar sua própria página, seguindo o mesmo padrão acima */}
+          <Route element={<PermissaoDaPagina idPagina="plano-de-estudos" />}>
+            <Route path="/plano-de-estudos" element={<EmBrevePage titulo="Plano de Estudos" />} />
+          </Route>
+          <Route element={<PermissaoDaPagina idPagina="aulas" />}>
+            <Route path="/aulas" element={<EmBrevePage titulo="Aulas" />} />
+          </Route>
+          <Route element={<PermissaoDaPagina idPagina="questoes" />}>
+            <Route path="/questoes" element={<EmBrevePage titulo="Questões" />} />
+          </Route>
+          <Route element={<PermissaoDaPagina idPagina="simulados" />}>
+            <Route path="/simulados" element={<EmBrevePage titulo="Simulados" />} />
+          </Route>
+          <Route element={<PermissaoDaPagina idPagina="redacao" />}>
+            <Route path="/redacao" element={<EmBrevePage titulo="Redação" />} />
+          </Route>
+          <Route element={<PermissaoDaPagina idPagina="chat" />}>
+            <Route path="/chat" element={<EmBrevePage titulo="Chat AdaptAI" />} />
+          </Route>
+          <Route element={<PermissaoDaPagina idPagina="progresso" />}>
+            <Route path="/progresso" element={<EmBrevePage titulo="Progresso" />} />
+          </Route>
+          <Route element={<PermissaoDaPagina idPagina="conquistas" />}>
+            <Route path="/conquistas" element={<EmBrevePage titulo="Conquistas" />} />
+          </Route>
+          <Route element={<PermissaoDaPagina idPagina="configuracoes" />}>
+            <Route path="/configuracoes" element={<EmBrevePage titulo="Configurações" />} />
+          </Route>
         </Route>
       </Route>
     </Routes>
