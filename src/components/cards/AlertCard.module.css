@@ -1,0 +1,21 @@
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  color: #f59e0b;
+  flex-shrink: 0;
+}
+
+.message {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 150%;
+  color: var(--text);
+}
