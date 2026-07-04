@@ -1,0 +1,36 @@
+.container {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius);
+  background: var(--surface);
+  padding: 12px 14px 12px 16px;
+}
+
+.container::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  border: 1px solid transparent;
+  pointer-events: none;
+}
+
+.accent--blue::before {
+  border-left: 3px solid #3b82f6;
+}
+
+.accent--green::before {
+  border-left: 3px solid #10b981;
+}
+
+.accent--purple::before {
+  border-left: 3px solid var(--primary);
+}
+
+.accent--gold::before {
+  border-left: 3px solid #f59e0b;
+}
+
+.accent--teal::before {
+  border-left: 3px solid #14b8a6;
+}

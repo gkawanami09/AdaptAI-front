@@ -1,0 +1,8 @@
+.heading {
+  margin: 0;
+  font-family: var(--heading);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.1px;
+  color: var(--text-h);
+}

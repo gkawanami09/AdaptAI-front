@@ -1,0 +1,27 @@
+.track {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--primary-bg);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.2s ease;
+}
+
+.fill--purple {
+  background: linear-gradient(90deg, #8b7ff0, var(--primary));
+}
+
+.fill--teal {
+  background: linear-gradient(90deg, #2dd4bf, #14b8a6);
+}
+
+@media (prefers-color-scheme: dark) {
+  .track {
+    background: var(--code-bg);
+  }
+}

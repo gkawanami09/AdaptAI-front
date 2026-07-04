@@ -46,3 +46,20 @@
   border-color: var(--primary-border);
   background: var(--primary-bg);
 }
+
+.button--auto-width {
+  width: auto;
+}
+
+.button--pill {
+  padding: 5px 12px;
+  font-size: 12px;
+  border-radius: 999px;
+  gap: 6px;
+}
+
+.button--pill svg {
+  width: 14px;
+  height: 14px;
+}
+

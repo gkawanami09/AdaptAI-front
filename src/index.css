@@ -19,10 +19,13 @@
   --primary-border: rgba(108, 92, 231, 0.4);
 
   --sidebar-width-collapsed: 76px;
+  --border-radius: 14px;
 
   --sans: 'Nunito Sans', system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: 'Baloo 2', system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
+
+  --second-heading-weight: 700;
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
@@ -39,7 +42,7 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --text: #9ca3af;
     --text-h: #f3f4f6;
@@ -64,7 +67,7 @@
   #social .button-icon {
     filter: invert(1) brightness(2);
   }
-}
+} */
 
 #root {
   width: 100%;

@@ -1,0 +1,6 @@
+.title {
+    font-family: var(--heading);
+    font-weight: var(--second-heading-weight);
+    font-size: var(60px);
+    color: var(--text-h);
+}
