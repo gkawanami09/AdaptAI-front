@@ -1,0 +1,103 @@
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.navButton svg {
+  width: 18px;
+  height: 18px;
+}
+
+.navButton:hover {
+  background: var(--primary-bg);
+  color: var(--primary);
+}
+
+.days {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 4px;
+  border: none;
+  border-radius: 14px;
+  background: none;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.day:hover {
+  background: var(--primary-bg);
+}
+
+.dayLabel {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.dayNumber {
+  font-family: var(--heading);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.dots {
+  display: flex;
+  gap: 3px;
+  height: 5px;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--primary-border);
+}
+
+.day--active {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+}
+
+.day--active:hover {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+}
+
+.day--active .dayLabel {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.day--active .dayNumber {
+  color: #fff;
+}
+
+.day--active .dot {
+  background: #34d399;
+}

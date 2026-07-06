@@ -294,6 +294,45 @@ export function AlertCircleIcon({ className }: IconProps) {
   )
 }
 
+export function PlusIcon({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+export function SparklesIcon({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M11 3c.4 2.8 1.2 4.4 2.2 5.4S15.6 9.9 18.5 10c-2.9.1-4.4.9-5.3 1.9S11.4 14.2 11 17c-.4-2.8-1.2-4.4-2.2-5.4S6.4 10.1 3.5 10c2.9-.1 4.4-.9 5.3-1.9S10.6 5.8 11 3Z"
+        fill="currentColor"
+      />
+      <path
+        d="M18.5 15.5c.2 1.4.6 2.2 1.1 2.7s1.2.7 2.4.8c-1.2.1-1.9.4-2.4.8s-.9 1.3-1.1 2.7c-.2-1.4-.6-2.2-1.1-2.7s-1.2-.7-2.4-.8c1.2-.1 1.9-.4 2.4-.8s.9-1.3 1.1-2.7Z"
+        fill="currentColor"
+      />
+    </svg>
+  )
+}
+
+export function ChevronLeftIcon({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="m15 5-7 7 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
+export function ChevronRightIcon({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="m9 5 7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
 export function LogOutIcon({ className }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">

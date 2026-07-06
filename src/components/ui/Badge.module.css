@@ -30,6 +30,16 @@
   color: #08655d;
 }
 
+.badge--gold {
+  background: rgba(245, 158, 11, 0.18);
+  color: #92600a;
+}
+
+.badge--red {
+  background: rgba(239, 68, 68, 0.16);
+  color: #a3241f;
+}
+
 @media (prefers-color-scheme: dark) {
   .badge--purple {
     background: rgba(139, 127, 240, 0.24);
@@ -49,5 +59,15 @@
   .badge--teal {
     background: rgba(45, 212, 191, 0.22);
     color: #a6f0e6;
+  }
+
+  .badge--gold {
+    background: rgba(251, 191, 36, 0.22);
+    color: #fde68a;
+  }
+
+  .badge--red {
+    background: rgba(248, 113, 113, 0.22);
+    color: #fecaca;
   }
 }

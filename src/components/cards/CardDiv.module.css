@@ -34,3 +34,15 @@
 .accent--teal::before {
   border-left: 3px solid #14b8a6;
 }
+
+.tone--green {
+  background: rgba(16, 185, 129, 0.07);
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+@media (prefers-color-scheme: dark) {
+  .tone--green {
+    background: rgba(52, 211, 153, 0.1);
+    border-color: rgba(52, 211, 153, 0.3);
+  }
+}

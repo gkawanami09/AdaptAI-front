@@ -1,0 +1,45 @@
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.day {
+  width: 32px;
+  flex-shrink: 0;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.badges {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rest {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+.count {
+  flex-shrink: 0;
+  min-width: 26px;
+  text-align: right;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-muted);
+}

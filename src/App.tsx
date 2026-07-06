@@ -5,6 +5,7 @@ import { LoginPage } from './pages/Login/LoginPage'
 import { CadastroPage } from './pages/Cadastro/CadastroPage'
 import { VerificarCodigoPage } from './pages/VerificarCodigo/VerificarCodigoPage'
 import { DashboardPage } from './pages/Dashboard/DashboardPage'
+import { PlanoEstudos } from './pages/PlanoEstudos/PlanoEstudos'
 import { EmBrevePage } from './pages/EmBreve/EmBrevePage'
 
 import { Header } from './components/layout/Header'
@@ -98,7 +99,7 @@ function App() {
           {/* Telas ainda não implementadas — apontam para um placeholder até
               cada uma ganhar sua própria página, seguindo o mesmo padrão acima */}
           <Route element={<PermissaoDaPagina idPagina="plano-de-estudos" />}>
-            <Route path="/plano-de-estudos" element={<EmBrevePage titulo="Plano de Estudos" />} />
+            <Route path="/plano-de-estudos" element={<PlanoEstudos />} />
           </Route>
           <Route element={<PermissaoDaPagina idPagina="aulas" />}>
             <Route path="/aulas" element={<EmBrevePage titulo="Aulas" />} />

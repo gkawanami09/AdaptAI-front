@@ -7,6 +7,7 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   iconPosition?: 'left' | 'right'
   fullWidth?: boolean
   pill?: boolean
+  size?: 'sm' | 'md'
 }
 
 export function Button({
@@ -17,11 +18,13 @@ export function Button({
   className,
   fullWidth = true,
   pill = false,
+  size = 'md',
   ...rest
 }: ButtonProps) {
   const classes = [
     'button',
     `button--${variant}`,
+    `button--size-${size}`,
     !fullWidth && 'button--auto-width',
     pill && 'button--pill',
     className,

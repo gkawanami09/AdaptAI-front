@@ -72,7 +72,7 @@ export function ActivityCard({ icon, subject, subjectColor, status, title, durat
         </div>
 
         {config.showButton && (
-          <Button pill fullWidth={false} icon={<PlayIcon />} iconPosition="left" onClick={onStart}>
+          <Button pill size="sm" fullWidth={false} icon={<PlayIcon />} iconPosition="left" onClick={onStart}>
             Começar
           </Button>
         )}

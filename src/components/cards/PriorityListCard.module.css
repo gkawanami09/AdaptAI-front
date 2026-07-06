@@ -1,0 +1,92 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 16px;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.subject {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--heading);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.icon {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.description {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.item--blue {
+  background: rgba(59, 130, 246, 0.12);
+}
+
+.item--blue .subject {
+  color: #1739a3;
+}
+
+.item--purple {
+  background: rgba(108, 92, 231, 0.12);
+}
+
+.item--purple .subject {
+  color: #4530b8;
+}
+
+.item--gold {
+  background: rgba(245, 158, 11, 0.14);
+}
+
+.item--gold .subject {
+  color: #92600a;
+}
+
+@media (prefers-color-scheme: dark) {
+  .item--blue {
+    background: rgba(96, 165, 250, 0.16);
+  }
+
+  .item--blue .subject {
+    color: #bfdbfe;
+  }
+
+  .item--purple {
+    background: rgba(139, 127, 240, 0.18);
+  }
+
+  .item--purple .subject {
+    color: #d5cbff;
+  }
+
+  .item--gold {
+    background: rgba(251, 191, 36, 0.18);
+  }
+
+  .item--gold .subject {
+    color: #fde68a;
+  }
+}

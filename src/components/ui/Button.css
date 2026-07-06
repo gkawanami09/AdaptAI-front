@@ -5,9 +5,7 @@
   gap: 8px;
   width: 100%;
   box-sizing: border-box;
-  padding: 11px 14px;
   font: inherit;
-  font-size: 14px;
   font-weight: 600;
   border-radius: 12px;
   border: 1px solid transparent;
@@ -52,14 +50,21 @@
 }
 
 .button--pill {
+  border-radius: 999px;
+}
+
+.button--size-md {
+  padding: 11px 14px;
+  font-size: 14px;
+}
+
+.button--size-sm {
   padding: 5px 12px;
   font-size: 12px;
-  border-radius: 999px;
   gap: 6px;
 }
 
-.button--pill svg {
+.button--size-sm svg {
   width: 14px;
   height: 14px;
 }
-
