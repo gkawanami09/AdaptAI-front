@@ -2,7 +2,7 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import './Button.css'
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: 'primary' | 'outline'
+  variant?: 'primary' | 'outline' | 'success'
   icon?: ReactNode
   iconPosition?: 'left' | 'right'
   fullWidth?: boolean

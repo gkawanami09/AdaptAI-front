@@ -6,6 +6,8 @@ import { CadastroPage } from './pages/Cadastro/CadastroPage'
 import { VerificarCodigoPage } from './pages/VerificarCodigo/VerificarCodigoPage'
 import { DashboardPage } from './pages/Dashboard/DashboardPage'
 import { PlanoEstudos } from './pages/PlanoEstudos/PlanoEstudos'
+import { Aulas } from './pages/Aulas/Aulas'
+import { Questoes } from './pages/Questoes/questoes'
 import { EmBrevePage } from './pages/EmBreve/EmBrevePage'
 
 import { Header } from './components/layout/Header'
@@ -102,10 +104,10 @@ function App() {
             <Route path="/plano-de-estudos" element={<PlanoEstudos />} />
           </Route>
           <Route element={<PermissaoDaPagina idPagina="aulas" />}>
-            <Route path="/aulas" element={<EmBrevePage titulo="Aulas" />} />
+            <Route path="/aulas" element={<Aulas />} />
           </Route>
           <Route element={<PermissaoDaPagina idPagina="questoes" />}>
-            <Route path="/questoes" element={<EmBrevePage titulo="Questões" />} />
+            <Route path="/questoes" element={<Questoes />} />
           </Route>
           <Route element={<PermissaoDaPagina idPagina="simulados" />}>
             <Route path="/simulados" element={<EmBrevePage titulo="Simulados" />} />

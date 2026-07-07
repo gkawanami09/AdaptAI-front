@@ -3,6 +3,7 @@
   border: 1px solid var(--border);
   border-radius: var(--border-radius);
   background: var(--surface);
+  box-shadow: var(--shadow);
   padding: 12px 14px 12px 16px;
 }
 

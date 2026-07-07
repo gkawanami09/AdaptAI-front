@@ -45,6 +45,15 @@
   background: var(--primary-bg);
 }
 
+.button--success {
+  color: #08655d;
+  background: rgba(20, 184, 166, 0.16);
+}
+
+.button--success:hover {
+  background: rgba(20, 184, 166, 0.26);
+}
+
 .button--auto-width {
   width: auto;
 }
