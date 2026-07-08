@@ -14,6 +14,10 @@
   height: 26px;
 }
 
+.icon--circle {
+  border-radius: 50%;
+}
+
 .icon--purple {
   background: rgba(108, 92, 231, 0.12);
   color: #6c5ce7;
@@ -27,6 +31,16 @@
 .icon--blue {
   background: rgba(59, 130, 246, 0.12);
   color: #2563eb;
+}
+
+.icon--gold {
+  background: rgba(245, 158, 11, 0.14);
+  color: #b45309;
+}
+
+.icon--red {
+  background: rgba(239, 68, 68, 0.12);
+  color: #c0362c;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -43,5 +57,15 @@
   .icon--blue {
     background: rgba(96, 165, 250, 0.2);
     color: #93c5fd;
+  }
+
+  .icon--gold {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fde68a;
+  }
+
+  .icon--red {
+    background: rgba(248, 113, 113, 0.2);
+    color: #fecaca;
   }
 }
