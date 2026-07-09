@@ -1,0 +1,26 @@
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  color: var(--primary);
+}
+
+.title {
+  font-family: var(--heading);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.message {
+  margin: 8px 0 0;
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 150%;
+  color: var(--text);
+}

@@ -1,0 +1,33 @@
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  overflow: hidden;
+}
+
+.avatar--md {
+  width: 40px;
+  height: 40px;
+}
+
+.avatar--sm {
+  width: 28px;
+  height: 28px;
+}
+
+.avatar--md .icon {
+  width: 46px;
+  margin-top: 10px;
+}
+
+.avatar--sm .icon {
+  width: 32px;
+  margin-top: 7px;
+}
+
+.icon {
+  height: auto;
+}

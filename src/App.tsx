@@ -10,6 +10,7 @@ import { Aulas } from './pages/Aulas/Aulas'
 import { Questoes } from './pages/Questoes/questoes'
 import { Simulados } from './pages/Simulados/Simulados'
 import { Redacao } from './pages/Redacao/redacao'
+import { Chat } from './pages/Chat/Chat'
 import { EmBrevePage } from './pages/EmBreve/EmBrevePage'
 
 import { Header } from './components/layout/Header'
@@ -118,7 +119,7 @@ function App() {
             <Route path="/redacao" element={<Redacao />} />
           </Route>
           <Route element={<PermissaoDaPagina idPagina="chat" />}>
-            <Route path="/chat" element={<EmBrevePage titulo="Chat AdaptAI" />} />
+            <Route path="/chat" element={<Chat />} />
           </Route>
           <Route element={<PermissaoDaPagina idPagina="progresso" />}>
             <Route path="/progresso" element={<EmBrevePage titulo="Progresso" />} />

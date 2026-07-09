@@ -394,6 +394,33 @@ export function SendIcon({ className }: IconProps) {
   )
 }
 
+export function StarIcon({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="m12 3 2.7 5.7 6.3.8-4.6 4.4 1.2 6.2L12 17l-5.6 3.1 1.2-6.2-4.6-4.4 6.3-.8L12 3Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+export function LightbulbIcon({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M9 18h6M10 21h4M7 10.5c0-2.9 2.24-5.5 5-5.5s5 2.6 5 5.5c0 2-1.1 3.2-2 4.1-.6.6-1 1.2-1 1.9H10c0-.7-.4-1.3-1-1.9-.9-.9-2-2.1-2-4.1Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
 export function LogOutIcon({ className }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
