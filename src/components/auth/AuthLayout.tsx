@@ -9,14 +9,23 @@ type AuthLayoutProps = {
   bubbleTitle: string
   bubbleText: string
   showcaseExtra?: ReactNode
+  contentClassName?: string
   children: ReactNode
 }
 
-export function AuthLayout({ title, subtitle, bubbleTitle, bubbleText, showcaseExtra, children }: AuthLayoutProps) {
+export function AuthLayout({
+  title,
+  subtitle,
+  bubbleTitle,
+  bubbleText,
+  showcaseExtra,
+  contentClassName,
+  children,
+}: AuthLayoutProps) {
   return (
     <div className={styles.page}>
       <section className={styles.panel}>
-        <div className={styles.panelContent}>
+        <div className={[styles.panelContent, contentClassName].filter(Boolean).join(' ')}>
           <div className={styles.brand}>
             <span className={styles.brandLogo}>
               <BoltIcon />

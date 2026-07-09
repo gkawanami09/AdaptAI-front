@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Button } from '../../components/ui/Button'
 import { CodeInput } from '../../components/ui/CodeInput'
 import { AuthLayout } from '../../components/auth/AuthLayout'
 import { ArrowRightIcon, CheckIcon } from '../../components/ui/icons'
+import { confirmEmail } from '../../services/auth'
 import styles from './VerificarCodigoPage.module.css'
 
 const RESEND_COOLDOWN_SECONDS = 30
@@ -24,11 +25,16 @@ function maskEmail(email: string) {
 
 export function VerificarCodigoPage() {
   const location = useLocation()
-  const email = (location.state as { email?: string } | null)?.email ?? 'seu@email.com'
+  const navigate = useNavigate()
+  const email =
+    (location.state as { email?: string } | null)?.email ??
+    sessionStorage.getItem('adaptai_pending_email') ??
+    'seu@email.com'
 
   const [code, setCode] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [cooldown, setCooldown] = useState(RESEND_COOLDOWN_SECONDS)
+  const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
     if (cooldown === 0) return
@@ -40,33 +46,33 @@ export function VerificarCodigoPage() {
     return () => clearInterval(timer)
   }, [cooldown])
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    setErrorMessage('')
     setIsSubmitting(true)
 
-    // TODO: conectar ao backend de verificação de código
-    // ex: await api.post('/auth/verify-code', { email, code })
-    console.log('verify code submit', { email, code })
-
-    setIsSubmitting(false)
+    try {
+      await confirmEmail(email, code)
+      sessionStorage.removeItem('adaptai_pending_email')
+      navigate('/login', { replace: true, state: { verifiedEmail: email } })
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : 'Nao foi possivel verificar o codigo.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   function handleResend() {
     if (cooldown > 0) return
-
-    // TODO: conectar ao backend para reenviar o código
-    // ex: await api.post('/auth/resend-code', { email })
-    console.log('resend code', { email })
-
     setCooldown(RESEND_COOLDOWN_SECONDS)
   }
 
   return (
     <AuthLayout
       title="Verifique seu e-mail"
-      subtitle={`Enviamos um código de 6 dígitos para ${maskEmail(email)}`}
-      bubbleTitle="Quase lá! 🎉"
-      bubbleText="Confirme o código para ativar sua conta e começar sua jornada de estudos."
+      subtitle={`Enviamos um codigo de 6 digitos para ${maskEmail(email)}`}
+      bubbleTitle="Quase la!"
+      bubbleText="Confirme o codigo para ativar sua conta e comecar sua jornada de estudos."
       showcaseExtra={
         <ul className={styles.steps}>
           {steps.map((step) => (
@@ -85,19 +91,21 @@ export function VerificarCodigoPage() {
     >
       <form className={styles.form} onSubmit={handleSubmit} noValidate>
         <div className={styles.codeField}>
-          <span className={styles.codeLabel}>Código de verificação</span>
-          <CodeInput value={code} onChange={setCode} />
+          <span className={styles.codeLabel}>Codigo de verificacao</span>
+          <CodeInput value={code} onChange={setCode} error={Boolean(errorMessage)} />
         </div>
 
+        {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
+
         <Button type="submit" icon={<ArrowRightIcon />} disabled={isSubmitting || code.length < 6}>
-          Verificar código
+          {isSubmitting ? 'Verificando...' : 'Verificar codigo'}
         </Button>
       </form>
 
       <p className={styles.resendHint}>
-        Não recebeu o código?{' '}
+        Nao recebeu o codigo?{' '}
         <button type="button" className={styles.resendButton} onClick={handleResend} disabled={cooldown > 0}>
-          {cooldown > 0 ? `Reenviar em ${cooldown}s` : 'Reenviar código'}
+          {cooldown > 0 ? `Reenviar em ${cooldown}s` : 'Reenviar codigo'}
         </button>
       </p>
 

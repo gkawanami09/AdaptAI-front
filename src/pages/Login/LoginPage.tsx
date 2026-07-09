@@ -1,34 +1,44 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { TextField } from '../../components/ui/TextField'
 import { Button } from '../../components/ui/Button'
 import { AuthLayout } from '../../components/auth/AuthLayout'
 import { ArrowRightIcon, BoltIcon, EyeIcon, EyeOffIcon, FireIcon } from '../../components/ui/icons'
+import { loginUser } from '../../services/auth'
 import styles from './LoginPage.module.css'
 
 export function LoginPage() {
-  const [email, setEmail] = useState('')
+  const location = useLocation()
+  const navigate = useNavigate()
+  const verifiedEmail = (location.state as { verifiedEmail?: string } | null)?.verifiedEmail ?? ''
+
+  const [email, setEmail] = useState(verifiedEmail)
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    setErrorMessage('')
     setIsSubmitting(true)
 
-    // TODO: conectar ao backend de autenticação (endpoint de login)
-    // ex: await api.post('/auth/login', { email, password })
-    console.log('login submit', { email, password })
-
-    setIsSubmitting(false)
+    try {
+      await loginUser(email, password)
+      navigate('/dashboard', { replace: true })
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : 'Nao foi possivel entrar na conta.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
     <AuthLayout
       title="Bem-vindo de volta"
       subtitle="Continue sua jornada de estudos."
-      bubbleTitle="Olá! Sou a Ada 👋"
+      bubbleTitle="Ola! Sou a Ada"
       bubbleText="Sua tutora de IA. Estou aqui para te ajudar a conquistar sua vaga na universidade!"
       showcaseExtra={
         <div className={styles.adaStats}>
@@ -82,13 +92,15 @@ export function LoginPage() {
           </Link>
         </div>
 
+        {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
+
         <Button type="submit" icon={<ArrowRightIcon />} disabled={isSubmitting}>
-          Entrar na conta
+          {isSubmitting ? 'Entrando...' : 'Entrar na conta'}
         </Button>
       </form>
 
       <p className={styles.signupHint}>
-        Não tem conta? <Link to="/cadastro">Criar conta grátis</Link>
+        Nao tem conta? <Link to="/cadastro">Criar conta gratis</Link>
       </p>
     </AuthLayout>
   )

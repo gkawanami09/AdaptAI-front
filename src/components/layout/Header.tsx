@@ -16,6 +16,7 @@ import {
   TrendingUpIcon,
   TrophyIcon,
 } from '../ui/icons'
+import { clearStoredAuth } from '../../services/auth'
 import { removeCookie, TOKEN_COOKIE_NAME } from '../../utils/cookies'
 import type { UserProfile } from '../../types/auth'
 import styles from './Header.module.css'
@@ -49,6 +50,7 @@ export function Header({ perfil }: HeaderProps) {
   function handleLogout() {
     // TODO: conectar ao backend — invalidar a sessão/token no servidor, se aplicável
     removeCookie(TOKEN_COOKIE_NAME)
+    clearStoredAuth()
     window.location.href = '/login'
   }
 

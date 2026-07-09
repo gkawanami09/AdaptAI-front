@@ -1,7 +1,28 @@
+.panelContentWide {
+  max-width: 560px;
+}
+
 .form {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
+}
+
+.form > button {
+  grid-column: 1 / -1;
+}
+
+.errorMessage {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  border-radius: 12px;
+  background: rgba(248, 113, 113, 0.1);
+  color: #fca5a5;
+  font-family: var(--sans);
+  font-size: 12px;
+  line-height: 140%;
 }
 
 .passwordToggle {
@@ -18,6 +39,99 @@
 .passwordToggle svg {
   width: 16px;
   height: 16px;
+}
+
+.photoField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+
+.photoLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+.photoUpload {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 58px;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--text-h);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.photoUpload:hover,
+.photoUpload:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-bg);
+}
+
+.photoPreview {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--primary-bg);
+  color: var(--primary);
+}
+
+.photoPreview svg {
+  width: 18px;
+  height: 18px;
+}
+
+.photoPreview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photoContent {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+}
+
+.photoAction {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.photoHint {
+  overflow: hidden;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.photoInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .divider {
@@ -72,6 +186,16 @@
 
 .terms a:hover {
   color: var(--primary);
+}
+
+@media (max-width: 700px) {
+  .panelContentWide {
+    max-width: 320px;
+  }
+
+  .form {
+    grid-template-columns: 1fr;
+  }
 }
 
 .featureChips {

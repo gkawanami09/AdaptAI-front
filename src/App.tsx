@@ -17,7 +17,7 @@ import { Header } from './components/layout/Header'
 import { Loading } from './components/ui/Loading'
 import shellStyles from './components/layout/AppShell.module.css'
 
-import { fetchCurrentUser, isMockAuthEnabled } from './services/auth'
+import { clearStoredAuth, fetchCurrentUser, isMockAuthEnabled } from './services/auth'
 import { getCookie, removeCookie, TOKEN_COOKIE_NAME } from './utils/cookies'
 import type { UserProfile } from './types/auth'
 
@@ -46,6 +46,7 @@ function GaranteAutenticacao() {
       } catch (error) {
         console.error('Token inválido ou expirado', error)
         removeCookie(TOKEN_COOKIE_NAME)
+        clearStoredAuth()
         setAutenticado(false)
       } finally {
         setCarregando(false)
