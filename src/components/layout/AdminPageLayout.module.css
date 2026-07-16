@@ -1,0 +1,10 @@
+.wrapper {
+  min-height: 100svh;
+}
+
+.content {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 8px 32px 48px;
+  box-sizing: border-box;
+}

@@ -19,6 +19,7 @@
   --primary-border: rgba(108, 92, 231, 0.4);
 
   --sidebar-width-collapsed: 76px;
+  --admin-sidebar-width: 250px;
   --border-radius: 14px;
 
   --sans: 'Nunito Sans', system-ui, 'Segoe UI', Roboto, sans-serif;

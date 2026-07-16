@@ -182,6 +182,13 @@
   transition-delay: 0.05s;
 }
 
+.navDivider {
+  height: 1px;
+  margin: 8px 6px;
+  background: rgba(255, 255, 255, 0.15);
+  flex-shrink: 0;
+}
+
 .userArea {
   display: flex;
   align-items: center;
@@ -234,6 +241,18 @@
   font-family: var(--sans);
   font-size: 11px;
   color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+}
+
+.userRole {
+  align-self: flex-start;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 800;
   white-space: nowrap;
 }
 

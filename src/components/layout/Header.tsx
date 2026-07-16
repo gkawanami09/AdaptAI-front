@@ -13,6 +13,7 @@ import {
   LogOutIcon,
   SearchIcon,
   SettingsIcon,
+  ShieldIcon,
   TrendingUpIcon,
   TrophyIcon,
 } from '../ui/icons'
@@ -38,6 +39,8 @@ const navItems = [
   { to: '/configuracoes', label: 'Configurações', icon: SettingsIcon },
 ]
 
+const adminNavItem = { to: '/admin', label: 'Admin', icon: ShieldIcon }
+
 function getInitials(nome: string) {
   const parts = nome.trim().split(/\s+/)
   const initials = parts.length > 1 ? `${parts[0][0]}${parts[parts.length - 1][0]}` : parts[0]?.slice(0, 2)
@@ -46,6 +49,7 @@ function getInitials(nome: string) {
 
 export function Header({ perfil }: HeaderProps) {
   const [busca, setBusca] = useState('')
+  const isAdmin = perfil?.nivelAcesso === 'admin'
 
   function handleLogout() {
     // TODO: conectar ao backend — invalidar a sessão/token no servidor, se aplicável
@@ -93,18 +97,35 @@ export function Header({ perfil }: HeaderProps) {
             {badge && <span className={styles.navBadge}>{badge}</span>}
           </NavLink>
         ))}
+
+        {isAdmin && (
+          <>
+            <div className={styles.navDivider} />
+            <NavLink
+              to={adminNavItem.to}
+              className={({ isActive }) => `${styles.navItem}${isActive ? ` ${styles.navItemActive}` : ''}`}
+            >
+              <adminNavItem.icon className={styles.navIcon} />
+              <span className={styles.navLabel}>{adminNavItem.label}</span>
+            </NavLink>
+          </>
+        )}
       </nav>
 
       <div className={styles.userArea}>
         <span className={styles.avatar}>{getInitials(perfil?.nome ?? 'Usuário')}</span>
         <span className={styles.userInfo}>
           <span className={styles.userName}>{perfil?.nome ?? 'Usuário'}</span>
-          {(perfil?.nivel || perfil?.xp) && (
-            <span className={styles.userMeta}>
-              {perfil?.nivel ? `Nível ${perfil.nivel}` : ''}
-              {perfil?.nivel && perfil?.xp ? ' · ' : ''}
-              {perfil?.xp ? `${perfil.xp.toLocaleString('pt-BR')} XP` : ''}
-            </span>
+          {isAdmin ? (
+            <span className={styles.userRole}>Admin</span>
+          ) : (
+            (perfil?.nivel || perfil?.xp) && (
+              <span className={styles.userMeta}>
+                {perfil?.nivel ? `Nível ${perfil.nivel}` : ''}
+                {perfil?.nivel && perfil?.xp ? ' · ' : ''}
+                {perfil?.xp ? `${perfil.xp.toLocaleString('pt-BR')} XP` : ''}
+              </span>
+            )
           )}
         </span>
         <button type="button" className={styles.logoutButton} onClick={handleLogout} aria-label="Sair" title="Sair">
