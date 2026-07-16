@@ -1,0 +1,30 @@
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.value {
+  font-family: var(--heading);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.sublabel {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--text-muted);
+}
