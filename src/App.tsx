@@ -11,9 +11,16 @@ import { Questoes } from './pages/Questoes/questoes'
 import { Simulados } from './pages/Simulados/Simulados'
 import { Redacao } from './pages/Redacao/redacao'
 import { Chat } from './pages/Chat/Chat'
+import { AdminDashboard } from './pages/Admin/AdminDashboard'
+import { AdminMateriasLista } from './pages/Admin/AdminMateriasLista'
+import { AdminMateriaDetalhe } from './pages/Admin/AdminMateriaDetalhe'
+import { AdminNovaMateria } from './pages/Admin/AdminNovaMateria'
+import { AdminNovoModulo } from './pages/Admin/AdminNovoModulo'
+import { AdminModuloDetalhe } from './pages/Admin/AdminModuloDetalhe'
 import { EmBrevePage } from './pages/EmBreve/EmBrevePage'
 
 import { Header } from './components/layout/Header'
+import { AdminLayout } from './components/layout/AdminLayout'
 import { Loading } from './components/ui/Loading'
 import shellStyles from './components/layout/AppShell.module.css'
 
@@ -84,6 +91,14 @@ function PermissaoDaPagina({ idPagina }: { idPagina: string }) {
   return permitido ? <Outlet /> : <Navigate to="/login" replace />
 }
 
+// 👑 Camada extra: bloqueia a área administrativa pra quem não é admin
+function GaranteAdmin() {
+  const perfil = useOutletContext<UserProfile | null>()
+  const isAdmin = perfil?.nivelAcesso === 'admin'
+
+  return isAdmin ? <Outlet /> : <Navigate to="/dashboard" replace />
+}
+
 function App() {
   return (
     <Routes>
@@ -130,6 +145,21 @@ function App() {
           </Route>
           <Route element={<PermissaoDaPagina idPagina="configuracoes" />}>
             <Route path="/configuracoes" element={<EmBrevePage titulo="Configurações" />} />
+          </Route>
+        </Route>
+
+        {/* 👑 Área administrativa — só acessível quando perfil.nivelAcesso === 'admin'.
+            Tem sua própria sidebar (AdminLayout/AdminSidebar), separada da área do aluno.
+            Novas páginas admin entram aqui dentro, seguindo o mesmo padrão. */}
+            
+        <Route element={<GaranteAdmin />}>
+          <Route element={<AdminLayout />}>
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/materias" element={<AdminMateriasLista />} />
+            <Route path="/admin/materias/matematica" element={<AdminMateriaDetalhe />} />
+            <Route path="/admin/materias/nova" element={<AdminNovaMateria />} />
+            <Route path="/admin/materias/matematica/modulos/novo" element={<AdminNovoModulo />} />
+            <Route path="/admin/materias/matematica/modulos/algebra" element={<AdminModuloDetalhe />} />
           </Route>
         </Route>
       </Route>
