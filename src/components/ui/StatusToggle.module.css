@@ -1,0 +1,60 @@
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.option {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  font: inherit;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-h);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.dotEmpty {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+}
+
+.dotIcon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.dotIcon--green {
+  color: #10b981;
+}
+
+.dotIcon--gold {
+  color: #f59e0b;
+}
+
+.option--active-green {
+  border-color: rgba(16, 185, 129, 0.35);
+  background: rgba(16, 185, 129, 0.08);
+  color: #087f5b;
+}
+
+.option--active-gold {
+  border-color: rgba(245, 158, 11, 0.35);
+  background: rgba(245, 158, 11, 0.08);
+  color: #92600a;
+}

@@ -2,7 +2,7 @@ import type { InputHTMLAttributes, ReactNode } from 'react'
 import './TextField.css'
 
 type TextFieldProps = InputHTMLAttributes<HTMLInputElement> & {
-  label: string
+  label: ReactNode
   endAdornment?: ReactNode
 }
 

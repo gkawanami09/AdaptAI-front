@@ -1,0 +1,18 @@
+.select-field__input {
+  appearance: none;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+.select-field__input:invalid {
+  color: var(--text-muted);
+}
+
+.select-field__chevron {
+  pointer-events: none;
+}
+
+.select-field__chevron svg {
+  width: 16px;
+  height: 16px;
+}

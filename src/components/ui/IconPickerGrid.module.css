@@ -1,0 +1,45 @@
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.option {
+  padding: 3px;
+  border: 2px solid transparent;
+  border-radius: 15px;
+  background: none;
+  line-height: 0;
+  cursor: pointer;
+}
+
+.option--active {
+  border-color: var(--primary);
+}
+
+.addButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border: 1.5px dashed var(--border);
+  border-radius: 15px;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.addButton svg {
+  width: 18px;
+  height: 18px;
+}
+
+.addButton:hover {
+  border-color: var(--primary-border);
+  color: var(--primary);
+}
