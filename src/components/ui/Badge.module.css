@@ -40,6 +40,11 @@
   color: #a3241f;
 }
 
+.badge--gray {
+  background: var(--code-bg);
+  color: var(--text-muted);
+}
+
 @media (prefers-color-scheme: dark) {
   .badge--purple {
     background: rgba(139, 127, 240, 0.24);
@@ -69,5 +74,10 @@
   .badge--red {
     background: rgba(248, 113, 113, 0.22);
     color: #fecaca;
+  }
+
+  .badge--gray {
+    background: var(--code-bg);
+    color: var(--text-muted);
   }
 }

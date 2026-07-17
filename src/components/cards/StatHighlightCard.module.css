@@ -7,6 +7,16 @@
   text-align: center;
 }
 
+.content--left {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.plainIcon {
+  font-size: 30px;
+  line-height: 1;
+}
+
 .value {
   font-family: var(--heading);
   font-size: 22px;

@@ -1,7 +1,7 @@
 import styles from './ProgressBar.module.css'
 
-export type ProgressBarColor = 'purple' | 'teal' | 'gold' | 'red' | 'blue'
-export type ProgressBarSize = 'sm' | 'md'
+export type ProgressBarColor = 'purple' | 'teal' | 'gold' | 'red' | 'blue' | 'green' | 'orange'
+export type ProgressBarSize = 'sm' | 'md' | 'lg'
 
 type ProgressBarProps = {
   value: number
