@@ -11,6 +11,8 @@ import { Questoes } from './pages/Questoes/questoes'
 import { Simulados } from './pages/Simulados/Simulados'
 import { Redacao } from './pages/Redacao/redacao'
 import { Chat } from './pages/Chat/Chat'
+import { Progresso } from './pages/Progresso/Progresso'
+import { Conquistas } from './pages/Conquistas/Conquistas'
 import { AdminDashboard } from './pages/Admin/AdminDashboard'
 import { AdminMateriasLista } from './pages/Admin/AdminMateriasLista'
 import { AdminMateriaDetalhe } from './pages/Admin/AdminMateriaDetalhe'
@@ -138,10 +140,10 @@ function App() {
             <Route path="/chat" element={<Chat />} />
           </Route>
           <Route element={<PermissaoDaPagina idPagina="progresso" />}>
-            <Route path="/progresso" element={<EmBrevePage titulo="Progresso" />} />
+            <Route path="/progresso" element={<Progresso />} />
           </Route>
           <Route element={<PermissaoDaPagina idPagina="conquistas" />}>
-            <Route path="/conquistas" element={<EmBrevePage titulo="Conquistas" />} />
+            <Route path="/conquistas" element={<Conquistas />} />
           </Route>
           <Route element={<PermissaoDaPagina idPagina="configuracoes" />}>
             <Route path="/configuracoes" element={<EmBrevePage titulo="Configurações" />} />
