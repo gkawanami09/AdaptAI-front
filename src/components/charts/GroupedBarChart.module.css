@@ -1,0 +1,166 @@
+.chart {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.yAxis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 22px;
+  height: 150px;
+  flex-shrink: 0;
+}
+
+.tick {
+  font-family: var(--sans);
+  font-size: 11px;
+  line-height: 1;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+.plotColumn {
+  flex: 1;
+  min-width: 0;
+}
+
+.plot {
+  position: relative;
+  height: 150px;
+}
+
+.gridline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--border);
+}
+
+.groups {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.group {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+}
+
+.bar {
+  position: relative;
+  width: 14px;
+  max-width: 24px;
+  min-height: 2px;
+  border-radius: 4px 4px 2px 2px;
+  transition: opacity 0.15s ease;
+}
+
+.bar:hover {
+  opacity: 0.85;
+}
+
+.bar--blue {
+  background: #3b82f6;
+}
+
+.bar--green {
+  background: #0d9668;
+}
+
+.bar--red {
+  background: #ef4444;
+}
+
+@media (prefers-color-scheme: dark) {
+  .bar--green {
+    background: #059669;
+  }
+}
+
+.tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translate(-50%, -4px);
+  margin-bottom: 6px;
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: var(--text-h);
+  color: var(--bg);
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.categoryLabels {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.categoryLabel {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.legendDot--blue {
+  background: #3b82f6;
+}
+
+.legendDot--green {
+  background: #0d9668;
+}
+
+.legendDot--red {
+  background: #ef4444;
+}
+
+@media (prefers-color-scheme: dark) {
+  .legendDot--green {
+    background: #059669;
+  }
+}
