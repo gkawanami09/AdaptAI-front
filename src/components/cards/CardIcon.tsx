@@ -7,10 +7,16 @@ type CardIconProps = {
   children: ReactNode
   color?: CardIconColor
   shape?: 'square' | 'circle'
+  size?: 'sm' | 'md'
 }
 
-export function CardIcon({ children, color = 'purple', shape = 'square' }: CardIconProps) {
-  const classes = [styles.icon, styles[`icon--${color}`], shape === 'circle' && styles['icon--circle']]
+export function CardIcon({ children, color = 'purple', shape = 'square', size = 'md' }: CardIconProps) {
+  const classes = [
+    styles.icon,
+    styles[`icon--${color}`],
+    shape === 'circle' && styles['icon--circle'],
+    size === 'sm' && styles['icon--sm'],
+  ]
     .filter(Boolean)
     .join(' ')
 

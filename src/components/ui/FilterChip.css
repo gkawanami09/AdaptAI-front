@@ -26,3 +26,8 @@
 .filter-chip--active:hover {
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
 }
+
+.filter-chip--md {
+  padding: 12px 20px;
+  font-size: 14px;
+}

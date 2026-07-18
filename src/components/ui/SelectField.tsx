@@ -7,12 +7,16 @@ type SelectFieldProps = SelectHTMLAttributes<HTMLSelectElement> & {
   label: string
   placeholder?: string
   children: ReactNode
+  labelVariant?: 'default' | 'caps'
 }
 
-export function SelectField({ label, id, placeholder, children, ...selectProps }: SelectFieldProps) {
+export function SelectField({ label, id, placeholder, children, labelVariant = 'default', ...selectProps }: SelectFieldProps) {
   return (
     <div className="text-field">
-      <label className="text-field__label" htmlFor={id}>
+      <label
+        className={`text-field__label${labelVariant === 'caps' ? ' text-field__label--caps' : ''}`}
+        htmlFor={id}
+      >
         {label}
       </label>
       <div className="text-field__control">
