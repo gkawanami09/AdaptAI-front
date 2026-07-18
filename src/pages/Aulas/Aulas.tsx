@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { TitlePage } from '../../components/ui/TitlePage'
 import { Button } from '../../components/ui/Button'
 import { AulaCard } from '../../components/cards/AulaCard'
@@ -79,7 +80,17 @@ const AULAS = [
 ]
 
 export function Aulas() {
+  const navigate = useNavigate()
   const [categoria, setCategoria] = useState('Todas')
+
+  function handleAcessarAula(title: string) {
+    if (title === 'Função Quadrática') {
+      navigate('/aulas/funcao-quadratica')
+      return
+    }
+    // TODO: conectar à navegação real — só temos a página de visualização da Função Quadrática por enquanto
+    console.log('acessar aula', title)
+  }
 
   return (
     <main className={styles.page}>
@@ -113,6 +124,7 @@ export function Aulas() {
             progress={aula.progress}
             status={aula.status}
             featured={aula.featured}
+            onAction={() => handleAcessarAula(aula.title)}
           />
         ))}
       </div>
