@@ -7,19 +7,20 @@ import { VerificarCodigoPage } from './pages/VerificarCodigo/VerificarCodigoPage
 import { DashboardPage } from './pages/Dashboard/DashboardPage'
 import { PlanoEstudos } from './pages/PlanoEstudos/PlanoEstudos'
 import { Aulas } from './pages/Aulas/Aulas'
+import { AulaVisualizacao } from './pages/Aulas/AulaVisualizacao'
 import { Questoes } from './pages/Questoes/questoes'
 import { Simulados } from './pages/Simulados/Simulados'
 import { Redacao } from './pages/Redacao/redacao'
 import { Chat } from './pages/Chat/Chat'
 import { Progresso } from './pages/Progresso/Progresso'
 import { Conquistas } from './pages/Conquistas/Conquistas'
+import { Configuracoes } from './pages/Configuracoes/Configuracoes'
 import { AdminDashboard } from './pages/Admin/AdminDashboard'
 import { AdminMateriasLista } from './pages/Admin/AdminMateriasLista'
 import { AdminMateriaDetalhe } from './pages/Admin/AdminMateriaDetalhe'
 import { AdminNovaMateria } from './pages/Admin/AdminNovaMateria'
 import { AdminNovoModulo } from './pages/Admin/AdminNovoModulo'
 import { AdminModuloDetalhe } from './pages/Admin/AdminModuloDetalhe'
-import { EmBrevePage } from './pages/EmBreve/EmBrevePage'
 
 import { Header } from './components/layout/Header'
 import { AdminLayout } from './components/layout/AdminLayout'
@@ -126,6 +127,7 @@ function App() {
           </Route>
           <Route element={<PermissaoDaPagina idPagina="aulas" />}>
             <Route path="/aulas" element={<Aulas />} />
+            <Route path="/aulas/funcao-quadratica" element={<AulaVisualizacao />} />
           </Route>
           <Route element={<PermissaoDaPagina idPagina="questoes" />}>
             <Route path="/questoes" element={<Questoes />} />
@@ -146,7 +148,7 @@ function App() {
             <Route path="/conquistas" element={<Conquistas />} />
           </Route>
           <Route element={<PermissaoDaPagina idPagina="configuracoes" />}>
-            <Route path="/configuracoes" element={<EmBrevePage titulo="Configurações" />} />
+            <Route path="/configuracoes" element={<Configuracoes />} />
           </Route>
         </Route>
 
