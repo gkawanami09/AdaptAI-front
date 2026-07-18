@@ -18,6 +18,22 @@
   border-radius: 50%;
 }
 
+.icon--sm {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  font-size: 17px;
+}
+
+.icon--sm.icon--circle {
+  border-radius: 50%;
+}
+
+.icon--sm svg {
+  width: 18px;
+  height: 18px;
+}
+
 .icon--purple {
   background: rgba(108, 92, 231, 0.12);
   color: #6c5ce7;
@@ -43,29 +59,27 @@
   color: #c0362c;
 }
 
-@media (prefers-color-scheme: dark) {
-  .icon--purple {
-    background: rgba(139, 127, 240, 0.22);
-    color: #c4b8ff;
-  }
+:global(.dark) .icon--purple {
+  background: rgba(139, 127, 240, 0.22);
+  color: #c4b8ff;
+}
 
-  .icon--green {
-    background: rgba(52, 211, 153, 0.2);
-    color: #6ee7b7;
-  }
+:global(.dark) .icon--green {
+  background: rgba(52, 211, 153, 0.2);
+  color: #6ee7b7;
+}
 
-  .icon--blue {
-    background: rgba(96, 165, 250, 0.2);
-    color: #93c5fd;
-  }
+:global(.dark) .icon--blue {
+  background: rgba(96, 165, 250, 0.2);
+  color: #93c5fd;
+}
 
-  .icon--gold {
-    background: rgba(251, 191, 36, 0.2);
-    color: #fde68a;
-  }
+:global(.dark) .icon--gold {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fde68a;
+}
 
-  .icon--red {
-    background: rgba(248, 113, 113, 0.2);
-    color: #fecaca;
-  }
+:global(.dark) .icon--red {
+  background: rgba(248, 113, 113, 0.2);
+  color: #fecaca;
 }

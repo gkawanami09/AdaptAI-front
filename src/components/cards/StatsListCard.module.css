@@ -36,16 +36,14 @@
   color: #92600a;
 }
 
-@media (prefers-color-scheme: dark) {
-  .value--purple {
-    color: #d5cbff;
-  }
+:global(.dark) .value--purple {
+  color: #d5cbff;
+}
 
-  .value--teal {
-    color: #a6f0e6;
-  }
+:global(.dark) .value--teal {
+  color: #a6f0e6;
+}
 
-  .value--gold {
-    color: #fde68a;
-  }
+:global(.dark) .value--gold {
+  color: #fde68a;
 }

@@ -52,26 +52,24 @@
   background: #3f2d9e;
 }
 
-@media (prefers-color-scheme: dark) {
-  .cell--0 {
-    background: var(--code-bg);
-  }
+:global(.dark) .cell--0 {
+  background: var(--code-bg);
+}
 
-  .cell--1 {
-    background: rgba(139, 127, 240, 0.25);
-  }
+:global(.dark) .cell--1 {
+  background: rgba(139, 127, 240, 0.25);
+}
 
-  .cell--2 {
-    background: rgba(139, 127, 240, 0.45);
-  }
+:global(.dark) .cell--2 {
+  background: rgba(139, 127, 240, 0.45);
+}
 
-  .cell--3 {
-    background: rgba(139, 127, 240, 0.7);
-  }
+:global(.dark) .cell--3 {
+  background: rgba(139, 127, 240, 0.7);
+}
 
-  .cell--4 {
-    background: rgba(139, 127, 240, 0.95);
-  }
+:global(.dark) .cell--4 {
+  background: rgba(139, 127, 240, 0.95);
 }
 
 .legend {

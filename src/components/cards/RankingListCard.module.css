@@ -100,32 +100,30 @@
   color: #0d9488;
 }
 
-@media (prefers-color-scheme: dark) {
-  .value--green {
-    color: #6ee7b7;
-  }
+:global(.dark) .value--green {
+  color: #6ee7b7;
+}
 
-  .value--gold {
-    color: #fde68a;
-  }
+:global(.dark) .value--gold {
+  color: #fde68a;
+}
 
-  .value--red {
-    color: #fecaca;
-  }
+:global(.dark) .value--red {
+  color: #fecaca;
+}
 
-  .value--blue {
-    color: #93c5fd;
-  }
+:global(.dark) .value--blue {
+  color: #93c5fd;
+}
 
-  .value--orange {
-    color: #fdba74;
-  }
+:global(.dark) .value--orange {
+  color: #fdba74;
+}
 
-  .value--purple {
-    color: #c4b8ff;
-  }
+:global(.dark) .value--purple {
+  color: #c4b8ff;
+}
 
-  .value--teal {
-    color: #5eead4;
-  }
+:global(.dark) .value--teal {
+  color: #5eead4;
 }
