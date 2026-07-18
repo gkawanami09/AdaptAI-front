@@ -1,0 +1,29 @@
+.body {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.paragraph {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 165%;
+  color: var(--text);
+}
+
+.paragraph strong {
+  color: var(--text-h);
+}
+
+.highlight {
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--primary-bg);
+  text-align: center;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--primary);
+}

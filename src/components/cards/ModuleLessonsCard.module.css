@@ -1,0 +1,71 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 16px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.row--atual {
+  background: var(--primary-bg);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.badge svg {
+  width: 13px;
+  height: 13px;
+}
+
+.badge--concluida {
+  background: #0d9668;
+  color: #fff;
+}
+
+.badge--atual {
+  background: var(--primary);
+  color: #fff;
+}
+
+.badge--bloqueada {
+  background: var(--code-bg);
+  color: var(--text-muted);
+}
+
+.label {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.label--concluida {
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.label--atual {
+  color: var(--primary);
+  font-weight: 800;
+}
+
+.label--bloqueada {
+  color: var(--text-muted);
+}
