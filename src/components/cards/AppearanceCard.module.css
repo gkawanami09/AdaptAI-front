@@ -1,0 +1,72 @@
+.label {
+  display: block;
+  margin-top: 16px;
+  text-transform: uppercase;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 10px;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.option:hover {
+  border-color: var(--primary-border);
+}
+
+.option--selected {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-bg);
+}
+
+.preview {
+  width: 100%;
+  height: 64px;
+  border-radius: 12px;
+}
+
+.preview--claro {
+  background: #fff;
+  border: 1.5px solid var(--border);
+}
+
+.preview--escuro {
+  background: #1a1b23;
+}
+
+.preview--sistema {
+  border: 1.5px solid var(--border);
+  background: linear-gradient(135deg, #fff 0%, #fff 49%, #1a1b23 51%, #1a1b23 100%);
+}
+
+.optionLabel {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-h);
+}
