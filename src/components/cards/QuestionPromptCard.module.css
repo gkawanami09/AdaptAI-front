@@ -1,0 +1,23 @@
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.examInfo {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.question {
+  margin: 16px 0 0;
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 165%;
+  color: var(--text-h);
+}
+
+.question strong {
+  font-weight: 800;
+}
