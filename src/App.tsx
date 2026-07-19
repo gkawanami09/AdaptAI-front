@@ -9,6 +9,7 @@ import { PlanoEstudos } from './pages/PlanoEstudos/PlanoEstudos'
 import { Aulas } from './pages/Aulas/Aulas'
 import { AulaVisualizacao } from './pages/Aulas/AulaVisualizacao'
 import { Questoes } from './pages/Questoes/questoes'
+import { QuestoesVisualizacao } from './pages/Questoes/QuestoesVisualizacao'
 import { Simulados } from './pages/Simulados/Simulados'
 import { Redacao } from './pages/Redacao/redacao'
 import { Chat } from './pages/Chat/Chat'
@@ -131,6 +132,7 @@ function App() {
           </Route>
           <Route element={<PermissaoDaPagina idPagina="questoes" />}>
             <Route path="/questoes" element={<Questoes />} />
+            <Route path="/questoes/visualizacao" element={<QuestoesVisualizacao />} />
           </Route>
           <Route element={<PermissaoDaPagina idPagina="simulados" />}>
             <Route path="/simulados" element={<Simulados />} />

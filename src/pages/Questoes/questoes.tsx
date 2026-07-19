@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { TitlePage } from '../../components/ui/TitlePage'
 import { Button } from '../../components/ui/Button'
 import { FiltersCard } from '../../components/cards/FiltersCard'
@@ -74,6 +75,7 @@ function toggleValue(list: string[], value: string) {
 }
 
 export function Questoes() {
+  const navigate = useNavigate()
   const [vestibulares, setVestibulares] = useState<string[]>(['enem'])
   const [dificuldades, setDificuldades] = useState<string[]>([])
   const [materias, setMaterias] = useState<string[]>([])
@@ -122,7 +124,14 @@ export function Questoes() {
         <div className={styles.mainColumn}>
           <div className={styles.listsHeader}>
             <span className={styles.listsCount}>6 listas disponíveis</span>
-            <Button variant="outline" pill fullWidth={false} icon={<PlayIcon />} iconPosition="left">
+            <Button
+              variant="outline"
+              pill
+              fullWidth={false}
+              icon={<PlayIcon />}
+              iconPosition="left"
+              onClick={() => navigate('/questoes/visualizacao')}
+            >
               Começar lista
             </Button>
           </div>
@@ -140,6 +149,7 @@ export function Questoes() {
                 completed={lista.completed}
                 total={lista.total}
                 progressColor={lista.progressColor}
+                onClick={() => navigate('/questoes/visualizacao')}
               />
             ))}
           </div>

@@ -1,0 +1,105 @@
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-h);
+  text-decoration: none;
+}
+
+.backLink:hover {
+  color: var(--primary);
+}
+
+.backIcon {
+  width: 16px;
+  height: 16px;
+}
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.progressText {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.answerButton {
+  min-width: 160px;
+}
+
+.flagButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.flagButton svg {
+  width: 15px;
+  height: 15px;
+}
+
+.flagButton:hover {
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+
+.flagButton--active {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.14);
+  color: #f59e0b;
+}
+
+.navRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
