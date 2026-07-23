@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AdminPageLayout } from '../../components/layout/AdminPageLayout'
 import { Breadcrumb } from '../../components/ui/Breadcrumb'
@@ -10,20 +10,31 @@ import { Pagination } from '../../components/ui/Pagination'
 import { CardDiv } from '../../components/cards/CardDiv'
 import { AdminStatCard } from '../../components/cards/AdminStatCard'
 import { MateriaCard } from '../../components/cards/MateriaCard'
+import type { CardIconColor } from '../../components/cards/CardIcon'
 import { BookIcon, CheckCircleIcon, FileTextIcon, FolderIcon, PlusIcon, SearchIcon } from '../../components/ui/icons'
 import styles from './AdminMateriasLista.module.css'
 
+// api functions
+import { getMaterias } from '../../services/materias'
+import type { Materias } from '../../types/materias'
+
 const AREAS = ['Todas', 'Matemática', 'Ciências da Natureza', 'Ciências Humanas', 'Linguagens', 'Redação']
 
-// TODO: substituir pelos dados reais vindos do backend (endpoint de matérias)
-const MATERIAS = [
-  { icon: '📐', iconColor: 'purple' as const, titulo: 'Matemática', area: 'Matemática', status: 'ativa' as const, modulos: 8, aulas: 24 },
-  { icon: '⚡', iconColor: 'gold' as const, titulo: 'Física', area: 'Ciências da Natureza', status: 'ativa' as const, modulos: 6, aulas: 18 },
-  { icon: '🧪', iconColor: 'blue' as const, titulo: 'Química', area: 'Ciências da Natureza', status: 'ativa' as const, modulos: 7, aulas: 21 },
-  { icon: '🌿', iconColor: 'green' as const, titulo: 'Biologia', area: 'Ciências da Natureza', status: 'ativa' as const, modulos: 6, aulas: 16 },
-  { icon: '🏛️', iconColor: 'gold' as const, titulo: 'História', area: 'Ciências Humanas', status: 'ativa' as const, modulos: 5, aulas: 15 },
-  { icon: '✍️', iconColor: 'red' as const, titulo: 'Redação', area: 'Linguagens', status: 'rascunho' as const, modulos: 4, aulas: 12 },
-]
+const ITENS_POR_PAGINA = 6
+
+const AREA_ICONS: Record<string, { icon: string; iconColor: CardIconColor }> = {
+  'Matemática': { icon: '📐', iconColor: 'purple' },
+  'Ciências da Natureza': { icon: '⚡', iconColor: 'gold' },
+  'Ciências Humanas': { icon: '🏛️', iconColor: 'blue' },
+  'Linguagens': { icon: '✍️', iconColor: 'red' },
+  'Redação': { icon: '✍️', iconColor: 'red' },
+}
+
+const AREA_ICON_PADRAO = { icon: '📚', iconColor: 'green' as const }
+
+function getAreaVisual(area: string) {
+  return AREA_ICONS[area] ?? AREA_ICON_PADRAO
+}
 
 export function AdminMateriasLista() {
   const navigate = useNavigate()
@@ -32,9 +43,42 @@ export function AdminMateriasLista() {
   const [ordenacao, setOrdenacao] = useState('nome-az')
   const [pagina, setPagina] = useState(1)
 
+  const [materias, setMaterias] = useState<Materias[]>([])
+  const [totalPaginas, setTotalPaginas] = useState(1)
+  const [totalRegistros, setTotalRegistros] = useState(0)
+  const [carregando, setCarregando] = useState(false)
+
+  //Materias functions
   function handleNovaMateria() {
     navigate('/admin/materias/nova')
   }
+
+  //obtem a lista de todas as materias
+  async function carregarMaterias() {
+    setCarregando(true)
+
+    try {
+      const response = await getMaterias({
+        busca: busca.trim() || undefined,
+        area: area === 'Todas' ? undefined : area,
+        pagina,
+        limite: ITENS_POR_PAGINA,
+      })
+
+      setMaterias(response.materias)
+      setTotalPaginas(response.total_paginas || 1)
+      setTotalRegistros(response.total_registros)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setCarregando(false)
+    }
+  }
+
+  useEffect(() => {
+    carregarMaterias()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [busca, area, pagina])
 
   function handleVerModulos(titulo: string) {
     // TODO: navegar pra tela de detalhe da matéria correspondente (por enquanto só temos a de Matemática)
@@ -47,14 +91,9 @@ export function AdminMateriasLista() {
     console.log('editar matéria', titulo)
   }
 
-  const materiasFiltradas = MATERIAS.filter((materia) => {
-    const termo = busca.trim().toLowerCase()
-    const bateBusca = !termo || materia.titulo.toLowerCase().includes(termo)
-    const bateArea = area === 'Todas' || materia.area === area
-    return bateBusca && bateArea
-  }).sort((a, b) => {
-    if (ordenacao === 'nome-za') return b.titulo.localeCompare(a.titulo)
-    return a.titulo.localeCompare(b.titulo)
+  const materiasOrdenadas = [...materias].sort((a, b) => {
+    if (ordenacao === 'nome-za') return b.nome.localeCompare(a.nome)
+    return a.nome.localeCompare(b.nome)
   })
 
   return (
@@ -71,10 +110,25 @@ export function AdminMateriasLista() {
         </div>
 
         <div className={styles.statsRow}>
-          <AdminStatCard icon={<BookIcon />} iconColor="purple" label="Total de matérias" value="24" />
-          <AdminStatCard icon={<FolderIcon />} iconColor="purple" label="Total de módulos" value="156" />
-          <AdminStatCard icon={<CheckCircleIcon />} iconColor="green" label="Matérias ativas" value="20" />
-          <AdminStatCard icon={<FileTextIcon />} iconColor="gold" label="Rascunhos" value="4" />
+          <AdminStatCard icon={<BookIcon />} iconColor="purple" label="Total de matérias" value={String(totalRegistros)} />
+          <AdminStatCard
+            icon={<FolderIcon />}
+            iconColor="purple"
+            label="Total de tópicos"
+            value={String(materias.reduce((soma, materia) => soma + materia.total_topicos, 0))}
+          />
+          <AdminStatCard
+            icon={<CheckCircleIcon />}
+            iconColor="green"
+            label="Matérias ativas"
+            value={String(materias.filter((materia) => materia.ativo).length)}
+          />
+          <AdminStatCard
+            icon={<FileTextIcon />}
+            iconColor="gold"
+            label="Rascunhos"
+            value={String(materias.filter((materia) => !materia.ativo).length)}
+          />
         </div>
 
         <CardDiv>
@@ -85,7 +139,10 @@ export function AdminMateriasLista() {
               placeholder="Buscar matéria..."
               aria-label="Buscar matéria"
               value={busca}
-              onChange={(event) => setBusca(event.target.value)}
+              onChange={(event) => {
+                setBusca(event.target.value)
+                setPagina(1)
+              }}
               className={styles.searchInput}
             />
           </div>
@@ -95,7 +152,15 @@ export function AdminMateriasLista() {
               <span className={styles.filterLabel}>Área</span>
               <div className={styles.chips}>
                 {AREAS.map((item) => (
-                  <FilterChip key={item} label={item} selected={item === area} onClick={() => setArea(item)} />
+                  <FilterChip
+                    key={item}
+                    label={item}
+                    selected={item === area}
+                    onClick={() => {
+                      setArea(item)
+                      setPagina(1)
+                    }}
+                  />
                 ))}
               </div>
             </div>
@@ -115,22 +180,29 @@ export function AdminMateriasLista() {
           </div>
         </CardDiv>
 
-        {materiasFiltradas.length > 0 ? (
+        {carregando ? (
+          <CardDiv>
+            <p className={styles.emptyState}>Carregando matérias...</p>
+          </CardDiv>
+        ) : materiasOrdenadas.length > 0 ? (
           <div className={styles.grid}>
-            {materiasFiltradas.map((materia) => (
-              <MateriaCard
-                key={materia.titulo}
-                icon={materia.icon}
-                iconColor={materia.iconColor}
-                title={materia.titulo}
-                area={materia.area}
-                status={materia.status}
-                modulos={materia.modulos}
-                aulas={materia.aulas}
-                onVerModulos={() => handleVerModulos(materia.titulo)}
-                onEditar={() => handleEditar(materia.titulo)}
-              />
-            ))}
+            {materiasOrdenadas.map((materia) => {
+              const { icon, iconColor } = getAreaVisual(materia.area)
+              return (
+                <MateriaCard
+                  key={materia.id ?? materia.slug}
+                  icon={icon}
+                  iconColor={iconColor}
+                  title={materia.nome}
+                  area={materia.area}
+                  status={materia.ativo ? 'ativa' : 'rascunho'}
+                  modulos={materia.total_topicos}
+                  aulas={materia.total_aulas}
+                  onVerModulos={() => handleVerModulos(materia.nome)}
+                  onEditar={() => handleEditar(materia.nome)}
+                />
+              )
+            })}
           </div>
         ) : (
           <CardDiv>
@@ -140,9 +212,9 @@ export function AdminMateriasLista() {
 
         <div className={styles.footer}>
           <span className={styles.footerText}>
-            Mostrando {materiasFiltradas.length} de {MATERIAS.length} matérias
+            Mostrando {materiasOrdenadas.length} de {totalRegistros} matérias
           </span>
-          <Pagination page={pagina} totalPages={4} onChange={setPagina} />
+          <Pagination page={pagina} totalPages={totalPaginas} onChange={setPagina} />
         </div>
       </div>
     </AdminPageLayout>

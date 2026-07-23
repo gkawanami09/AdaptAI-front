@@ -28,7 +28,8 @@ import { AdminLayout } from './components/layout/AdminLayout'
 import { Loading } from './components/ui/Loading'
 import shellStyles from './components/layout/AppShell.module.css'
 
-import { clearStoredAuth, fetchCurrentUser, isMockAuthEnabled } from './services/auth'
+import { clearStoredAuth, fetchCurrentUser } from './services/auth'
+import { isMockAuthEnabled } from './services/api'
 import { getCookie, removeCookie, TOKEN_COOKIE_NAME } from './utils/cookies'
 import type { UserProfile } from './types/auth'
 

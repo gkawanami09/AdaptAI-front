@@ -1,7 +1,9 @@
 import type { UserProfile } from '../types/auth'
 import { setCookie, TOKEN_COOKIE_NAME } from '../utils/cookies'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
+import { isMockAuthEnabled } from './api'
+import { requestJson } from './api'
+
 const AUTH_PROFILE_STORAGE_KEY = 'adaptai_user_profile'
 const AUTH_REFRESH_TOKEN_STORAGE_KEY = 'adaptai_refresh_token'
 
@@ -24,10 +26,6 @@ const MOCK_PROFILE: UserProfile = {
   nivel: 12,
   xp: 4820,
   telasPermitidas: DEFAULT_TELAS_PERMITIDAS,
-}
-
-type ApiErrorBody = {
-  detail?: string
 }
 
 type RegisterInput = {
@@ -53,29 +51,6 @@ type LoginResponse = {
     refresh_token?: string
     token_type?: string
   }
-}
-
-export function isMockAuthEnabled(): boolean {
-  return import.meta.env.DEV && import.meta.env.VITE_MOCK_AUTH === 'true'
-}
-
-async function parseApiError(response: Response): Promise<string> {
-  try {
-    const data = (await response.json()) as ApiErrorBody
-    return data.detail || 'Nao foi possivel concluir a solicitacao.'
-  } catch {
-    return 'Nao foi possivel concluir a solicitacao.'
-  }
-}
-
-async function requestJson<T>(path: string, init: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, init)
-
-  if (!response.ok) {
-    throw new Error(await parseApiError(response))
-  }
-
-  return response.json() as Promise<T>
 }
 
 function mapLoginResponseToProfile(data: LoginResponse): UserProfile {
