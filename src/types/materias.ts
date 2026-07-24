@@ -10,6 +10,16 @@ export type Materias = {
     total_aulas: number
 }
 
+export type Materia = {
+  id: number
+  nome: string
+  slug: string
+  area: string[]
+  icone: string
+  cor: string
+  ordem: number
+}
+
 export type GetMateriasResponse = {
     sucesso: boolean
     pagina: number
@@ -26,4 +36,20 @@ export type GetMateriasParams = {
     ativo?: boolean
     pagina?: number
     limite?: number
+}
+
+export type PostMateriasParams = {
+    nome: string
+    slug: string
+    area: string[]
+    icone: string
+    cor: string
+    ordem: number
+    ativo: boolean
+}
+
+export type PostMateriasResponse = {
+  sucesso: boolean
+  mensagem: string
+  materia: Materia
 }

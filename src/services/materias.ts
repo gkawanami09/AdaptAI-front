@@ -1,10 +1,14 @@
 import { requestAuthJson } from "./api"
 
-import type { GetMateriasParams, GetMateriasResponse } from "../types/materias"
+import type { GetMateriasParams } from "../types/materias"
+import type { GetMateriasResponse } from "../types/materias"
+import type { PostMateriasParams } from "../types/materias"
+import type { PostMateriasResponse } from "../types/materias"
 
 const API_MATERIAS_PREFIX = "/admin/materias"
 
-export async function getMaterias(params: GetMateriasParams = {}): Promise<GetMateriasResponse> {
+// get functions
+export function getMaterias(params: GetMateriasParams = {}): Promise<GetMateriasResponse> {
     const query = new URLSearchParams()
 
     if (params.busca) query.set("busca", params.busca)
@@ -20,5 +24,16 @@ export async function getMaterias(params: GetMateriasParams = {}): Promise<GetMa
         headers: {
             "Content-Type": "application/json"
         }
+    })
+}
+
+//post functions
+export function postMaterias(params:PostMateriasParams) {
+    return requestAuthJson<PostMateriasResponse> (API_MATERIAS_PREFIX + "/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(params)
     })
 }

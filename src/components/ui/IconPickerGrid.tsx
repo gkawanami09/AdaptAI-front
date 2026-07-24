@@ -7,7 +7,8 @@ import styles from './IconPickerGrid.module.css'
 export type IconPickerOption = {
   value: string
   icon: ReactNode
-  color: CardIconColor
+  color?: CardIconColor
+  hex?: string
 }
 
 type IconPickerGridProps = {
@@ -29,7 +30,9 @@ export function IconPickerGrid({ options, value, onChange, onAddCustom }: IconPi
           aria-pressed={option.value === value}
           aria-label={`Selecionar ícone ${option.value}`}
         >
-          <CardIcon color={option.color}>{option.icon}</CardIcon>
+          <CardIcon color={option.color} hex={option.hex}>
+            {option.icon}
+          </CardIcon>
         </button>
       ))}
 

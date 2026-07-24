@@ -83,6 +83,14 @@
   color: var(--text-h);
 }
 
+.areaChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 42px;
+  align-items: center;
+}
+
 .iconPicker {
   display: flex;
   align-items: center;
@@ -131,6 +139,98 @@
   border-radius: 50%;
   background: #7c4dff;
   flex-shrink: 0;
+}
+
+.colorOptions {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: 12px;
+}
+
+.colorOption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 6px;
+  border: 1.5px solid transparent;
+  border-radius: 14px;
+  background: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.colorOption[aria-pressed='true'] {
+  border-color: var(--primary);
+}
+
+.colorOptionSwatch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+
+.colorOptionCheck {
+  width: 16px;
+  height: 16px;
+  color: #fff;
+}
+
+.colorOptionLabel {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.customColorRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.customColorSwatch {
+  position: relative;
+  display: inline-flex;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.customColorInput {
+  position: absolute;
+  inset: -6px;
+  width: calc(100% + 12px);
+  height: calc(100% + 12px);
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.customColorLabel {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.customColorLabel small {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
 }
 
 .descriptionField {
