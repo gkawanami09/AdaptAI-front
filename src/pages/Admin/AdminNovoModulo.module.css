@@ -84,6 +84,35 @@
   margin-top: 20px;
 }
 
+.customIconRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.customIconInput {
+  width: 96px;
+  box-sizing: border-box;
+  padding: 8px 12px;
+  font: inherit;
+  font-family: var(--sans);
+  font-size: 16px;
+  text-align: center;
+  color: var(--text-h);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.customIconInput:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-bg);
+}
+
 .descriptionField {
   display: flex;
   flex-direction: column;

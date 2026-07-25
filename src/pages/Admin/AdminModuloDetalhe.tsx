@@ -1,5 +1,6 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { PointerEvent as ReactPointerEvent } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { AdminPageLayout } from '../../components/layout/AdminPageLayout'
 import { Breadcrumb } from '../../components/ui/Breadcrumb'
 import { TitlePage } from '../../components/ui/TitlePage'
@@ -7,13 +8,13 @@ import { Button } from '../../components/ui/Button'
 import { Badge } from '../../components/ui/Badge'
 import { UnderlineTabs } from '../../components/ui/UnderlineTabs'
 import { Pagination } from '../../components/ui/Pagination'
+import { Loading } from '../../components/ui/Loading'
 import { CardDiv } from '../../components/cards/CardDiv'
 import { CardIcon } from '../../components/cards/CardIcon'
 import { AdminStatCard } from '../../components/cards/AdminStatCard'
 import {
   PencilIcon,
   PlusIcon,
-  CheckCircleIcon,
   BookIcon,
   CalendarIcon,
   TargetIcon,
@@ -25,6 +26,10 @@ import {
   ClockIcon,
 } from '../../components/ui/icons'
 import styles from './AdminModuloDetalhe.module.css'
+
+import { getMateriaPorId } from '../../services/materias'
+import { getTopicosPorMateria } from '../../services/modulos'
+import type { Topico } from '../../types/modulos'
 
 const TABS = [
   { value: 'aulas', label: 'Aulas' },
@@ -86,7 +91,23 @@ const DIFICULDADE_CONFIG = {
   medio: { label: 'Médio', color: 'gold' as const },
 }
 
+const ICONE_TOPICO_PADRAO = '📘'
+
+function formatarData(iso: string) {
+  const data = new Date(iso)
+  if (Number.isNaN(data.getTime())) return '—'
+  return data.toLocaleDateString('pt-BR')
+}
+
 export function AdminModuloDetalhe() {
+  const navigate = useNavigate()
+  const { materiaId, topicoId } = useParams<{ materiaId: string; topicoId: string }>()
+
+  const [materiaNome, setMateriaNome] = useState('')
+  const [topico, setTopico] = useState<Topico | null>(null)
+  const [carregando, setCarregando] = useState(true)
+  const [erro, setErro] = useState('')
+
   const [tab, setTab] = useState('aulas')
   const [busca, setBusca] = useState('')
   const [pagina, setPagina] = useState(1)
@@ -98,6 +119,44 @@ export function AdminModuloDetalhe() {
   const overIndexRef = useRef<number | null>(null)
   const rowRefs = useRef<Array<HTMLTableRowElement | null>>([])
 
+  //carrega o nome da matéria e o tópico (não existe GET por tópico individual, então filtra da lista)
+  useEffect(() => {
+    if (!materiaId || !topicoId) return
+
+    let cancelado = false
+
+    async function carregar() {
+      setCarregando(true)
+      setErro('')
+      try {
+        const [respostaMateria, respostaTopicos] = await Promise.all([
+          getMateriaPorId(materiaId!),
+          getTopicosPorMateria({ materia_id: materiaId! }),
+        ])
+        if (cancelado) return
+
+        setMateriaNome(respostaMateria.materia.nome)
+
+        const encontrado = respostaTopicos.topicos.find((item) => item.topico_id === topicoId)
+        if (!encontrado) {
+          setErro('Não foi possível encontrar esse módulo.')
+          return
+        }
+        setTopico(encontrado)
+      } catch (err) {
+        console.error(err)
+        if (!cancelado) setErro('Não foi possível carregar os dados do módulo.')
+      } finally {
+        if (!cancelado) setCarregando(false)
+      }
+    }
+
+    carregar()
+    return () => {
+      cancelado = true
+    }
+  }, [materiaId, topicoId])
+
   const aulasFiltradas = aulas.filter((aula) => {
     const termo = busca.trim().toLowerCase()
     if (!termo) return true
@@ -105,8 +164,7 @@ export function AdminModuloDetalhe() {
   })
 
   function handleEditarModulo() {
-    // TODO: conectar ao backend — abrir formulário de edição do módulo
-    console.log('editar módulo')
+    navigate(`/admin/materias/${materiaId}/modulos/${topicoId}/editar`)
   }
 
   function handleNovaAula() {
@@ -178,16 +236,26 @@ export function AdminModuloDetalhe() {
           items={[
             { label: 'Conteúdos', to: '/admin' },
             { label: 'Matérias', to: '/admin/materias' },
-            { label: 'Matemática', to: '/admin/materias/matematica' },
-            { label: 'Álgebra' },
+            { label: materiaNome || 'Matéria', to: `/admin/materias/${materiaId}` },
+            { label: topico?.nome ?? 'Módulo' },
           ]}
         />
 
         <div className={styles.header}>
-          <TitlePage title="Módulo: Álgebra" subtitle="Organize as aulas e a progressão deste módulo" />
+          <TitlePage
+            title={`Módulo: ${topico?.nome ?? 'Carregando...'}`}
+            subtitle="Organize as aulas e a progressão deste módulo"
+          />
 
           <div className={styles.headerActions}>
-            <Button variant="outline" fullWidth={false} icon={<PencilIcon />} iconPosition="left" onClick={handleEditarModulo}>
+            <Button
+              variant="outline"
+              fullWidth={false}
+              icon={<PencilIcon />}
+              iconPosition="left"
+              onClick={handleEditarModulo}
+              disabled={carregando}
+            >
               Editar módulo
             </Button>
             <Button fullWidth={false} icon={<PlusIcon />} iconPosition="left" onClick={handleNovaAula}>
@@ -196,11 +264,33 @@ export function AdminModuloDetalhe() {
           </div>
         </div>
 
+        {erro && (
+          <CardDiv>
+            <p className={styles.emptyTab}>{erro}</p>
+          </CardDiv>
+        )}
+
+        {carregando && (
+          <CardDiv>
+            <Loading text="Carregando módulo..." />
+          </CardDiv>
+        )}
+
         <div className={styles.statsRow}>
-          <AdminStatCard icon={<CheckCircleIcon />} iconColor="green" label="Status" value={<Badge color="teal">Ativo</Badge>} />
-          <AdminStatCard icon={<TargetIcon />} iconColor="purple" label="Ordem" value="1º" />
+          <AdminStatCard
+            icon={topico?.icone ?? ICONE_TOPICO_PADRAO}
+            iconColor="green"
+            label="Status"
+            value={topico?.ativo ? <Badge color="teal">Ativo</Badge> : <Badge color="gold">Rascunho</Badge>}
+          />
+          <AdminStatCard icon={<TargetIcon />} iconColor="purple" label="Ordem" value={topico ? `${topico.ordem}º` : '—'} />
           <AdminStatCard icon={<BookIcon />} iconColor="gold" label="Total de aulas" value={aulas.length} sublabel="Aulas cadastradas" />
-          <AdminStatCard icon={<CalendarIcon />} iconColor="blue" label="Última atualização" value="15/05/2025" sublabel="Por Guilherme Silva" />
+          <AdminStatCard
+            icon={<CalendarIcon />}
+            iconColor="blue"
+            label="Última atualização"
+            value={topico ? formatarData(topico.atualizado_em) : '—'}
+          />
         </div>
 
         <UnderlineTabs options={TABS} value={tab} onChange={setTab} />

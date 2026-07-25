@@ -80,15 +80,16 @@ export function AdminMateriasLista() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [busca, area, pagina])
 
-  function handleVerModulos(titulo: string) {
-    // TODO: navegar pra tela de detalhe da matéria correspondente (por enquanto só temos a de Matemática)
-    console.log('ver módulos de', titulo)
-    if (titulo === 'Matemática') navigate('/admin/materias/matematica')
+  function handleVerModulos(id: string | undefined) {
+    navigate(`/admin/materias/${id}`)
   }
 
-  function handleEditar(titulo: string) {
-    // TODO: conectar ao backend — abrir formulário de edição da matéria
-    console.log('editar matéria', titulo)
+  function handleEditar(id: string | undefined) {
+    if (!id) {
+      console.error('matéria sem id, não é possível editar')
+      return
+    }
+    navigate(`/admin/materias/${id}/editar`)
   }
 
   const materiasOrdenadas = [...materias].sort((a, b) => {
@@ -198,8 +199,8 @@ export function AdminMateriasLista() {
                   status={materia.ativo ? 'ativa' : 'rascunho'}
                   modulos={materia.total_topicos}
                   aulas={materia.total_aulas}
-                  onVerModulos={() => handleVerModulos(materia.nome)}
-                  onEditar={() => handleEditar(materia.nome)}
+                  onVerModulos={() => handleVerModulos(materia.id)}
+                  onEditar={() => handleEditar(materia.id)}
                 />
               )
             })}

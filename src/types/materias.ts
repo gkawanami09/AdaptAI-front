@@ -18,6 +18,7 @@ export type Materia = {
   icone: string
   cor: string
   ordem: number
+  ativo: boolean
 }
 
 export type GetMateriasResponse = {
@@ -49,6 +50,19 @@ export type PostMateriasParams = {
 }
 
 export type PostMateriasResponse = {
+  sucesso: boolean
+  mensagem: string
+  materia: Materia
+}
+
+export type GetMateriaResponse = {
+  sucesso: boolean
+  materia: Materia
+}
+
+export type PutMateriasParams = PostMateriasParams
+
+export type PutMateriasResponse = {
   sucesso: boolean
   mensagem: string
   materia: Materia

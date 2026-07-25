@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { AdminPageLayout } from '../../components/layout/AdminPageLayout'
 import { Breadcrumb } from '../../components/ui/Breadcrumb'
 import { TitlePage } from '../../components/ui/TitlePage'
@@ -17,7 +17,7 @@ import { CardIcon } from '../../components/cards/CardIcon'
 import { BookIcon, FolderIcon, InfoIcon, SaveIcon, UsersIcon, CheckCircleIcon, CheckIcon } from '../../components/ui/icons'
 import styles from './AdminNovaMateria.module.css'
 
-import { postMaterias } from '../../services/materias'
+import { postMaterias, putMateria, getMateriaPorId } from '../../services/materias'
 
 const STATUS_OPTIONS = [
   { value: 'ativa', label: 'Ativa' },
@@ -44,6 +44,8 @@ const COR_OPTIONS: { hex: string; label: string }[] = [
 
 export function AdminNovaMateria() {
   const navigate = useNavigate()
+  const { id } = useParams<{ id: string }>()
+  const emEdicao = Boolean(id)
   const [nome, setNome] = useState('')
   const [slug, setSlug] = useState('')
   const [area, setArea] = useState<string[]>([])
@@ -55,8 +57,44 @@ export function AdminNovaMateria() {
   const [cor, setCor] = useState(COR_OPTIONS[0].hex)
   const [modalAberto, setModalAberto] = useState<'icone' | 'cor' | null>(null)
   const [carregando, setCarregando] = useState(false)
+  const [carregandoMateria, setCarregandoMateria] = useState(emEdicao)
+  const [erroCarregamento, setErroCarregamento] = useState('')
 
   const nomePreview = nome || 'Nova matéria'
+
+  useEffect(() => {
+    if (!id) return
+
+    let cancelado = false
+
+    async function carregarMateria() {
+      setCarregandoMateria(true)
+      setErroCarregamento('')
+      try {
+        const response = await getMateriaPorId(id!)
+        if (cancelado) return
+
+        const materia = response.materia
+        setNome(materia.nome)
+        setSlug(materia.slug)
+        setArea(materia.area)
+        setIcone(materia.icone)
+        setCor(materia.cor)
+        setOrdem(String(materia.ordem))
+        setStatus(materia.ativo ? 'ativa' : 'rascunho')
+      } catch (err) {
+        console.error(err)
+        if (!cancelado) setErroCarregamento('Não foi possível carregar essa matéria.')
+      } finally {
+        if (!cancelado) setCarregandoMateria(false)
+      }
+    }
+
+    carregarMateria()
+    return () => {
+      cancelado = true
+    }
+  }, [id])
 
   function handleCancelar() {
     navigate('/admin/materias')
@@ -92,17 +130,19 @@ export function AdminNovaMateria() {
     event.preventDefault()
     if (area.length === 0) return
 
+    const payload = {
+      nome,
+      slug,
+      area,
+      icone,
+      cor,
+      ordem: Number(ordem),
+      ativo: status === 'ativa',
+    }
+
     setCarregando(true)
     try {
-      const response = await postMaterias({
-        nome,
-        slug,
-        area,
-        icone,
-        cor,
-        ordem: Number(ordem),
-        ativo: status === 'ativa',
-      })
+      const response = emEdicao ? await putMateria(id!, payload) : await postMaterias(payload)
       console.log(response)
       navigate('/admin/materias')
     } catch (err) {
@@ -121,11 +161,22 @@ export function AdminNovaMateria() {
     <AdminPageLayout>
       <div className={styles.page}>
         <Breadcrumb
-          items={[{ label: 'Conteúdos', to: '/admin' }, { label: 'Matérias', to: '/admin/materias' }, { label: 'Nova matéria' }]}
+          items={[
+            { label: 'Conteúdos', to: '/admin' },
+            { label: 'Matérias', to: '/admin/materias' },
+            { label: emEdicao ? 'Editar matéria' : 'Nova matéria' },
+          ]}
         />
 
         <div className={styles.header}>
-          <TitlePage title="Nova matéria" subtitle="Cadastre uma nova matéria para organizar módulos e aulas" />
+          <TitlePage
+            title={emEdicao ? 'Editar matéria' : 'Nova matéria'}
+            subtitle={
+              emEdicao
+                ? 'Atualize as informações desta matéria'
+                : 'Cadastre uma nova matéria para organizar módulos e aulas'
+            }
+          />
 
           <div className={styles.headerActions}>
             <Button type="button" variant="outline" fullWidth={false} onClick={handleCancelar} disabled={carregando}>
@@ -137,12 +188,24 @@ export function AdminNovaMateria() {
               fullWidth={false}
               icon={<SaveIcon />}
               iconPosition="left"
-              disabled={carregando}
+              disabled={carregando || carregandoMateria}
             >
-              {carregando ? 'Salvando...' : 'Salvar matéria'}
+              {carregando ? 'Salvando...' : emEdicao ? 'Salvar alterações' : 'Salvar matéria'}
             </Button>
           </div>
         </div>
+
+        {carregandoMateria && (
+          <CardDiv>
+            <p className={styles.fieldHint}>Carregando dados da matéria...</p>
+          </CardDiv>
+        )}
+
+        {erroCarregamento && (
+          <CardDiv>
+            <p className={styles.fieldHint}>{erroCarregamento}</p>
+          </CardDiv>
+        )}
 
         <form id="nova-materia-form" className={styles.contentRow} onSubmit={handleSubmit}>
           <div className={styles.mainColumn}>
@@ -164,6 +227,7 @@ export function AdminNovaMateria() {
                   placeholder="ex.: matematica"
                   value={slug}
                   onChange={(event) => setSlug(event.target.value)}
+                  disabled={emEdicao}
                   required
                 />
                 <span />

@@ -163,10 +163,12 @@ function App() {
           <Route element={<AdminLayout />}>
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/materias" element={<AdminMateriasLista />} />
-            <Route path="/admin/materias/matematica" element={<AdminMateriaDetalhe />} />
+            <Route path="/admin/materias/:id" element={<AdminMateriaDetalhe />} />
             <Route path="/admin/materias/nova" element={<AdminNovaMateria />} />
-            <Route path="/admin/materias/matematica/modulos/novo" element={<AdminNovoModulo />} />
-            <Route path="/admin/materias/matematica/modulos/algebra" element={<AdminModuloDetalhe />} />
+            <Route path="/admin/materias/:id/editar" element={<AdminNovaMateria />} />
+            <Route path="/admin/materias/:materiaId/modulos/novo" element={<AdminNovoModulo />} />
+            <Route path="/admin/materias/:materiaId/modulos/:topicoId/editar" element={<AdminNovoModulo />} />
+            <Route path="/admin/materias/:materiaId/modulos/:topicoId" element={<AdminModuloDetalhe />} />
           </Route>
         </Route>
       </Route>
