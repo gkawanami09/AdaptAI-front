@@ -22,14 +22,14 @@ import {
   ChevronDownIcon,
   MoreHorizontalIcon,
   GripVerticalIcon,
-  PlayIcon,
-  ClockIcon,
 } from '../../components/ui/icons'
 import styles from './AdminModuloDetalhe.module.css'
 
 import { getMateriaPorId } from '../../services/materias'
 import { getTopicosPorMateria } from '../../services/modulos'
+import { getAulasPorMateria } from '../../services/aulas'
 import type { Topico } from '../../types/modulos'
+import type { Aula } from '../../types/aulas'
 
 const TABS = [
   { value: 'aulas', label: 'Aulas' },
@@ -37,58 +37,10 @@ const TABS = [
   { value: 'configuracoes', label: 'Configurações' },
 ]
 
-// TODO: substituir pelos dados reais vindos do backend (endpoint de aulas do módulo)
-const AULAS_INICIAIS = [
-  {
-    nome: 'Introdução à Álgebra',
-    descricao: 'Conceitos básicos e variáveis',
-    tipo: 'video' as const,
-    dificuldade: 'basico' as const,
-    duracaoMin: 25,
-    status: 'ativo' as const,
-    ordem: 1,
-  },
-  {
-    nome: 'Expressões Algébricas',
-    descricao: 'Termos, coeficientes e operações',
-    tipo: 'video' as const,
-    dificuldade: 'basico' as const,
-    duracaoMin: 30,
-    status: 'ativo' as const,
-    ordem: 2,
-  },
-  {
-    nome: 'Equações do 1º Grau',
-    descricao: 'Resolução de equações lineares',
-    tipo: 'video' as const,
-    dificuldade: 'medio' as const,
-    duracaoMin: 35,
-    status: 'ativo' as const,
-    ordem: 3,
-  },
-  {
-    nome: 'Sistemas de Equações',
-    descricao: 'Métodos de substituição e adição',
-    tipo: 'video' as const,
-    dificuldade: 'medio' as const,
-    duracaoMin: 40,
-    status: 'ativo' as const,
-    ordem: 4,
-  },
-  {
-    nome: 'Revisão e Exercícios',
-    descricao: 'Exercícios práticos e aplicações',
-    tipo: 'exercicio' as const,
-    dificuldade: 'basico' as const,
-    duracaoMin: 30,
-    status: 'ativo' as const,
-    ordem: 5,
-  },
-]
-
 const DIFICULDADE_CONFIG = {
   basico: { label: 'Básico', color: 'teal' as const },
   medio: { label: 'Médio', color: 'gold' as const },
+  dificil: { label: 'Difícil', color: 'red' as const },
 }
 
 const ICONE_TOPICO_PADRAO = '📘'
@@ -111,7 +63,7 @@ export function AdminModuloDetalhe() {
   const [tab, setTab] = useState('aulas')
   const [busca, setBusca] = useState('')
   const [pagina, setPagina] = useState(1)
-  const [aulas, setAulas] = useState(AULAS_INICIAIS)
+  const [aulas, setAulas] = useState<Aula[]>([])
   const [dragIndex, setDragIndex] = useState<number | null>(null)
   const [overIndex, setOverIndex] = useState<number | null>(null)
   // Refs porque os handlers de pointer precisam do valor mais atual sem esperar o re-render.
@@ -119,7 +71,8 @@ export function AdminModuloDetalhe() {
   const overIndexRef = useRef<number | null>(null)
   const rowRefs = useRef<Array<HTMLTableRowElement | null>>([])
 
-  //carrega o nome da matéria e o tópico (não existe GET por tópico individual, então filtra da lista)
+  //carrega o nome da matéria, o tópico (não existe GET por tópico individual, então filtra da lista)
+  //e as aulas (o endpoint é por matéria, então filtra pelas que pertencem a este tópico)
   useEffect(() => {
     if (!materiaId || !topicoId) return
 
@@ -129,9 +82,10 @@ export function AdminModuloDetalhe() {
       setCarregando(true)
       setErro('')
       try {
-        const [respostaMateria, respostaTopicos] = await Promise.all([
+        const [respostaMateria, respostaTopicos, respostaAulas] = await Promise.all([
           getMateriaPorId(materiaId!),
           getTopicosPorMateria({ materia_id: materiaId! }),
+          getAulasPorMateria({ materia_id: materiaId! }),
         ])
         if (cancelado) return
 
@@ -143,6 +97,7 @@ export function AdminModuloDetalhe() {
           return
         }
         setTopico(encontrado)
+        setAulas(respostaAulas.aulas.filter((aula) => aula.topico_id === topicoId))
       } catch (err) {
         console.error(err)
         if (!cancelado) setErro('Não foi possível carregar os dados do módulo.')
@@ -160,7 +115,7 @@ export function AdminModuloDetalhe() {
   const aulasFiltradas = aulas.filter((aula) => {
     const termo = busca.trim().toLowerCase()
     if (!termo) return true
-    return aula.nome.toLowerCase().includes(termo) || aula.descricao.toLowerCase().includes(termo)
+    return aula.titulo.toLowerCase().includes(termo) || (aula.resumo ?? '').toLowerCase().includes(termo)
   })
 
   function handleEditarModulo() {
@@ -172,9 +127,9 @@ export function AdminModuloDetalhe() {
     console.log('nova aula')
   }
 
-  function handleEditarAula(nome: string) {
+  function handleEditarAula(id: string) {
     // TODO: conectar ao backend — abrir formulário de edição da aula
-    console.log('editar aula', nome)
+    console.log('editar aula', id)
   }
 
   function handlePointerDown(event: ReactPointerEvent<HTMLButtonElement>, index: number) {
@@ -322,7 +277,6 @@ export function AdminModuloDetalhe() {
                     <th></th>
                     <th>Aula</th>
                     <th>Dificuldade</th>
-                    <th>Duração</th>
                     <th>Status</th>
                     <th>Ordem</th>
                     <th>Ações</th>
@@ -341,7 +295,7 @@ export function AdminModuloDetalhe() {
 
                     return (
                       <tr
-                        key={aula.nome}
+                        key={aula.id}
                         ref={(el) => {
                           rowRefs.current[index] = el
                         }}
@@ -351,7 +305,7 @@ export function AdminModuloDetalhe() {
                           <button
                             type="button"
                             className={styles.dragHandle}
-                            aria-label={`Reordenar ${aula.nome}`}
+                            aria-label={`Reordenar ${aula.titulo}`}
                             onPointerDown={(event) => handlePointerDown(event, index)}
                             onPointerMove={handlePointerMove}
                             onPointerUp={handlePointerUp}
@@ -361,25 +315,26 @@ export function AdminModuloDetalhe() {
                         </td>
                         <td>
                           <div className={styles.aulaCell}>
-                            <CardIcon color="purple">{aula.tipo === 'video' ? <PlayIcon /> : <PencilIcon />}</CardIcon>
+                            <CardIcon color="purple">
+                              <BookIcon />
+                            </CardIcon>
                             <div className={styles.aulaInfo}>
-                              <span className={styles.aulaNome}>{aula.nome}</span>
-                              <span className={styles.aulaDescricao}>{aula.descricao}</span>
+                              <span className={styles.aulaNome}>
+                                {aula.titulo}
+                                {aula.mais_cobrado && (
+                                  <Badge color="gold">Mais cobrado</Badge>
+                                )}
+                              </span>
+                              <span className={styles.aulaDescricao}>{aula.resumo}</span>
                             </div>
                           </div>
                         </td>
                         <td>
                           <Badge color={dificuldadeConfig.color}>{dificuldadeConfig.label}</Badge>
                         </td>
-                        <td className={styles.mutedCell}>
-                          <span className={styles.durationCell}>
-                            <ClockIcon className={styles.durationIcon} />
-                            {aula.duracaoMin} min
-                          </span>
-                        </td>
                         <td>
-                          <span className={`${styles.statusDot} ${styles[`statusDot--${aula.status}`]}`} />
-                          {aula.status === 'ativo' ? 'Ativo' : 'Inativo'}
+                          <span className={`${styles.statusDot} ${styles[`statusDot--${aula.ativo ? 'ativo' : 'inativo'}`]}`} />
+                          {aula.ativo ? 'Ativo' : 'Inativo'}
                         </td>
                         <td>{aula.ordem}º</td>
                         <td>
@@ -390,11 +345,11 @@ export function AdminModuloDetalhe() {
                               fullWidth={false}
                               icon={<PencilIcon />}
                               iconPosition="left"
-                              onClick={() => handleEditarAula(aula.nome)}
+                              onClick={() => handleEditarAula(aula.id)}
                             >
                               Editar
                             </Button>
-                            <button type="button" className={styles.rowActionButton} aria-label={`Mais ações para ${aula.nome}`}>
+                            <button type="button" className={styles.rowActionButton} aria-label={`Mais ações para ${aula.titulo}`}>
                               <MoreHorizontalIcon />
                             </button>
                           </div>

@@ -170,6 +170,9 @@
 }
 
 .aulaNome {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-weight: 700;
   white-space: normal;
 }
