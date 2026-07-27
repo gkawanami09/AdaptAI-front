@@ -25,6 +25,7 @@ import styles from './AdminMateriaDetalhe.module.css'
 // api functions
 import { getMateriaPorId } from '../../services/materias'
 import { getTopicosPorMateria } from '../../services/modulos'
+import { getMateriaAreaLabel } from '../../constants/materias'
 
 //types
 import type { Materia } from '../../types/materias'
@@ -180,7 +181,7 @@ export function AdminMateriaDetalhe() {
             icon={materia?.icone ?? '📐'}
             iconColor="purple"
             label="Área"
-            value={materia?.area.join(', ') || '—'}
+            value={materia ? getMateriaAreaLabel(materia.area) : '—'}
           />
           <AdminStatCard
             icon={<CheckCircleIcon />}

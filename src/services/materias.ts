@@ -5,8 +5,9 @@ import type { GetMateriasResponse } from "../types/materias"
 import type { GetMateriaResponse } from "../types/materias"
 import type { PostMateriasParams } from "../types/materias"
 import type { PostMateriasResponse } from "../types/materias"
-import type { PutMateriasParams } from "../types/materias"
-import type { PutMateriasResponse } from "../types/materias"
+import type { PatchMateriaParams } from "../types/materias"
+import type { PatchMateriaResponse } from "../types/materias"
+import type { Materia } from "../types/materias"
 
 const API_MATERIAS_PREFIX = "/admin/materias"
 
@@ -22,7 +23,7 @@ export function getMaterias(params: GetMateriasParams = {}): Promise<GetMaterias
 
     const queryString = query.toString()
 
-    return requestAuthJson<GetMateriasResponse>(API_MATERIAS_PREFIX + "/" + (queryString ? `?${queryString}` : ""), {
+    return requestAuthJson<GetMateriasResponse>(API_MATERIAS_PREFIX + (queryString ? `?${queryString}` : ""), {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
@@ -31,17 +32,22 @@ export function getMaterias(params: GetMateriasParams = {}): Promise<GetMaterias
 }
 
 export function getMateriaPorId(id: string): Promise<GetMateriaResponse> {
-    return requestAuthJson<GetMateriaResponse>(`${API_MATERIAS_PREFIX}/${id}`, {
+    return requestAuthJson<{ sucesso: boolean; matéria: Materia }>(`${API_MATERIAS_PREFIX}/${id}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
+        }
+    }).then((response) => {
+        return {
+            sucesso: response.sucesso,
+            materia: response.matéria
         }
     })
 }
 
 //post functions
 export function postMaterias(params:PostMateriasParams) {
-    return requestAuthJson<PostMateriasResponse> (API_MATERIAS_PREFIX + "/", {
+    return requestAuthJson<PostMateriasResponse> (API_MATERIAS_PREFIX, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -50,12 +56,12 @@ export function postMaterias(params:PostMateriasParams) {
     })
 }
 
-//put functions
+// patch functions
 //função associada com a edição, recebe o ID e retorna as informações para
 // preenchimento da página (params e response em types/materias.ts)
-export function putMateria(id: string, params: PutMateriasParams) {
-    return requestAuthJson<PutMateriasResponse>(`${API_MATERIAS_PREFIX}/${id}`, {
-        method: "PUT",
+export function patchMateria(id: string, params: PatchMateriaParams) {
+    return requestAuthJson<PatchMateriaResponse>(`${API_MATERIAS_PREFIX}/${id}`, {
+        method: "PATCH",
         headers: {
             "Content-Type": "application/json"
         },

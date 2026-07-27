@@ -17,19 +17,13 @@ import { CardIcon } from '../../components/cards/CardIcon'
 import { BookIcon, FolderIcon, InfoIcon, SaveIcon, UsersIcon, CheckCircleIcon, CheckIcon } from '../../components/ui/icons'
 import styles from './AdminNovaMateria.module.css'
 
-import { postMaterias, putMateria, getMateriaPorId } from '../../services/materias'
+import { MATERIA_AREAS } from '../../constants/materias'
+import type { MateriaArea } from '../../constants/materias'
+import { postMaterias, patchMateria, getMateriaPorId } from '../../services/materias'
 
 const STATUS_OPTIONS = [
   { value: 'ativa', label: 'Ativa' },
   { value: 'rascunho', label: 'Rascunho' },
-]
-
-const AREAS = [
-  { value: 'matematica', label: 'Matemática' },
-  { value: 'ciencias-natureza', label: 'Ciências da Natureza' },
-  { value: 'ciencias-humanas', label: 'Ciências Humanas' },
-  { value: 'linguagens', label: 'Linguagens' },
-  { value: 'redacao', label: 'Redação' },
 ]
 
 const ICONE_OPTIONS = ['📐', '⚡', '🧪', '🌿', '🏛️', '✍️', '🌐', '🎨', '📚', '🔬']
@@ -47,12 +41,9 @@ export function AdminNovaMateria() {
   const { id } = useParams<{ id: string }>()
   const emEdicao = Boolean(id)
   const [nome, setNome] = useState('')
-  const [slug, setSlug] = useState('')
-  const [area, setArea] = useState<string[]>([])
-  const [descricaoCurta, setDescricaoCurta] = useState('')
+  const [area, setArea] = useState<MateriaArea | ''>('')
   const [ordem, setOrdem] = useState('1')
   const [status, setStatus] = useState('ativa')
-  const [descricao, setDescricao] = useState('')
   const [icone, setIcone] = useState(ICONE_OPTIONS[0])
   const [cor, setCor] = useState(COR_OPTIONS[0].hex)
   const [modalAberto, setModalAberto] = useState<'icone' | 'cor' | null>(null)
@@ -76,7 +67,6 @@ export function AdminNovaMateria() {
 
         const materia = response.materia
         setNome(materia.nome)
-        setSlug(materia.slug)
         setArea(materia.area)
         setIcone(materia.icone)
         setCor(materia.cor)
@@ -122,17 +112,16 @@ export function AdminNovaMateria() {
     setModalAberto(null)
   }
 
-  function handleToggleArea(value: string) {
-    setArea((prev) => (prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]))
+  function handleSelecionarArea(value: MateriaArea) {
+    setArea(value)
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (area.length === 0) return
+    if (!area) return
 
     const payload = {
       nome,
-      slug,
       area,
       icone,
       cor,
@@ -142,7 +131,7 @@ export function AdminNovaMateria() {
 
     setCarregando(true)
     try {
-      const response = emEdicao ? await putMateria(id!, payload) : await postMaterias(payload)
+      const response = emEdicao ? await patchMateria(id!, payload) : await postMaterias(payload)
       console.log(response)
       navigate('/admin/materias')
     } catch (err) {
@@ -221,44 +210,21 @@ export function AdminNovaMateria() {
                   onChange={(event) => setNome(event.target.value)}
                   required
                 />
-                <TextField
-                  id="slug"
-                  label="Slug *"
-                  placeholder="ex.: matematica"
-                  value={slug}
-                  onChange={(event) => setSlug(event.target.value)}
-                  disabled={emEdicao}
-                  required
-                />
                 <span />
-                <span className={styles.fieldHint}>Usado na URL. Apenas letras minúsculas, números e hífens.</span>
-
                 <div className={styles.fieldGroup}>
                   <span className={styles.fieldLabel}>Área do conhecimento *</span>
+                  <span className={styles.fieldHint}>Selecione a área relacionada a esta matéria.</span>
                   <div className={styles.areaChips}>
-                    {AREAS.map((item) => (
+                    {MATERIA_AREAS.map((item) => (
                       <FilterChip
                         key={item.value}
                         label={item.label}
-                        selected={area.includes(item.value)}
-                        onClick={() => handleToggleArea(item.value)}
+                        selected={area === item.value}
+                        onClick={() => handleSelecionarArea(item.value)}
                       />
                     ))}
                   </div>
                 </div>
-                <span className={styles.fieldHint}>Selecione uma ou mais áreas relacionadas a esta matéria.</span>
-
-                <TextField
-                  id="descricao-curta"
-                  label="Descrição curta *"
-                  placeholder="Ex.: Estude números, álgebra, geometria e mais."
-                  value={descricaoCurta}
-                  onChange={(event) => setDescricaoCurta(event.target.value.slice(0, 120))}
-                  maxLength={120}
-                  required
-                />
-                <span />
-                <span className={styles.charCount}>{descricaoCurta.length}/120</span>
 
                 <div className={styles.fieldGroup}>
                   <span className={styles.fieldLabel}>Ícone / categoria *</span>
@@ -299,17 +265,6 @@ export function AdminNovaMateria() {
                 <span className={styles.fieldHint}>Define a posição da matéria na listagem.</span>
               </div>
 
-              <div className={styles.descriptionField}>
-                <span className={styles.fieldLabel}>Descrição</span>
-                <textarea
-                  className={styles.textarea}
-                  placeholder="Descreva esta matéria, seus objetivos e o que os alunos irão aprender."
-                  value={descricao}
-                  onChange={(event) => setDescricao(event.target.value.slice(0, 500))}
-                  maxLength={500}
-                />
-                <span className={styles.charCount}>{descricao.length}/500</span>
-              </div>
             </CardDiv>
           </div>
 

@@ -1,20 +1,20 @@
+import type { MateriaArea } from '../constants/materias'
+
 export type Materias = {
-    id?: string,
-    nome: string,
-    slug: string,
-    area: string,
-    cor?: string,
-    ordem?: number,
-    ativo: boolean,
-    total_topicos: number,
-    total_aulas: number
+  id: string
+  nome: string
+  area: MateriaArea
+  cor?: string
+  ordem?: number
+  ativo: boolean
+  total_topicos: number
+  total_aulas: number
 }
 
 export type Materia = {
-  id: number
+  id: string
   nome: string
-  slug: string
-  area: string[]
+  area: MateriaArea
   icone: string
   cor: string
   ordem: number
@@ -33,20 +33,19 @@ export type GetMateriasResponse = {
 
 export type GetMateriasParams = {
     busca?: string
-    area?: string
+    area?: MateriaArea
     ativo?: boolean
     pagina?: number
     limite?: number
 }
 
 export type PostMateriasParams = {
-    nome: string
-    slug: string
-    area: string[]
-    icone: string
-    cor: string
-    ordem: number
-    ativo: boolean
+  nome: string
+  area: MateriaArea
+  icone: string
+  cor: string
+  ordem: number
+  ativo: boolean
 }
 
 export type PostMateriasResponse = {
@@ -60,9 +59,9 @@ export type GetMateriaResponse = {
   materia: Materia
 }
 
-export type PutMateriasParams = PostMateriasParams
+export type PatchMateriaParams = Partial<PostMateriasParams>
 
-export type PutMateriasResponse = {
+export type PatchMateriaResponse = {
   sucesso: boolean
   mensagem: string
   materia: Materia

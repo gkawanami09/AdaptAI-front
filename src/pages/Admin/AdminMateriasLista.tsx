@@ -17,29 +17,31 @@ import styles from './AdminMateriasLista.module.css'
 // api functions
 import { getMaterias } from '../../services/materias'
 import type { Materias } from '../../types/materias'
+import { MATERIA_AREAS, getMateriaAreaLabel } from '../../constants/materias'
+import type { MateriaArea } from '../../constants/materias'
 
-const AREAS = ['Todas', 'Matemática', 'Ciências da Natureza', 'Ciências Humanas', 'Linguagens', 'Redação']
+const AREA_FILTERS = [{ value: 'todas', label: 'Todas' }, ...MATERIA_AREAS] as const
 
 const ITENS_POR_PAGINA = 6
 
-const AREA_ICONS: Record<string, { icon: string; iconColor: CardIconColor }> = {
-  'Matemática': { icon: '📐', iconColor: 'purple' },
-  'Ciências da Natureza': { icon: '⚡', iconColor: 'gold' },
-  'Ciências Humanas': { icon: '🏛️', iconColor: 'blue' },
-  'Linguagens': { icon: '✍️', iconColor: 'red' },
-  'Redação': { icon: '✍️', iconColor: 'red' },
+const AREA_ICONS: Record<MateriaArea, { icon: string; iconColor: CardIconColor }> = {
+  matematica: { icon: '📐', iconColor: 'purple' },
+  natureza: { icon: '⚡', iconColor: 'gold' },
+  humanas: { icon: '🏛️', iconColor: 'blue' },
+  linguagens: { icon: '✍️', iconColor: 'red' },
+  redacao: { icon: '✍️', iconColor: 'red' },
 }
 
 const AREA_ICON_PADRAO = { icon: '📚', iconColor: 'green' as const }
 
-function getAreaVisual(area: string) {
+function getAreaVisual(area: MateriaArea) {
   return AREA_ICONS[area] ?? AREA_ICON_PADRAO
 }
 
 export function AdminMateriasLista() {
   const navigate = useNavigate()
   const [busca, setBusca] = useState('')
-  const [area, setArea] = useState('Todas')
+  const [area, setArea] = useState<MateriaArea | 'todas'>('todas')
   const [ordenacao, setOrdenacao] = useState('nome-az')
   const [pagina, setPagina] = useState(1)
 
@@ -60,7 +62,7 @@ export function AdminMateriasLista() {
     try {
       const response = await getMaterias({
         busca: busca.trim() || undefined,
-        area: area === 'Todas' ? undefined : area,
+        area: area === 'todas' ? undefined : area,
         pagina,
         limite: ITENS_POR_PAGINA,
       })
@@ -80,15 +82,11 @@ export function AdminMateriasLista() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [busca, area, pagina])
 
-  function handleVerModulos(id: string | undefined) {
+  function handleVerModulos(id: string) {
     navigate(`/admin/materias/${id}`)
   }
 
-  function handleEditar(id: string | undefined) {
-    if (!id) {
-      console.error('matéria sem id, não é possível editar')
-      return
-    }
+  function handleEditar(id: string) {
     navigate(`/admin/materias/${id}/editar`)
   }
 
@@ -152,13 +150,13 @@ export function AdminMateriasLista() {
             <div className={styles.filterGroup}>
               <span className={styles.filterLabel}>Área</span>
               <div className={styles.chips}>
-                {AREAS.map((item) => (
+                {AREA_FILTERS.map((item) => (
                   <FilterChip
-                    key={item}
-                    label={item}
-                    selected={item === area}
+                    key={item.value}
+                    label={item.label}
+                    selected={item.value === area}
                     onClick={() => {
-                      setArea(item)
+                      setArea(item.value)
                       setPagina(1)
                     }}
                   />
@@ -191,11 +189,11 @@ export function AdminMateriasLista() {
               const { icon, iconColor } = getAreaVisual(materia.area)
               return (
                 <MateriaCard
-                  key={materia.id ?? materia.slug}
+                  key={materia.id}
                   icon={icon}
                   iconColor={iconColor}
                   title={materia.nome}
-                  area={materia.area}
+                  area={getMateriaAreaLabel(materia.area)}
                   status={materia.ativo ? 'ativa' : 'rascunho'}
                   modulos={materia.total_topicos}
                   aulas={materia.total_aulas}
