@@ -1,0 +1,25 @@
+.sidebar { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 18px; }
+.panel { padding: 16px; border: 1px solid var(--border); border-radius: var(--border-radius); background: var(--surface); box-shadow: var(--shadow); }
+.panel h2 { margin: 0 0 12px; color: var(--text-h); font-family: var(--heading); font-size: 14px; }
+.panel small { display: block; margin-top: 7px; color: var(--text-muted); font-size: 10px; }
+.video { position: relative; display: grid; aspect-ratio: 16 / 8; place-items: center; overflow: hidden; border-radius: 12px; background: linear-gradient(135deg, var(--primary-bg), var(--bg)); }
+.video img { width: 100%; height: 100%; object-fit: cover; }
+.placeholder { max-width: 220px; padding: 20px; color: var(--text-muted); text-align: center; font-size: 12px; line-height: 1.45; }
+.play { position: absolute; display: grid; width: 44px; height: 44px; place-items: center; border-radius: 50%; color: #fff; background: rgba(15, 23, 42, .82); }
+.play svg { width: 20px; }
+.lessonCard { display: flex; align-items: center; gap: 12px; }
+.lessonIcon { display: grid; width: 56px; height: 56px; place-items: center; flex: 0 0 auto; border-radius: 16px; color: var(--primary); background: var(--primary-bg); font: 700 18px var(--heading); }
+.lessonInfo { display: flex; min-width: 0; flex-direction: column; align-items: flex-start; gap: 5px; }
+.lessonInfo strong { overflow: hidden; max-width: 100%; color: var(--text-h); text-overflow: ellipsis; white-space: nowrap; font-family: var(--heading); font-size: 15px; }
+.lessonInfo > span { display: flex; align-items: center; gap: 5px; color: var(--text-muted); font-size: 11px; }
+.lessonInfo svg { width: 13px; }
+.lessonInfo i { width: 5px; height: 5px; border-radius: 50%; background: #f59e0b; }
+.previewButton { margin-top: 14px; padding: 9px; border-radius: 10px; color: #fff; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); text-align: center; font-size: 12px; font-weight: 700; }
+.summary { display: flex; flex-direction: column; gap: 14px; margin: 0; }
+.summary div { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 12px; }
+.summary dt { color: var(--text-muted); }
+.summary dd { display: flex; align-items: center; gap: 5px; margin: 0; color: var(--text-h); text-align: right; font-weight: 500; }
+.summary svg { width: 14px; }
+.summary .active { color: #059669; }
+.summary .draft { color: #d97706; }
+@media (max-width: 960px) { .sidebar { position: static; } }

@@ -22,6 +22,8 @@ import { AdminMateriaDetalhe } from './pages/Admin/AdminMateriaDetalhe'
 import { AdminNovaMateria } from './pages/Admin/AdminNovaMateria'
 import { AdminNovoModulo } from './pages/Admin/AdminNovoModulo'
 import { AdminModuloDetalhe } from './pages/Admin/AdminModuloDetalhe'
+import { AdminAulaNova } from './pages/Admin/AdminAulaNova'
+import { AdminAulaPreview } from './pages/Admin/AdminAulaPreview'
 
 import { Header } from './components/layout/Header'
 import { AdminLayout } from './components/layout/AdminLayout'
@@ -169,6 +171,9 @@ function App() {
             <Route path="/admin/materias/:materiaId/modulos/novo" element={<AdminNovoModulo />} />
             <Route path="/admin/materias/:materiaId/modulos/:topicoId/editar" element={<AdminNovoModulo />} />
             <Route path="/admin/materias/:materiaId/modulos/:topicoId" element={<AdminModuloDetalhe />} />
+            <Route path="/admin/materias/:materiaId/modulos/:topicoId/nova" element={<AdminAulaNova />} />
+            <Route path="/admin/materias/:materiaId/modulos/:topicoId/aulas/:aulaId/editar" element={<AdminAulaNova />} />
+            <Route path="/admin/materias/:materiaId/modulos/:topicoId/aulas/:aulaId/preview" element={<AdminAulaPreview />} />
           </Route>
         </Route>
       </Route>

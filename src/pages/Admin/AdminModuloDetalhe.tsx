@@ -123,13 +123,11 @@ export function AdminModuloDetalhe() {
   }
 
   function handleNovaAula() {
-    // TODO: conectar à navegação real — criação de aula dentro deste módulo
-    console.log('nova aula')
+    navigate(`/admin/materias/${materiaId}/modulos/${topicoId}/nova`)
   }
 
   function handleEditarAula(id: string) {
-    // TODO: conectar ao backend — abrir formulário de edição da aula
-    console.log('editar aula', id)
+    navigate(`/admin/materias/${materiaId}/modulos/${topicoId}/aulas/${id}/editar`)
   }
 
   function handlePointerDown(event: ReactPointerEvent<HTMLButtonElement>, index: number) {
