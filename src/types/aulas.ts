@@ -76,3 +76,38 @@ export type PatchAulaResponse = {
     sucesso: boolean
     aula: AulaDetalhe
 }
+
+export type AulaConteudoResumo = {
+    tipo: AulaConteudoTipo
+    ordem: number
+    duracao: number
+    ativo: boolean
+}
+
+export type AulaResumo = Aula & {
+    conteudos: AulaConteudoResumo[]
+}
+
+export type GetAulasParams = {
+    busca?: string
+    dificuldade?: AulaDificuldade
+    ativo?: boolean
+    mais_cobrado?: boolean
+    materia_id?: string
+    pagina?: number
+    limite?: number
+    ordenar?: 'nome-az' | 'nome-za' | 'recentes'
+}
+
+export type GetAulasResponse = {
+    sucesso: boolean
+    pagina: number
+    limite: number
+    total_registros: number
+    total_paginas: number
+    total_aulas: number
+    total_conteudos: number
+    total_publicadas: number
+    total_mais_cobradas: number
+    aulas: AulaResumo[]
+}
