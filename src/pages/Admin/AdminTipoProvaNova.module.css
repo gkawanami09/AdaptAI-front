@@ -1,0 +1,12 @@
+.page { display: flex; flex-direction: column; gap: 20px; padding-top: 20px; }
+.header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.headerActions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.contentRow { display: flex; align-items: flex-start; gap: 20px; }
+.mainColumn { flex: 1; min-width: 0; max-width: 560px; }
+.grid { display: grid; grid-template-columns: 1fr; gap: 16px 20px; margin-top: 18px; }
+.fieldGroup { display: flex; flex-direction: column; gap: 6px; color: var(--text-h); font-size: 13px; font-weight: 500; }
+.textareaField { display: flex; flex-direction: column; gap: 6px; margin-top: 18px; color: var(--text-h); font-size: 13px; font-weight: 500; }
+.textareaField textarea { width: 100%; box-sizing: border-box; padding: 11px 12px; resize: vertical; border: 1px solid var(--border); border-radius: 14px; outline: 0; color: var(--text-h); background: var(--surface); font: inherit; line-height: 1.5; }
+.textareaField textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-bg); }
+.alert { padding: 12px 14px; border: 1px solid rgba(239, 68, 68, .3); border-radius: 12px; color: #dc2626; background: rgba(239, 68, 68, .07); font-size: 13px; }
+@media (max-width: 640px) { .headerActions { width: 100%; } .headerActions > button { flex: 1; } }

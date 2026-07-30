@@ -25,6 +25,12 @@ import { AdminModuloDetalhe } from './pages/Admin/AdminModuloDetalhe'
 import { AdminAulaNova } from './pages/Admin/AdminAulaNova'
 import { AdminAulaPreview } from './pages/Admin/AdminAulaPreview'
 import { AdminAulaLista } from './pages/Admin/AdminAulaLista'
+import { AdminQuestoesLista } from './pages/Admin/AdminQuestoesLista'
+import { AdminQuestaoNova } from './pages/Admin/AdminQuestaoNova'
+import { AdminListasLista } from './pages/Admin/AdminListasLista'
+import { AdminListaNova } from './pages/Admin/AdminListaNova'
+import { AdminTiposProvaLista } from './pages/Admin/AdminTiposProvaLista'
+import { AdminTipoProvaNova } from './pages/Admin/AdminTipoProvaNova'
 
 import { Header } from './components/layout/Header'
 import { AdminLayout } from './components/layout/AdminLayout'
@@ -177,6 +183,18 @@ function App() {
             <Route path="/admin/materias/:materiaId/modulos/:topicoId/aulas/:aulaId/preview" element={<AdminAulaPreview />} />
 
             <Route path="/admin/aulas" element={<AdminAulaLista />} />
+
+            <Route path="/admin/questoes" element={<AdminQuestoesLista />} />
+            <Route path="/admin/questoes/nova" element={<AdminQuestaoNova />} />
+            <Route path="/admin/questoes/:id/editar" element={<AdminQuestaoNova />} />
+
+            <Route path="/admin/listas" element={<AdminListasLista />} />
+            <Route path="/admin/listas/nova" element={<AdminListaNova />} />
+            <Route path="/admin/listas/:id/editar" element={<AdminListaNova />} />
+
+            <Route path="/admin/tipos-prova" element={<AdminTiposProvaLista />} />
+            <Route path="/admin/tipos-prova/novo" element={<AdminTipoProvaNova />} />
+            <Route path="/admin/tipos-prova/:id/editar" element={<AdminTipoProvaNova />} />
           </Route>
         </Route>
       </Route>

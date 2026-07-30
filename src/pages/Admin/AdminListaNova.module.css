@@ -1,0 +1,16 @@
+.page { display: flex; flex-direction: column; gap: 20px; padding-top: 20px; }
+.header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.headerActions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.contentRow { display: grid; grid-template-columns: minmax(220px, .8fr) minmax(0, 1.3fr) minmax(260px, 1fr); align-items: start; gap: 20px; }
+.column { display: flex; min-width: 0; flex-direction: column; gap: 20px; }
+.fieldGroup { display: flex; flex-direction: column; gap: 6px; margin-top: 18px; color: var(--text-h); font-size: 13px; font-weight: 500; }
+.textareaField { display: flex; flex-direction: column; gap: 6px; margin-top: 18px; color: var(--text-h); font-size: 13px; font-weight: 500; }
+.textareaField textarea { width: 100%; box-sizing: border-box; padding: 11px 12px; resize: vertical; border: 1px solid var(--border); border-radius: 14px; outline: 0; color: var(--text-h); background: var(--surface); font: inherit; line-height: 1.5; }
+.textareaField textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-bg); }
+.selectedHeading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.selectedHeading p { margin: 4px 0 0; color: var(--text-muted); font-size: 12px; }
+.selectedList { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; max-height: 620px; overflow-y: auto; }
+.empty { padding: 28px; border: 1px dashed var(--border); border-radius: 14px; color: var(--text-muted); text-align: center; font-size: 13px; }
+.alert { padding: 12px 14px; border: 1px solid rgba(239, 68, 68, .3); border-radius: 12px; color: #dc2626; background: rgba(239, 68, 68, .07); font-size: 13px; }
+@media (max-width: 1200px) { .contentRow { grid-template-columns: 1fr 1fr; } .contentRow > :last-child { grid-column: span 2; } }
+@media (max-width: 720px) { .contentRow { grid-template-columns: 1fr; } .contentRow > :last-child { grid-column: span 1; } .headerActions { width: 100%; } .headerActions > button { flex: 1; } }

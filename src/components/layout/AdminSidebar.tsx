@@ -5,6 +5,7 @@ import {
   BoltIcon,
   BookIcon,
   ChevronDownIcon,
+  ClipboardIcon,
   FileTextIcon,
   GridIcon,
   HelpCircleIcon,
@@ -31,8 +32,13 @@ const conteudosItems = [
   { to: '/admin/aulas', label: 'Aulas', icon: BookIcon },
 ]
 
-const bottomItems = [
+const avaliacoesItems = [
   { to: '/admin/questoes', label: 'Questões', icon: HelpCircleIcon },
+  { to: '/admin/listas', label: 'Listas', icon: ClipboardIcon },
+  { to: '/admin/tipos-prova', label: 'Tipos de Prova', icon: FileTextIcon },
+]
+
+const bottomItems = [
   { to: '/admin/relatorios', label: 'Relatórios', icon: BarChartIcon },
   { to: '/admin/configuracoes', label: 'Configurações', icon: SettingsIcon },
 ]
@@ -47,6 +53,9 @@ export function AdminSidebar({ perfil }: AdminSidebarProps) {
   const location = useLocation()
   const [conteudosAberto, setConteudosAberto] = useState(
     conteudosItems.some((item) => location.pathname.startsWith(item.to)),
+  )
+  const [avaliacoesAberto, setAvaliacoesAberto] = useState(
+    avaliacoesItems.some((item) => location.pathname.startsWith(item.to)),
   )
 
   function handleLogout() {
@@ -87,6 +96,27 @@ export function AdminSidebar({ perfil }: AdminSidebarProps) {
         {conteudosAberto && (
           <div className={styles.navGroup}>
             {conteudosItems.map(({ to, label, icon: Icon }) => (
+              <NavLink
+                key={to}
+                to={to}
+                className={({ isActive }) => `${styles.navItem}${isActive ? ` ${styles.navItemActive}` : ''}`}
+              >
+                <Icon className={styles.navIcon} />
+                <span className={styles.navLabel}>{label}</span>
+              </NavLink>
+            ))}
+          </div>
+        )}
+
+        <button type="button" className={styles.navGroupToggle} onClick={() => setAvaliacoesAberto((value) => !value)}>
+          <ClipboardIcon className={styles.navIcon} />
+          <span className={styles.navLabel}>Avaliações</span>
+          <ChevronDownIcon className={`${styles.groupChevron}${avaliacoesAberto ? ` ${styles.groupChevronOpen}` : ''}`} />
+        </button>
+
+        {avaliacoesAberto && (
+          <div className={styles.navGroup}>
+            {avaliacoesItems.map(({ to, label, icon: Icon }) => (
               <NavLink
                 key={to}
                 to={to}
