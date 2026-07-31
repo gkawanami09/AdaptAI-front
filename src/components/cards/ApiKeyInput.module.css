@@ -1,0 +1,13 @@
+.toggleButton {
+  display: inline-flex;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+.toggleButton svg {
+  width: 16px;
+  height: 16px;
+}

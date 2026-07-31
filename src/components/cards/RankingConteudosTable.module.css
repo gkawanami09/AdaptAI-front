@@ -1,0 +1,57 @@
+.tableWrapper {
+  margin-top: 16px;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-size: 13px;
+}
+
+.table th {
+  padding: 0 10px 10px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+
+.table td {
+  padding: 12px 10px;
+  color: var(--text-h);
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.rankCol {
+  width: 36px;
+}
+
+.rankBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  background: var(--code-bg);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.materia {
+  font-weight: 600;
+}
+
+.aula {
+  color: var(--text-muted);
+}

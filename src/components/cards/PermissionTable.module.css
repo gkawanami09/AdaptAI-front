@@ -1,0 +1,67 @@
+.tableWrapper {
+  margin-top: 16px;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-size: 13px;
+}
+
+.table th {
+  padding: 0 10px 10px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+
+.table td {
+  padding: 12px 10px;
+  color: var(--text-h);
+  vertical-align: middle;
+  border-bottom: 1px solid var(--border);
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.nome {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.email {
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.cargoCell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 140px;
+}
+
+.cargoCell :global(.text-field) {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+.cargoCell :global(.text-field__input) {
+  height: 100%;
+  cursor: pointer;
+}
+
+.statusCell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}

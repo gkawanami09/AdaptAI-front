@@ -1,0 +1,57 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.itemTitle {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.itemDescription {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quando {
+  flex-shrink: 0;
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.link {
+  display: inline-flex;
+  margin-top: 16px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+}

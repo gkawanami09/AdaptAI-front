@@ -1,0 +1,13 @@
+.description {
+  margin: 6px 0 0;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}

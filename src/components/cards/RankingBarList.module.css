@@ -1,0 +1,97 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.label {
+  width: 90px;
+  flex-shrink: 0;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-h);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.barTrack {
+  flex: 1;
+  min-width: 0;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--code-bg);
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.barFill--purple {
+  background: #6c5ce7;
+}
+
+.barFill--green {
+  background: #0d9668;
+}
+
+.barFill--blue {
+  background: #3b82f6;
+}
+
+.barFill--gold {
+  background: #f59e0b;
+}
+
+.barFill--red {
+  background: #ef4444;
+}
+
+.barFill--teal {
+  background: #14b8a6;
+}
+
+:global(.dark) .barFill--green {
+  background: #059669;
+}
+
+.percentual {
+  width: 46px;
+  flex-shrink: 0;
+  text-align: right;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.link {
+  display: inline-flex;
+  margin-top: 16px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+}

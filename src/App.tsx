@@ -31,6 +31,8 @@ import { AdminListasLista } from './pages/Admin/AdminListasLista'
 import { AdminListaNova } from './pages/Admin/AdminListaNova'
 import { AdminTiposProvaLista } from './pages/Admin/AdminTiposProvaLista'
 import { AdminTipoProvaNova } from './pages/Admin/AdminTipoProvaNova'
+import { AdminRelatorios } from './pages/Admin/AdminRelatorios'
+import { AdminConfiguracoes } from './pages/Admin/AdminConfiguracoes'
 
 import { Header } from './components/layout/Header'
 import { AdminLayout } from './components/layout/AdminLayout'
@@ -195,6 +197,10 @@ function App() {
             <Route path="/admin/tipos-prova" element={<AdminTiposProvaLista />} />
             <Route path="/admin/tipos-prova/novo" element={<AdminTipoProvaNova />} />
             <Route path="/admin/tipos-prova/:id/editar" element={<AdminTipoProvaNova />} />
+
+            <Route path="/admin/relatorios" element={<AdminRelatorios />} />
+
+            <Route path="/admin/configuracoes" element={<AdminConfiguracoes />} />
           </Route>
         </Route>
       </Route>
