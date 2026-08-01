@@ -1,0 +1,35 @@
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.descricao {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-h);
+}
+
+.data {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text-muted);
+}

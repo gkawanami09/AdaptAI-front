@@ -48,7 +48,7 @@ export function AreaLineChart({ title, data, maxValue, valueSuffix = 'h' }: Area
   }))
 
   const linePath = buildSmoothPath(points)
-  const areaPath = `${linePath} L ${points[points.length - 1].x} 100 L ${points[0].x} 100 Z`
+  const areaPath = points.length > 0 ? `${linePath} L ${points[points.length - 1].x} 100 L ${points[0].x} 100 Z` : ''
 
   return (
     <CardDiv>

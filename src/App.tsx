@@ -17,6 +17,8 @@ import { Progresso } from './pages/Progresso/Progresso'
 import { Conquistas } from './pages/Conquistas/Conquistas'
 import { Configuracoes } from './pages/Configuracoes/Configuracoes'
 import { AdminDashboard } from './pages/Admin/AdminDashboard'
+import { AdminUsuariosLista } from './pages/Admin/AdminUsuariosLista'
+import { AdminUsuarioDetalhe } from './pages/Admin/AdminUsuarioDetalhe'
 import { AdminMateriasLista } from './pages/Admin/AdminMateriasLista'
 import { AdminMateriaDetalhe } from './pages/Admin/AdminMateriaDetalhe'
 import { AdminNovaMateria } from './pages/Admin/AdminNovaMateria'
@@ -173,6 +175,10 @@ function App() {
         <Route element={<GaranteAdmin />}>
           <Route element={<AdminLayout />}>
             <Route path="/admin" element={<AdminDashboard />} />
+
+            <Route path="/admin/usuarios" element={<AdminUsuariosLista />} />
+            <Route path="/admin/usuarios/:id" element={<AdminUsuarioDetalhe />} />
+
             <Route path="/admin/materias" element={<AdminMateriasLista />} />
             <Route path="/admin/materias/:id" element={<AdminMateriaDetalhe />} />
             <Route path="/admin/materias/nova" element={<AdminNovaMateria />} />

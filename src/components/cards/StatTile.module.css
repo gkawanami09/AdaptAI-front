@@ -1,0 +1,29 @@
+.tile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.label {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.value {
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-h);
+}
