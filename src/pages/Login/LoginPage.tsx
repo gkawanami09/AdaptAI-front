@@ -6,6 +6,8 @@ import { Button } from '../../components/ui/Button'
 import { AuthLayout } from '../../components/auth/AuthLayout'
 import { ArrowRightIcon, BoltIcon, EyeIcon, EyeOffIcon, FireIcon } from '../../components/ui/icons'
 import { loginUser } from '../../services/auth'
+import { getOnboarding } from '../../services/onboarding'
+import { activateOnboardingFor, setOnboardingActive } from '../../utils/onboarding'
 import styles from './LoginPage.module.css'
 
 export function LoginPage() {
@@ -26,7 +28,17 @@ export function LoginPage() {
 
     try {
       await loginUser(email, password)
-      navigate('/dashboard', { replace: true })
+      let shouldStartOnboarding = activateOnboardingFor(email)
+
+      try {
+        const response = await getOnboarding()
+        shouldStartOnboarding = !response.onboarding.concluido
+        setOnboardingActive(shouldStartOnboarding)
+      } catch (onboardingError) {
+        console.error('Não foi possível consultar o onboarding.', onboardingError)
+      }
+
+      navigate(shouldStartOnboarding ? '/onboarding' : '/dashboard', { replace: true })
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Nao foi possivel entrar na conta.')
     } finally {

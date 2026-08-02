@@ -6,6 +6,7 @@ import { Button } from '../../components/ui/Button'
 import { AuthLayout } from '../../components/auth/AuthLayout'
 import { ArrowRightIcon, EyeIcon, EyeOffIcon, PlusIcon } from '../../components/ui/icons'
 import { registerUser } from '../../services/auth'
+import { markOnboardingPending } from '../../utils/onboarding'
 import styles from './CadastroPage.module.css'
 
 const featureChips = [
@@ -60,6 +61,7 @@ export function CadastroPage() {
         profilePhoto,
       })
 
+      markOnboardingPending(email)
       sessionStorage.setItem('adaptai_pending_email', email)
       navigate('/verificar-codigo', { state: { email } })
     } catch (error) {

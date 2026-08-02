@@ -5,6 +5,7 @@ import { LoginPage } from './pages/Login/LoginPage'
 import { CadastroPage } from './pages/Cadastro/CadastroPage'
 import { VerificarCodigoPage } from './pages/VerificarCodigo/VerificarCodigoPage'
 import { DashboardPage } from './pages/Dashboard/DashboardPage'
+import { OnboardingPage } from './pages/Onboarding/OnboardingPage'
 import { PlanoEstudos } from './pages/PlanoEstudos/PlanoEstudos'
 import { Aulas } from './pages/Aulas/Aulas'
 import { AulaVisualizacao } from './pages/Aulas/AulaVisualizacao'
@@ -45,6 +46,7 @@ import { clearStoredAuth, fetchCurrentUser } from './services/auth'
 import { isMockAuthEnabled } from './services/api'
 import { getCookie, removeCookie, TOKEN_COOKIE_NAME } from './utils/cookies'
 import type { UserProfile } from './types/auth'
+import { isOnboardingActive } from './utils/onboarding'
 
 // 🔒 Camada 1: garante que existe um token válido e carrega o perfil do usuário
 function GaranteAutenticacao() {
@@ -91,6 +93,8 @@ function GaranteAutenticacao() {
 function LayoutComHeader() {
   const perfil = useOutletContext<UserProfile | null>()
 
+  if (isOnboardingActive()) return <Navigate to="/onboarding" replace />
+
   return (
     <div className={shellStyles.shell}>
       <Header perfil={perfil} />
@@ -128,6 +132,8 @@ function App() {
 
       {/* 🔒 Camada 1: garante que está logado e pega o perfil */}
       <Route element={<GaranteAutenticacao />}>
+        <Route path="/onboarding" element={<OnboardingPage />} />
+
         {/* 🌐 Camada 2: aplica o Header passando o perfil recebido */}
         <Route element={<LayoutComHeader />}>
           {/* 🛡️ Camada 3: bloqueios individuais por tela */}
