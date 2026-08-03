@@ -54,3 +54,15 @@
   gap: 16px;
   margin-top: 16px;
 }
+
+.emptyState {
+  text-align: center;
+  color: var(--color-text-secondary, #6b7280);
+  padding: 24px 0;
+}
+
+.retryRow {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}

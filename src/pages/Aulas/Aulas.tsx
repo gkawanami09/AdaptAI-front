@@ -1,133 +1,112 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TitlePage } from '../../components/ui/TitlePage'
 import { Button } from '../../components/ui/Button'
+import { CardDiv } from '../../components/cards/CardDiv'
 import { AulaCard } from '../../components/cards/AulaCard'
 import styles from './Aulas.module.css'
 
-const CATEGORIAS = ['Todas', 'Matemática', 'Ciências da Natureza', 'Ciências Humanas', 'Linguagens', 'Redação']
-
-// TODO: substituir pelos dados reais vindos do backend (catálogo de aulas)
-const AULAS = [
-  {
-    icon: '📐',
-    iconColor: 'blue' as const,
-    title: 'Funcao afim',
-    subject: 'Matemática',
-    subjectColor: 'blue' as const,
-    duration: '45 min',
-    difficulty: 'Básico',
-    progress: 100,
-    status: 'concluida' as const,
-    featured: true,
-  },
-  {
-    icon: '📐',
-    iconColor: 'blue' as const,
-    title: 'Função Quadrática',
-    subject: 'Matemática',
-    subjectColor: 'blue' as const,
-    duration: '35 min',
-    difficulty: 'Médio',
-    progress: 60,
-    status: 'em-andamento' as const,
-    featured: true,
-  },
-  {
-    icon: '🌿',
-    iconColor: 'green' as const,
-    title: 'Ecologia e Biomas',
-    subject: 'Biologia',
-    subjectColor: 'green' as const,
-    duration: '40 min',
-    difficulty: 'Médio',
-    progress: 25,
-    status: 'em-andamento' as const,
-  },
-  {
-    icon: '⚛️',
-    iconColor: 'purple' as const,
-    title: 'Leis de Newton',
-    subject: 'Física',
-    subjectColor: 'purple' as const,
-    duration: '50 min',
-    difficulty: 'Difícil',
-    progress: 0,
-    status: 'em-andamento' as const,
-  },
-  {
-    icon: '✍️',
-    iconColor: 'purple' as const,
-    title: 'Repertório sociocultural',
-    subject: 'Redação',
-    subjectColor: 'purple' as const,
-    duration: '30 min',
-    difficulty: 'Básico',
-    progress: 100,
-    status: 'concluida' as const,
-  },
-  {
-    icon: '📜',
-    iconColor: 'blue' as const,
-    title: 'Revolução Industrial',
-    subject: 'História',
-    subjectColor: 'red' as const,
-    duration: '35 min',
-    difficulty: 'Médio',
-    progress: 10,
-    status: 'em-andamento' as const,
-  },
-]
+import { getBibliotecaAulas } from '../../services/bibliotecaAulas'
+import type { GetBibliotecaAulasResponse } from '../../types/bibliotecaAulas'
 
 export function Aulas() {
   const navigate = useNavigate()
-  const [categoria, setCategoria] = useState('Todas')
+  const [categoriaId, setCategoriaId] = useState<string | undefined>(undefined)
+  const [dados, setDados] = useState<GetBibliotecaAulasResponse | null>(null)
+  const [carregando, setCarregando] = useState(false)
+  const [erro, setErro] = useState(false)
 
-  function handleAcessarAula(title: string) {
-    if (title === 'Função Quadrática') {
-      navigate('/aulas/funcao-quadratica')
-      return
+  async function carregarAulas() {
+    setCarregando(true)
+    setErro(false)
+
+    try {
+      const resposta = await getBibliotecaAulas({ categoria_id: categoriaId })
+      setDados(resposta)
+    } catch (err) {
+      console.error(err)
+      setErro(true)
+    } finally {
+      setCarregando(false)
     }
-    // TODO: conectar à navegação real — só temos a página de visualização da Função Quadrática por enquanto
-    console.log('acessar aula', title)
+  }
+
+  useEffect(() => {
+    carregarAulas()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categoriaId])
+
+  function handleAcessarAula(aula: GetBibliotecaAulasResponse['aulas'][number]) {
+    navigate(`/aulas/${aula.slug ?? aula.id}`)
   }
 
   return (
     <main className={styles.page}>
-      <TitlePage title="Biblioteca de Aulas" subtitle="10 aulas disponíveis · 2 concluídas" />
+      <TitlePage title="Biblioteca de Aulas" subtitle={dados?.subtitulo ?? ''} />
 
-      <div className={styles.filters}>
-        {CATEGORIAS.map((item) => (
-          <Button
-            key={item}
-            variant={item === categoria ? 'primary' : 'outline'}
-            pill
-            fullWidth={false}
-            onClick={() => setCategoria(item)}
-          >
-            {item}
-          </Button>
-        ))}
-      </div>
+      {carregando ? (
+        <CardDiv>
+          <p className={styles.emptyState}>Carregando aulas...</p>
+        </CardDiv>
+      ) : erro || !dados ? (
+        <CardDiv>
+          <p className={styles.emptyState}>Não foi possível carregar as aulas.</p>
+          <div className={styles.retryRow}>
+            <Button fullWidth={false} onClick={carregarAulas}>
+              Tentar novamente
+            </Button>
+          </div>
+        </CardDiv>
+      ) : (
+        <>
+          <div className={styles.filters}>
+            <Button
+              variant={categoriaId === undefined ? 'primary' : 'outline'}
+              pill
+              fullWidth={false}
+              onClick={() => setCategoriaId(undefined)}
+            >
+              Todas
+            </Button>
+            {dados.categorias.map((categoria) => (
+              <Button
+                key={categoria.id}
+                variant={categoria.id === categoriaId ? 'primary' : 'outline'}
+                pill
+                fullWidth={false}
+                onClick={() => setCategoriaId(categoria.id)}
+              >
+                {categoria.nome}
+              </Button>
+            ))}
+          </div>
 
-      <div className={styles.grid}>
-        {AULAS.map((aula) => (
-          <AulaCard
-            key={aula.title}
-            icon={aula.icon}
-            iconColor={aula.iconColor}
-            title={aula.title}
-            subject={aula.subject}
-            subjectColor={aula.subjectColor}
-            duration={aula.duration}
-            difficulty={aula.difficulty}
-            progress={aula.progress}
-            status={aula.status}
-            featured={aula.featured}
-            onAction={() => handleAcessarAula(aula.title)}
-          />
-        ))}
-      </div>
+          {dados.aulas.length === 0 ? (
+            <CardDiv>
+              <p className={styles.emptyState}>Nenhuma aula encontrada para esta categoria.</p>
+            </CardDiv>
+          ) : (
+            <div className={styles.grid}>
+              {dados.aulas.map((aula) => (
+                <AulaCard
+                  key={aula.id}
+                  icon={aula.icone}
+                  iconColor={aula.icone_cor}
+                  title={aula.titulo}
+                  subject={aula.materia}
+                  subjectColor={aula.materia_cor}
+                  duration={`${aula.duracao_min} min`}
+                  difficulty={aula.dificuldade}
+                  progress={aula.progresso}
+                  status={aula.status === 'concluida' ? 'concluida' : 'em-andamento'}
+                  featured={aula.destaque}
+                  onAction={() => handleAcessarAula(aula)}
+                />
+              ))}
+            </div>
+          )}
+        </>
+      )}
     </main>
   )
 }

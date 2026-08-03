@@ -27,3 +27,15 @@
     grid-template-columns: 1fr;
   }
 }
+
+.emptyState {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 24px 0;
+}
+
+.retryRow {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}

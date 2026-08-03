@@ -1,5 +1,6 @@
-// import { useOutletContext } from 'react-router-dom'
-// import type { UserProfile } from '../../types/auth'
+import { useEffect, useState } from 'react'
+import { useOutletContext } from 'react-router-dom'
+import type { UserProfile } from '../../types/auth'
 import styles from './DashboardPage.module.css'
 import { TitlePage } from '../../components/ui/TitlePage'
 import { BubbleInformation } from '../../components/ui/BubbleInformation'
@@ -7,116 +8,142 @@ import { ClockIcon, CheckSquareIcon, BoltIcon, FireIcon } from '../../components
 import { TitleSession } from '../../components/ui/TitleSession'
 import { ActivityCard } from '../../components/cards/ActivityCard'
 import { AlertCard } from '../../components/cards/AlertCard'
+import { CardDiv } from '../../components/cards/CardDiv'
+import { Button } from '../../components/ui/Button'
 import { GraphBars } from '../../components/graph/GraphBars'
 import { SubjectProgressList } from '../../components/graph/SubjectProgressList'
 
-// TODO: substituir pelos dados reais vindos do backend (endpoint de resumo do dashboard)
-const resumoEstudos = [
-  { icon: <ClockIcon />, title: 'Tempo estudado', information: '12h30', variant: 'blue' as const },
-  { icon: <CheckSquareIcon />, title: 'Tarefas concluídas', information: '6/9', variant: 'green' as const },
-  { icon: <BoltIcon />, title: 'XP da semana', information: '1.240 XP', variant: 'purple' as const },
-  { icon: <FireIcon />, title: 'Ofensiva atual', information: '8 dias', variant: 'gold' as const },
-]
+import { getDashboardAluno } from '../../services/dashboardAluno'
+import type { GetDashboardAlunoResponse } from '../../types/dashboardAluno'
 
-// TODO: substituir pelos dados reais vindos do backend (endpoint de evolução semanal)
-const evolucaoSemanal = [
-  { label: 'Seg', value: 65 },
-  { label: 'Ter', value: 55 },
-  { label: 'Qua', value: 90 },
-  { label: 'Qui', value: 60 },
-  { label: 'Sex', value: 85 },
-  { label: 'Sáb', value: 35 },
-  { label: 'Dom', value: 15 },
-]
-
-// TODO: substituir pelos dados reais vindos do backend (endpoint de desempenho por matéria)
-const desempenhoPorMateria = [
-  { label: 'Biologia', value: 78, color: 'teal' as const },
-  { label: 'Português', value: 72, color: 'gold' as const },
-  { label: 'História', value: 65, color: 'red' as const },
-  { label: 'Matemática', value: 58, color: 'blue' as const },
-]
-
-// TODO: substituir pelos dados reais vindos do backend (endpoint do plano de estudos do dia)
-const planoDeHoje = [
-  {
-    icon: '✍️',
-    subject: 'Redação',
-    subjectColor: 'purple' as const,
-    status: 'concluido' as const,
-    title: 'Repertório sociocultural',
-    duration: '30 min',
-    progress: 100,
-  },
-  {
-    icon: '🌿',
-    subject: 'Biologia',
-    subjectColor: 'green' as const,
-    status: 'em-andamento' as const,
-    title: 'Ecologia',
-    duration: '40 min',
-    progress: 55,
-  },
-  {
-    icon: '📐',
-    subject: 'Matemática',
-    subjectColor: 'blue' as const,
-    status: 'nao-iniciado' as const,
-    title: 'Questões ENEM: 20 questões',
-    duration: '50 min',
-  },
-]
+function formatarDuracao(minutos: number) {
+  if (minutos < 60) return `${minutos} min`
+  const horas = Math.floor(minutos / 60)
+  const resto = minutos % 60
+  return resto > 0 ? `${horas}h${resto}` : `${horas}h`
+}
 
 export function DashboardPage() {
-  // const perfil = useOutletContext<UserProfile | null>()
+  const perfil = useOutletContext<UserProfile | null>()
+
+  const [dados, setDados] = useState<GetDashboardAlunoResponse | null>(null)
+  const [carregando, setCarregando] = useState(false)
+  const [erro, setErro] = useState(false)
+
+  async function carregarDashboard() {
+    setCarregando(true)
+    setErro(false)
+
+    try {
+      const resposta = await getDashboardAluno()
+      setDados(resposta)
+    } catch (err) {
+      console.error(err)
+      setErro(true)
+    } finally {
+      setCarregando(false)
+    }
+  }
+
+  useEffect(() => {
+    carregarDashboard()
+  }, [])
 
   return (
     <main className={styles.page}>
       <TitlePage
-        title="E aí, Guilherme! 👋"
+        title={`E aí, ${perfil?.nome ?? 'Aluno'}! 👋`}
         subtitle="Aqui está seu plano de estudos de hoje. Você está indo muito bem!"
       />
 
-      <div className={styles.cardsRow}>
-        {resumoEstudos.map((item) => (
-          <BubbleInformation
-            key={item.title}
-            icon={item.icon}
-            title={item.title}
-            information={item.information}
-            variant={item.variant}
-          />
-        ))}
-      </div>
-
-      <div className={styles.overviewRow}>
-        <div className={styles.planColumn}>
-          <TitleSession title="Plano de hoje" linkTo="/plano-de-estudos" />
-          <div className={styles.activityList}>
-            {planoDeHoje.map((item) => (
-              <ActivityCard
-                key={item.title}
-                icon={item.icon}
-                subject={item.subject}
-                subjectColor={item.subjectColor}
-                status={item.status}
-                title={item.title}
-                duration={item.duration}
-                progress={item.progress}
-              />
-            ))}
+      {carregando ? (
+        <CardDiv>
+          <p className={styles.emptyState}>Carregando dashboard...</p>
+        </CardDiv>
+      ) : erro || !dados ? (
+        <CardDiv>
+          <p className={styles.emptyState}>Não foi possível carregar o dashboard.</p>
+          <div className={styles.retryRow}>
+            <Button fullWidth={false} onClick={carregarDashboard}>
+              Tentar novamente
+            </Button>
           </div>
-        </div>
+        </CardDiv>
+      ) : (
+        <>
+          <div className={styles.cardsRow}>
+            <BubbleInformation
+              icon={<ClockIcon />}
+              title="Tempo estudado"
+              information={formatarDuracao(dados.resumo.tempo_estudado_min)}
+              variant="blue"
+            />
+            <BubbleInformation
+              icon={<CheckSquareIcon />}
+              title="Tarefas concluídas"
+              information={`${dados.resumo.tarefas_concluidas}/${dados.resumo.tarefas_totais}`}
+              variant="green"
+            />
+            <BubbleInformation
+              icon={<BoltIcon />}
+              title="XP da semana"
+              information={`${dados.resumo.xp_semana.toLocaleString('pt-BR')} XP`}
+              variant="purple"
+            />
+            <BubbleInformation
+              icon={<FireIcon />}
+              title="Ofensiva atual"
+              information={`${dados.resumo.ofensiva_dias} dias`}
+              variant="gold"
+            />
+          </div>
 
-        <div className={styles.graphColumn}>
-          <GraphBars title="Evolução semanal" data={evolucaoSemanal} />
-          <SubjectProgressList title="Evolução semanal" linkTo="/progresso" data={desempenhoPorMateria} />
-          <AlertCard
-            title="Evolução semanal"
-            message="Matemática e Química estão abaixo da meta. Revise esta semana!"
-          />
-        </div>
-      </div>
+          <div className={styles.overviewRow}>
+            <div className={styles.planColumn}>
+              <TitleSession title="Plano de hoje" linkTo="/plano-de-estudos" />
+              <div className={styles.activityList}>
+                {dados.plano_do_dia.length === 0 ? (
+                  <CardDiv>
+                    <p className={styles.emptyState}>Nenhuma atividade planejada para hoje.</p>
+                  </CardDiv>
+                ) : (
+                  dados.plano_do_dia.map((item) => (
+                    <ActivityCard
+                      key={item.id}
+                      icon={item.icone}
+                      subject={item.materia}
+                      subjectColor={item.materia_cor}
+                      status={item.status}
+                      title={item.titulo}
+                      duration={formatarDuracao(item.duracao_min)}
+                      progress={item.progresso}
+                    />
+                  ))
+                )}
+              </div>
+            </div>
+
+            <div className={styles.graphColumn}>
+              <GraphBars
+                title="Evolução semanal"
+                data={dados.evolucao_semanal.map((ponto) => ({ label: ponto.dia_semana, value: ponto.percentual }))}
+              />
+              <SubjectProgressList
+                title="Desempenho por matéria"
+                linkTo="/progresso"
+                data={dados.desempenho_por_materia.map((item) => ({
+                  label: item.materia,
+                  value: item.percentual,
+                  color: item.cor,
+                }))}
+              />
+              {dados.alertas.map((alerta) => (
+                <AlertCard key={alerta.id} title={alerta.titulo} message={alerta.mensagem} />
+              ))}
+            </div>
+          </div>
+        </>
+      )}
     </main>
   )
 }

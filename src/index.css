@@ -130,3 +130,25 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* Largura da barra de rolagem */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Cor do fundo da barra */
+::-webkit-scrollbar-track {
+  background: none;
+}
+
+/* Cor da parte que se move */
+::-webkit-scrollbar-thumb {
+  background: var(--accent-bg);
+  border-radius: 5px;
+}
+
+/* Cor da parte que se move ao passar o mouse */
+/* ::-webkit-scrollbar-thumb:hover {
+  background: #555;
+} */
+
