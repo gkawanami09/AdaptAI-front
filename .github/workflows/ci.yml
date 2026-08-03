@@ -19,3 +19,10 @@ jobs:
           --build-arg VITE_API_URL=https://api.example.invalid
           --tag adaptai-front:ci
           .
+      - name: Deploy to Easypanel
+        if: github.event_name == 'push'
+        env:
+          EASYPANEL_DEPLOY_WEBHOOK: ${{ secrets.EASYPANEL_DEPLOY_WEBHOOK }}
+        run: >-
+          curl --fail --show-error --silent --retry 3
+          "$EASYPANEL_DEPLOY_WEBHOOK"
