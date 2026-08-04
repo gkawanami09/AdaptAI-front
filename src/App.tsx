@@ -148,7 +148,7 @@ function App() {
           </Route>
           <Route element={<PermissaoDaPagina idPagina="aulas" />}>
             <Route path="/aulas" element={<Aulas />} />
-            <Route path="/aulas/funcao-quadratica" element={<AulaVisualizacao />} />
+            <Route path="/aulas/:slug" element={<AulaVisualizacao />} />
           </Route>
           <Route element={<PermissaoDaPagina idPagina="questoes" />}>
             <Route path="/questoes" element={<Questoes />} />

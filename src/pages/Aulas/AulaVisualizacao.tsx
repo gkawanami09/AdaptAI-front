@@ -1,9 +1,10 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useCallback, useEffect, useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Badge } from '../../components/ui/Badge'
 import { Button } from '../../components/ui/Button'
 import { VideoPlayer } from '../../components/ui/VideoPlayer'
-import { LessonSummaryCard, LessonParagraph, LessonHighlight } from '../../components/cards/LessonSummaryCard'
+import { CardDiv } from '../../components/cards/CardDiv'
+import { LessonSummaryCard, LessonParagraph } from '../../components/cards/LessonSummaryCard'
 import { LessonConceptsCard } from '../../components/cards/LessonConceptsCard'
 import { ModuleLessonsCard } from '../../components/cards/ModuleLessonsCard'
 import { NextLessonCard } from '../../components/cards/NextLessonCard'
@@ -11,55 +12,111 @@ import { DicaCard } from '../../components/cards/DicaCard'
 import { ArrowLeftIcon, ClockIcon, CheckCircleIcon, BookIcon, BarChartIcon } from '../../components/ui/icons'
 import styles from './AulaVisualizacao.module.css'
 
-// TODO: substituir pelos dados reais vindos do backend (detalhe da aula + URL do vídeo)
-const AULA = {
-  title: 'Função Quadrática',
-  subject: 'Matemática',
-  subjectColor: 'blue' as const,
-  duration: '35 min',
-  difficulty: 'Médio',
-  progress: 60,
-  videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-}
-
-// TODO: substituir pelos dados reais vindos do backend (conceitos abordados nesta aula)
-const CONCEITOS_INICIAIS = [
-  { id: 'definicao', label: 'Definição de função quadrática f(x) = ax² + bx + c', checked: false },
-  { id: 'discriminante', label: 'Cálculo do discriminante (Δ = b² - 4ac)', checked: false },
-  { id: 'bhaskara', label: 'Fórmula de Bhaskara', checked: false },
-  { id: 'grafico', label: 'Interpretação gráfica da parábola', checked: false },
-]
-
-// TODO: substituir pelos dados reais vindos do backend (aulas do módulo + progresso do aluno)
-const MODULO_LESSONS = [
-  { order: 1, label: 'Função Afim', status: 'concluida' as const },
-  { order: 2, label: 'Função Quadrática', status: 'atual' as const },
-  { order: 3, label: 'Função Exponencial', status: 'bloqueada' as const },
-  { order: 4, label: 'Função Logarítmica', status: 'bloqueada' as const },
-]
-
-// TODO: substituir pelos dados reais vindos do backend (próxima aula do módulo)
-const PROXIMA_AULA = {
-  title: 'Função Exponencial',
-  duration: '28 min',
-  difficulty: 'Médio',
-}
+import { getAula, marcarAulaConcluida, atualizarProgressoAula, marcarConceito } from '../../services/aulaVisualizacao'
+import type { GetAulaVisualizacaoResponse } from '../../types/aulaVisualizacao'
 
 export function AulaVisualizacao() {
-  const [conceitos, setConceitos] = useState(CONCEITOS_INICIAIS)
+  const { slug } = useParams<{ slug: string }>()
+  const navigate = useNavigate()
 
-  function handleToggleConceito(id: string, checked: boolean) {
-    setConceitos((prev) => prev.map((item) => (item.id === id ? { ...item, checked } : item)))
+  const [aula, setAula] = useState<GetAulaVisualizacaoResponse | null>(null)
+  const [carregando, setCarregando] = useState(false)
+  const [erro, setErro] = useState(false)
+
+  const carregarAula = useCallback(async () => {
+    if (!slug) return
+    setCarregando(true)
+    setErro(false)
+
+    try {
+      const resposta = await getAula(slug)
+      setAula(resposta)
+    } catch (err) {
+      console.error(err)
+      setErro(true)
+    } finally {
+      setCarregando(false)
+    }
+  }, [slug])
+
+  useEffect(() => {
+    carregarAula()
+  }, [carregarAula])
+
+  async function handleToggleConceito(conceitoId: string, concluido: boolean) {
+    if (!slug || !aula) return
+
+    setAula((prev) =>
+      prev
+        ? {
+            ...prev,
+            conceitos: prev.conceitos.map((item) => (item.id === conceitoId ? { ...item, concluido } : item)),
+          }
+        : prev,
+    )
+
+    try {
+      await marcarConceito(slug, conceitoId, concluido)
+    } catch (err) {
+      console.error(err)
+      setAula((prev) =>
+        prev
+          ? {
+              ...prev,
+              conceitos: prev.conceitos.map((item) => (item.id === conceitoId ? { ...item, concluido: !concluido } : item)),
+            }
+          : prev,
+      )
+    }
   }
 
-  function handleMarcarConcluido() {
-    // TODO: conectar ao backend — marcar a aula como concluída
-    console.log('marcar aula como concluída')
+  async function handleMarcarConcluido() {
+    if (!slug) return
+    try {
+      const atualizada = await marcarAulaConcluida(slug)
+      if (atualizada.proxima_aula) {
+        navigate(`/aulas/${atualizada.proxima_aula.slug}`)
+      } else {
+        navigate('/aulas')
+      }
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   function handleFazerQuestoes() {
-    // TODO: conectar à navegação real — lista de questões desta aula
-    console.log('fazer questões')
+    if (!slug) return
+    navigate(`/questoes?origem=aula&slug=${slug}`)
+  }
+
+  function handleProgressoVideo(progresso: number) {
+    if (!slug) return
+    atualizarProgressoAula(slug, progresso).catch((err) => console.error(err))
+  }
+
+  if (carregando) {
+    return (
+      <main className={styles.page}>
+        <CardDiv>
+          <p>Carregando aula...</p>
+        </CardDiv>
+      </main>
+    )
+  }
+
+  if (erro || !aula) {
+    return (
+      <main className={styles.page}>
+        <CardDiv>
+          <p>Não foi possível carregar a aula.</p>
+          <div className={styles.actions}>
+            <Button fullWidth={false} onClick={carregarAula}>
+              Tentar novamente
+            </Button>
+          </div>
+        </CardDiv>
+      </main>
+    )
   }
 
   return (
@@ -70,39 +127,38 @@ export function AulaVisualizacao() {
           Aulas
         </Link>
         <span className={styles.separator}>/</span>
-        <span className={styles.current}>{AULA.title}</span>
+        <span className={styles.current}>{aula.titulo}</span>
       </div>
 
       <div className={styles.meta}>
-        <Badge color={AULA.subjectColor}>{AULA.subject}</Badge>
+        <Badge color={aula.materia_cor}>{aula.materia}</Badge>
         <span className={styles.metaText}>
           <ClockIcon className={styles.metaIcon} />
-          {AULA.duration} · {AULA.difficulty}
+          {aula.duracao_min} min · {aula.dificuldade}
         </span>
       </div>
 
-      <h1 className={styles.title}>{AULA.title}</h1>
+      <h1 className={styles.title}>{aula.titulo}</h1>
 
       <div className={styles.columns}>
         <div className={styles.mainColumn}>
-          <VideoPlayer src={AULA.videoUrl} initialProgress={AULA.progress} />
+          {aula.video_url && (
+            <VideoPlayer src={aula.video_url} initialProgress={aula.progresso} onProgressChange={handleProgressoVideo} />
+          )}
 
-          <LessonSummaryCard title="Resumo da aula">
-            <LessonParagraph>
-              A <strong>função quadrática</strong> é definida por f(x) = ax² + bx + c, onde a ≠ 0. Seu gráfico é uma{' '}
-              <strong>parábola</strong> que abre para cima quando a &gt; 0 e para baixo quando a &lt; 0.
-            </LessonParagraph>
-            <LessonParagraph>
-              Para encontrar as raízes (zeros) da função, usamos a <strong>Fórmula de Bhaskara</strong>:
-            </LessonParagraph>
-            <LessonHighlight>x = (-b ± √Δ) / 2a, onde Δ = b² - 4ac</LessonHighlight>
-            <LessonParagraph>
-              O <strong>vértice</strong> da parábola é o ponto de máximo ou mínimo da função, com coordenadas V =
-              (-b/2a, -Δ/4a).
-            </LessonParagraph>
-          </LessonSummaryCard>
+          {aula.resumo.length > 0 && (
+            <LessonSummaryCard title="Resumo da aula">
+              {aula.resumo.map((paragrafo, index) => (
+                <LessonParagraph key={index}>{paragrafo}</LessonParagraph>
+              ))}
+            </LessonSummaryCard>
+          )}
 
-          <LessonConceptsCard title="Conceitos desta aula" items={conceitos} onToggle={handleToggleConceito} />
+          <LessonConceptsCard
+            title="Conceitos desta aula"
+            items={aula.conceitos.map((item) => ({ id: item.id, label: item.label, checked: item.concluido }))}
+            onToggle={handleToggleConceito}
+          />
 
           <div className={styles.actions}>
             <Button icon={<CheckCircleIcon />} iconPosition="left" fullWidth={false} onClick={handleMarcarConcluido}>
@@ -121,22 +177,25 @@ export function AulaVisualizacao() {
         </div>
 
         <div className={styles.sideColumn}>
-          <ModuleLessonsCard title="Módulo: Funções" lessons={MODULO_LESSONS} />
+          {aula.modulo && (
+            <ModuleLessonsCard
+              title={`Módulo: ${aula.modulo.titulo}`}
+              lessons={aula.modulo.aulas.map((item) => ({ order: item.ordem, label: item.titulo, status: item.status }))}
+            />
+          )}
 
-          <NextLessonCard
-            title="Próxima aula"
-            icon={<BarChartIcon />}
-            iconColor="blue"
-            lessonTitle={PROXIMA_AULA.title}
-            duration={PROXIMA_AULA.duration}
-            difficulty={PROXIMA_AULA.difficulty}
-          />
+          {aula.proxima_aula && (
+            <NextLessonCard
+              title="Próxima aula"
+              icon={<BarChartIcon />}
+              iconColor="blue"
+              lessonTitle={aula.proxima_aula.titulo}
+              duration={`${aula.proxima_aula.duracao_min} min`}
+              difficulty={aula.proxima_aula.dificuldade}
+            />
+          )}
 
-          <DicaCard
-            icon="🤖"
-            title="Dica da Ada"
-            message="Preste atenção no sinal de 'a' — ele define se a parábola abre para cima ou para baixo. Isso cai muito no ENEM!"
-          />
+          {aula.dica_ada && <DicaCard icon="🤖" title="Dica da Ada" message={aula.dica_ada} />}
         </div>
       </div>
     </main>

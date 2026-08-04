@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import type { MouseEvent } from 'react'
 import { PlayIcon } from './icons'
+import { getYoutubeId } from '../../utils/youtube'
 import styles from './VideoPlayer.module.css'
 
 type VideoPlayerProps = {
   src: string
   poster?: string
   initialProgress?: number
+  onProgressChange?: (progress: number) => void
 }
 
 function formatTime(seconds: number) {
@@ -16,7 +18,8 @@ function formatTime(seconds: number) {
   return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
 }
 
-export function VideoPlayer({ src, poster, initialProgress = 0 }: VideoPlayerProps) {
+export function VideoPlayer({ src, poster, initialProgress = 0, onProgressChange }: VideoPlayerProps) {
+  const youtubeId = getYoutubeId(src)
   const videoRef = useRef<HTMLVideoElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
   const [playing, setPlaying] = useState(false)
@@ -57,6 +60,30 @@ export function VideoPlayer({ src, poster, initialProgress = 0 }: VideoPlayerPro
   }
 
   const percent = duration ? (currentTime / duration) * 100 : initialProgress
+
+  const lastReportedRef = useRef(initialProgress)
+  useEffect(() => {
+    if (!onProgressChange || !duration) return
+    const rounded = Math.round(percent)
+    if (Math.abs(rounded - lastReportedRef.current) >= 5) {
+      lastReportedRef.current = rounded
+      onProgressChange(rounded)
+    }
+  }, [percent, duration, onProgressChange])
+
+  if (youtubeId) {
+    return (
+      <div className={styles.player}>
+        <iframe
+          className={styles.video}
+          src={`https://www.youtube-nocookie.com/embed/${youtubeId}`}
+          title="Vídeo da aula"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      </div>
+    )
+  }
 
   return (
     <div className={styles.player}>
