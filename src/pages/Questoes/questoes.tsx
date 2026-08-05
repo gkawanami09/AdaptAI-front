@@ -1,74 +1,16 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TitlePage } from '../../components/ui/TitlePage'
 import { Button } from '../../components/ui/Button'
+import { CardDiv } from '../../components/cards/CardDiv'
 import { FiltersCard } from '../../components/cards/FiltersCard'
 import type { FilterGroup } from '../../components/cards/FiltersCard'
 import { QuestionListItem } from '../../components/cards/QuestionListItem'
 import { PlayIcon, SparklesIcon } from '../../components/ui/icons'
 import styles from './Questoes.module.css'
 
-// TODO: substituir pelos dados reais vindos do backend (listas de questões)
-const LISTAS = [
-  {
-    icon: '📐',
-    iconColor: 'purple' as const,
-    title: 'Lista: Funções',
-    difficulty: 'Médio',
-    difficultyColor: 'blue' as const,
-    exam: 'ENEM',
-    completed: 8,
-    total: 15,
-    progressColor: 'purple' as const,
-  },
-  {
-    icon: '🌿',
-    iconColor: 'green' as const,
-    title: 'Lista: Ecologia',
-    difficulty: 'Fácil',
-    difficultyColor: 'teal' as const,
-    exam: 'ENEM',
-    completed: 20,
-    total: 20,
-    progressColor: 'teal' as const,
-  },
-  {
-    icon: '🏛️',
-    iconColor: 'blue' as const,
-    title: 'Lista: Revolução Industrial',
-    difficulty: 'Médio',
-    difficultyColor: 'blue' as const,
-    exam: 'Fuvest',
-    completed: 0,
-    total: 12,
-    progressColor: 'purple' as const,
-  },
-]
-
-const VESTIBULAR_OPTIONS = [
-  { value: 'enem', label: 'ENEM' },
-  { value: 'fuvest', label: 'Fuvest' },
-  { value: 'unicamp', label: 'Unicamp' },
-  { value: 'ufrj', label: 'UFRJ' },
-  { value: 'ufmg', label: 'UFMG' },
-]
-
-const DIFICULDADE_OPTIONS = [
-  { value: 'facil', label: 'Fácil' },
-  { value: 'medio', label: 'Médio' },
-  { value: 'dificil', label: 'Difícil' },
-]
-
-const MATERIA_OPTIONS = [
-  { value: 'matematica', label: 'Matemática' },
-  { value: 'fisica', label: 'Física' },
-  { value: 'quimica', label: 'Química' },
-  { value: 'biologia', label: 'Biologia' },
-  { value: 'historia', label: 'História' },
-  { value: 'geografia', label: 'Geografia' },
-  { value: 'portugues', label: 'Português' },
-  { value: 'redacao', label: 'Redação' },
-]
+import { getBancoQuestoesFiltros, getBancoQuestoesListas, postGerarListaComIA } from '../../services/bancoQuestoes'
+import type { GetBancoQuestoesFiltrosResponse, GetBancoQuestoesListasResponse } from '../../types/bancoQuestoes'
 
 function toggleValue(list: string[], value: string) {
   return list.includes(value) ? list.filter((item) => item !== value) : [...list, value]
@@ -76,26 +18,83 @@ function toggleValue(list: string[], value: string) {
 
 export function Questoes() {
   const navigate = useNavigate()
-  const [vestibulares, setVestibulares] = useState<string[]>(['enem'])
+  const [vestibulares, setVestibulares] = useState<string[]>([])
   const [dificuldades, setDificuldades] = useState<string[]>([])
   const [materias, setMaterias] = useState<string[]>([])
+  const [apenasErradas, setApenasErradas] = useState(false)
+  const [apenasFavoritas, setApenasFavoritas] = useState(false)
+
+  const [filtros, setFiltros] = useState<GetBancoQuestoesFiltrosResponse | null>(null)
+  const [listas, setListas] = useState<GetBancoQuestoesListasResponse | null>(null)
+  const [carregando, setCarregando] = useState(false)
+  const [erro, setErro] = useState(false)
+  const [gerandoComIA, setGerandoComIA] = useState(false)
+
+  useEffect(() => {
+    getBancoQuestoesFiltros()
+      .then(setFiltros)
+      .catch((err) => console.error(err))
+  }, [])
+
+  async function carregarListas() {
+    setCarregando(true)
+    setErro(false)
+
+    try {
+      const resposta = await getBancoQuestoesListas({
+        vestibulares,
+        dificuldades,
+        materias,
+        apenas_erradas: apenasErradas,
+        apenas_favoritas: apenasFavoritas,
+      })
+      setListas(resposta)
+    } catch (err) {
+      console.error(err)
+      setErro(true)
+    } finally {
+      setCarregando(false)
+    }
+  }
+
+  useEffect(() => {
+    carregarListas()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [vestibulares, dificuldades, materias, apenasErradas, apenasFavoritas])
+
+  async function handleGerarListaComIA() {
+    setGerandoComIA(true)
+    try {
+      const resultado = await postGerarListaComIA()
+      await carregarListas()
+      navigate(`/questoes/${resultado.slug ?? resultado.id}`)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setGerandoComIA(false)
+    }
+  }
+
+  function handleAbrirLista(id: string, slug: string | null) {
+    navigate(`/questoes/${slug ?? id}`)
+  }
 
   const grupos: FilterGroup[] = [
     {
       label: 'Vestibular',
-      options: VESTIBULAR_OPTIONS,
+      options: filtros?.vestibulares ?? [],
       selected: vestibulares,
       onToggle: (value) => setVestibulares((current) => toggleValue(current, value)),
     },
     {
       label: 'Dificuldade',
-      options: DIFICULDADE_OPTIONS,
+      options: filtros?.dificuldades ?? [],
       selected: dificuldades,
       onToggle: (value) => setDificuldades((current) => toggleValue(current, value)),
     },
     {
       label: 'Matéria',
-      options: MATERIA_OPTIONS,
+      options: filtros?.materias ?? [],
       selected: materias,
       onToggle: (value) => setMaterias((current) => toggleValue(current, value)),
       display: 'list',
@@ -107,7 +106,14 @@ export function Questoes() {
       <div className={styles.header}>
         <TitlePage title="Banco de Questões" subtitle="+12.000 questões do ENEM e vestibulares" />
 
-        <Button pill fullWidth={false} icon={<SparklesIcon />} iconPosition="left">
+        <Button
+          pill
+          fullWidth={false}
+          icon={<SparklesIcon />}
+          iconPosition="left"
+          onClick={handleGerarListaComIA}
+          disabled={gerandoComIA}
+        >
           Gerar lista com IA
         </Button>
       </div>
@@ -117,42 +123,68 @@ export function Questoes() {
           <FiltersCard
             title="Filtros"
             groups={grupos}
-            shortcuts={[{ label: 'Questões erradas' }, { label: 'Questões favoritas' }]}
+            shortcuts={[
+              { label: 'Questões erradas', onClick: () => setApenasErradas((value) => !value) },
+              { label: 'Questões favoritas', onClick: () => setApenasFavoritas((value) => !value) },
+            ]}
           />
         </div>
 
         <div className={styles.mainColumn}>
-          <div className={styles.listsHeader}>
-            <span className={styles.listsCount}>6 listas disponíveis</span>
-            <Button
-              variant="outline"
-              pill
-              fullWidth={false}
-              icon={<PlayIcon />}
-              iconPosition="left"
-              onClick={() => navigate('/questoes/visualizacao')}
-            >
-              Começar lista
-            </Button>
-          </div>
+          {carregando ? (
+            <CardDiv>
+              <p>Carregando listas de questões...</p>
+            </CardDiv>
+          ) : erro || !listas ? (
+            <CardDiv>
+              <p>Não foi possível carregar as listas de questões.</p>
+              <Button fullWidth={false} onClick={carregarListas}>
+                Tentar novamente
+              </Button>
+            </CardDiv>
+          ) : (
+            <>
+              <div className={styles.listsHeader}>
+                <span className={styles.listsCount}>{listas.total} listas disponíveis</span>
+                {listas.listas.length > 0 && (
+                  <Button
+                    variant="outline"
+                    pill
+                    fullWidth={false}
+                    icon={<PlayIcon />}
+                    iconPosition="left"
+                    onClick={() => handleAbrirLista(listas.listas[0].id, listas.listas[0].slug)}
+                  >
+                    Começar lista
+                  </Button>
+                )}
+              </div>
 
-          <div className={styles.lists}>
-            {LISTAS.map((lista) => (
-              <QuestionListItem
-                key={lista.title}
-                icon={lista.icon}
-                iconColor={lista.iconColor}
-                title={lista.title}
-                difficulty={lista.difficulty}
-                difficultyColor={lista.difficultyColor}
-                exam={lista.exam}
-                completed={lista.completed}
-                total={lista.total}
-                progressColor={lista.progressColor}
-                onClick={() => navigate('/questoes/visualizacao')}
-              />
-            ))}
-          </div>
+              <div className={styles.lists}>
+                {listas.listas.length === 0 ? (
+                  <CardDiv>
+                    <p>Nenhuma lista encontrada para os filtros selecionados.</p>
+                  </CardDiv>
+                ) : (
+                  listas.listas.map((lista) => (
+                    <QuestionListItem
+                      key={lista.id}
+                      icon={lista.icone}
+                      iconColor={lista.icone_cor}
+                      title={lista.titulo}
+                      difficulty={lista.dificuldade}
+                      difficultyColor={lista.dificuldade_cor}
+                      exam={lista.vestibular}
+                      completed={lista.questoes_concluidas}
+                      total={lista.questoes_totais}
+                      progressColor={lista.progresso_cor}
+                      onClick={() => handleAbrirLista(lista.id, lista.slug)}
+                    />
+                  ))
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </main>

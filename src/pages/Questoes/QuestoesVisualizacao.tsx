@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Button } from '../../components/ui/Button'
 import { QuestionProgressDots } from '../../components/ui/QuestionProgressDots'
 import { QuestionPromptCard } from '../../components/cards/QuestionPromptCard'
@@ -17,182 +17,8 @@ import {
 } from '../../components/ui/icons'
 import styles from './QuestoesVisualizacao.module.css'
 
-// TODO: substituir pelos dados reais vindos do backend (banco de questões)
-const QUESTOES = [
-  {
-    subject: 'Matemática',
-    subjectColor: 'blue' as const,
-    examInfo: 'ENEM 2020 · Fácil',
-    question: 'Resolva a equação do 2º grau x² - 7x + 12 = 0 e identifique suas raízes.',
-    options: [
-      'As raízes são x = 3 e x = 4.',
-      'As raízes são x = 2 e x = 6.',
-      'A equação não possui raízes reais.',
-      'As raízes são x = -3 e x = -4.',
-      'A raiz é única: x = 7.',
-    ],
-    hint: 'Use a Fórmula de Bhaskara com a = 1, b = -7 e c = 12. O discriminante Δ = b² - 4ac vai te dar duas raízes reais.',
-  },
-  {
-    subject: 'Biologia',
-    subjectColor: 'green' as const,
-    examInfo: 'ENEM 2019 · Médio',
-    question: 'Sobre a fotossíntese, marque a alternativa correta.',
-    options: [
-      'Ocorre apenas na ausência de luz.',
-      'Libera CO₂ e consome O₂.',
-      'Converte energia luminosa em energia química.',
-      'Não depende da clorofila.',
-      'É exclusiva de organismos heterótrofos.',
-    ],
-    hint: 'Pense na função da clorofila: ela captura luz e a converte em energia química (glicose). Isso já elimina algumas alternativas.',
-  },
-  {
-    subject: 'História',
-    subjectColor: 'red' as const,
-    examInfo: 'ENEM 2021 · Médio',
-    question: 'A Revolução Industrial teve início, de forma pioneira, em qual país?',
-    options: ['França', 'Alemanha', 'Inglaterra', 'Estados Unidos', 'Itália'],
-    hint: 'Pense em qual país tinha, no século XVIII, acesso a carvão, capital e uma marinha mercante forte o suficiente para industrializar primeiro.',
-  },
-  {
-    subject: 'Física',
-    subjectColor: 'purple' as const,
-    examInfo: 'ENEM 2018 · Difícil',
-    question: 'Um corpo em queda livre, desprezando a resistência do ar, apresenta:',
-    options: [
-      'Velocidade constante.',
-      'Aceleração constante e igual a g.',
-      'Aceleração decrescente.',
-      'Velocidade decrescente.',
-      'Movimento retilíneo uniforme.',
-    ],
-    hint: 'Sem resistência do ar, a única força atuando é o peso — isso significa aceleração constante durante toda a queda.',
-  },
-  {
-    subject: 'Português',
-    subjectColor: 'gold' as const,
-    examInfo: 'ENEM 2022 · Fácil',
-    question: 'Assinale a alternativa em que todas as palavras estão acentuadas corretamente.',
-    options: ['Árvore, café, você', 'Arvore, café, voce', 'Árvore, cafe, você', 'Arvóre, café, você', 'Árvore, café, voçê'],
-    hint: 'Lembre-se: palavras proparoxítonas são sempre acentuadas, e "café"/"você" seguem a regra dos monossílabos e oxítonas terminados em "e".',
-  },
-  {
-    subject: 'Química',
-    subjectColor: 'blue' as const,
-    examInfo: 'ENEM 2020 · Médio',
-    question: 'O número atômico de um elemento representa:',
-    options: [
-      'O número de nêutrons no núcleo.',
-      'A massa total do átomo.',
-      'O número de prótons no núcleo.',
-      'O número de elétrons na camada de valência.',
-      'O número de isótopos do elemento.',
-    ],
-    hint: 'O número atômico (Z) é uma identidade do elemento — ele conta os prótons, que definem de qual elemento químico se trata.',
-  },
-  {
-    subject: 'Geografia',
-    subjectColor: 'green' as const,
-    examInfo: 'ENEM 2021 · Fácil',
-    question: 'O fenômeno El Niño está diretamente relacionado a mudanças em qual oceano?',
-    options: ['Atlântico', 'Índico', 'Pacífico', 'Ártico', 'Antártico'],
-    hint: 'O nome "El Niño" (o menino) vem de pescadores peruanos, na costa oeste da América do Sul — pense em qual oceano banha essa região.',
-  },
-  {
-    subject: 'Matemática',
-    subjectColor: 'blue' as const,
-    examInfo: 'ENEM 2019 · Médio',
-    question: 'Em uma progressão aritmética de razão 5, sendo o primeiro termo 3, qual é o 10º termo?',
-    options: ['48', '45', '50', '53', '43'],
-    hint: 'Use a fórmula do termo geral: aₙ = a₁ + (n-1)·r. Aqui, a₁ = 3, r = 5 e n = 10.',
-  },
-  {
-    subject: 'Matemática',
-    subjectColor: 'blue' as const,
-    examInfo: 'ENEM 2022 · Médio',
-    question: (
-      <>
-        Considere a equação do 2º grau x² - 5x + 6 = 0. Analise as afirmações abaixo e marque a alternativa{' '}
-        <strong>correta</strong>:
-      </>
-    ),
-    options: [
-      'A raiz da equação 2x² - 8x + 6 = 0 é x = 1 e x = 3.',
-      'O discriminante da equação x² - 5x + 6 = 0 é Δ = 1, com raízes x = 2 e x = 3.',
-      'Uma função quadrática com a > 0 tem ponto de máximo no vértice.',
-      'A parábola de f(x) = -x² + 4x - 3 abre para cima.',
-      'O vértice da parábola f(x) = x² - 4x + 3 tem coordenada y = 1.',
-    ],
-    hint: 'Calcule o discriminante Δ = b² - 4ac de cada equação citada antes de julgar as afirmações — várias alternativas mudam os coeficientes originais.',
-  },
-  {
-    subject: 'Redação',
-    subjectColor: 'purple' as const,
-    examInfo: 'ENEM 2020 · Médio',
-    question: 'Qual dos elementos abaixo é obrigatório em uma redação nota 1000 no ENEM?',
-    options: [
-      'Uso de gírias regionais.',
-      'Proposta de intervenção que respeite os direitos humanos.',
-      'Texto em primeira pessoa.',
-      'Ausência de conclusão.',
-      'Citação de uma única fonte.',
-    ],
-    hint: 'A competência 5 do ENEM exige uma proposta de intervenção completa (agente, ação, meio, finalidade e detalhamento) que respeite os direitos humanos.',
-  },
-  {
-    subject: 'Biologia',
-    subjectColor: 'green' as const,
-    examInfo: 'ENEM 2018 · Fácil',
-    question: 'A unidade básica da hereditariedade é:',
-    options: ['A célula', 'O gene', 'O cromossomo inteiro', 'A proteína', 'O ribossomo'],
-    hint: 'Pense na menor unidade que carrega uma informação hereditária específica, transmitida de pais para filhos.',
-  },
-  {
-    subject: 'Física',
-    subjectColor: 'purple' as const,
-    examInfo: 'ENEM 2021 · Médio',
-    question: 'A primeira Lei de Newton também é conhecida como:',
-    options: [
-      'Lei da Ação e Reação',
-      'Lei da Gravitação Universal',
-      'Lei da Inércia',
-      'Lei de Ohm',
-      'Lei da Conservação de Energia',
-    ],
-    hint: 'Ela descreve o que acontece com um corpo quando a força resultante sobre ele é nula — ele tende a manter seu estado de movimento.',
-  },
-  {
-    subject: 'Química',
-    subjectColor: 'blue' as const,
-    examInfo: 'ENEM 2019 · Difícil',
-    question: 'Uma reação exotérmica é aquela que:',
-    options: [
-      'Absorve energia do ambiente.',
-      'Libera energia para o ambiente.',
-      'Não troca energia com o ambiente.',
-      'Ocorre apenas em altas temperaturas.',
-      'É sempre irreversível.',
-    ],
-    hint: '"Exo" significa "para fora" — pense em qual direção a energia se move em relação ao sistema.',
-  },
-  {
-    subject: 'História',
-    subjectColor: 'red' as const,
-    examInfo: 'ENEM 2022 · Médio',
-    question: 'A Proclamação da República no Brasil ocorreu em qual ano?',
-    options: ['1822', '1888', '1889', '1891', '1500'],
-    hint: 'Não confunda com a Independência (1822) ou a Abolição da Escravidão (1888) — são eventos próximos, mas distintos.',
-  },
-  {
-    subject: 'Geografia',
-    subjectColor: 'green' as const,
-    examInfo: 'ENEM 2020 · Fácil',
-    question: 'O bioma predominante no Brasil, em extensão territorial, é:',
-    options: ['Caatinga', 'Cerrado', 'Amazônia', 'Mata Atlântica', 'Pampa'],
-    hint: 'Pense no maior bioma do país, associado à maior floresta tropical do mundo.',
-  },
-]
+import { getListaQuestoes, responderQuestao, favoritarQuestao, finalizarLista } from '../../services/questoesVisualizacao'
+import type { GetListaQuestoesResponse } from '../../types/questoesVisualizacao'
 
 const LETRAS = ['A', 'B', 'C', 'D', 'E']
 
@@ -201,13 +27,42 @@ function horaAtual() {
 }
 
 export function QuestoesVisualizacao() {
-  const [currentIndex, setCurrentIndex] = useState(8)
-  const [respostas, setRespostas] = useState<Array<number | null>>(() => QUESTOES.map(() => null))
-  const [flagged, setFlagged] = useState<boolean[]>(() => QUESTOES.map(() => false))
+  const { slug } = useParams<{ slug: string }>()
+  const navigate = useNavigate()
+
+  const [dados, setDados] = useState<GetListaQuestoesResponse | null>(null)
+  const [carregando, setCarregando] = useState(false)
+  const [erro, setErro] = useState<string | null>(null)
+
+  const [currentIndex, setCurrentIndex] = useState(0)
   const [dicaAberta, setDicaAberta] = useState(false)
   const [iaAberta, setIaAberta] = useState(false)
   const [iaMensagens, setIaMensagens] = useState<AskAiMessage[]>([])
   const [iaInput, setIaInput] = useState('')
+  const [enviandoResposta, setEnviandoResposta] = useState(false)
+  const [finalizando, setFinalizando] = useState(false)
+
+  async function carregarLista() {
+    if (!slug) return
+    setCarregando(true)
+    setErro(null)
+
+    try {
+      const resposta = await getListaQuestoes(slug)
+      setDados(resposta)
+      setCurrentIndex(0)
+    } catch (err) {
+      console.error(err)
+      setErro(err instanceof Error ? err.message : 'Não foi possível carregar a lista de questões.')
+    } finally {
+      setCarregando(false)
+    }
+  }
+
+  useEffect(() => {
+    carregarLista()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug])
 
   useEffect(() => {
     setDicaAberta(false)
@@ -216,23 +71,68 @@ export function QuestoesVisualizacao() {
     setIaInput('')
   }, [currentIndex])
 
-  const questao = QUESTOES[currentIndex]
-  const isLast = currentIndex === QUESTOES.length - 1
+  const questao = dados?.questoes[currentIndex]
+  const isLast = currentIndex === (dados?.questoes.length ?? 0) - 1
   const isFirst = currentIndex === 0
-  const selectedOption = respostas[currentIndex]
-  const respondidas = respostas.map((resposta) => resposta !== null)
+  const respondidas = dados?.questoes.map((item) => item.respondida) ?? []
+  const flagged = dados?.questoes.map(() => false) ?? []
 
   function handleSelecionarOpcao(index: number) {
-    setRespostas((prev) => prev.map((resposta, i) => (i === currentIndex ? index : resposta)))
+    if (!dados || !questao) return
+    setDados({
+      ...dados,
+      questoes: dados.questoes.map((item, i) => (i === currentIndex ? { ...item, opcaoSelecionada: index } : item)),
+    })
   }
 
-  function handleResponder() {
-    if (selectedOption === null) return
-    // TODO: conectar ao backend — registrar a resposta escolhida
-    console.log('resposta enviada', { questao: currentIndex, opcao: selectedOption })
+  async function handleResponder() {
+    if (!dados || !questao || !slug || questao.opcaoSelecionada === null) return
+    setEnviandoResposta(true)
 
-    if (!isLast) {
-      setCurrentIndex((prev) => prev + 1)
+    try {
+      const resultado = await responderQuestao(slug, questao.id, { opcao_selecionada: questao.opcaoSelecionada })
+
+      setDados((prev) => {
+        if (!prev) return prev
+        return {
+          ...prev,
+          questoes_concluidas: resultado.questoes_concluidas,
+          progresso_percentual: resultado.progresso_percentual,
+          questoes: prev.questoes.map((item, i) =>
+            i === currentIndex
+              ? { ...item, respondida: resultado.respondida, opcaoSelecionada: resultado.opcaoSelecionada, correta: resultado.correta }
+              : item,
+          ),
+        }
+      })
+
+      const todasRespondidas = dados.questoes.every((item, i) => (i === currentIndex ? true : item.respondida))
+
+      if (todasRespondidas) {
+        await handleFinalizarLista()
+      } else if (!isLast) {
+        setCurrentIndex((prev) => prev + 1)
+      }
+    } catch (err) {
+      console.error(err)
+      setErro(err instanceof Error ? err.message : 'Não foi possível registrar a resposta.')
+    } finally {
+      setEnviandoResposta(false)
+    }
+  }
+
+  async function handleFinalizarLista() {
+    if (!slug) return
+    setFinalizando(true)
+
+    try {
+      await finalizarLista(slug)
+      navigate('/questoes')
+    } catch (err) {
+      console.error(err)
+      setErro(err instanceof Error ? err.message : 'Não foi possível finalizar a lista.')
+    } finally {
+      setFinalizando(false)
     }
   }
 
@@ -241,15 +141,32 @@ export function QuestoesVisualizacao() {
   }
 
   function handleProxima() {
-    setCurrentIndex((prev) => Math.min(QUESTOES.length - 1, prev + 1))
+    setCurrentIndex((prev) => Math.min((dados?.questoes.length ?? 1) - 1, prev + 1))
   }
 
   function handleSelecionarQuestao(index: number) {
     setCurrentIndex(index)
   }
 
-  function handleToggleFlag() {
-    setFlagged((prev) => prev.map((value, i) => (i === currentIndex ? !value : value)))
+  async function handleToggleFavorito() {
+    if (!dados || !questao) return
+    const favoritaAnterior = questao.favorita
+
+    setDados({
+      ...dados,
+      questoes: dados.questoes.map((item, i) => (i === currentIndex ? { ...item, favorita: !favoritaAnterior } : item)),
+    })
+
+    try {
+      await favoritarQuestao(questao.id)
+    } catch (err) {
+      console.error(err)
+      setDados((prev) =>
+        prev
+          ? { ...prev, questoes: prev.questoes.map((item, i) => (i === currentIndex ? { ...item, favorita: favoritaAnterior } : item)) }
+          : prev,
+      )
+    }
   }
 
   function handlePedirDica() {
@@ -258,10 +175,10 @@ export function QuestoesVisualizacao() {
   }
 
   function handleExplicarComIA() {
+    if (!questao) return
     setIaAberta((prev) => {
       const abrindo = !prev
       if (abrindo && iaMensagens.length === 0) {
-        // TODO: conectar ao backend — pedir explicação real da IA para esta questão
         setIaMensagens([
           {
             sender: 'ada',
@@ -277,7 +194,6 @@ export function QuestoesVisualizacao() {
 
   function handleEnviarPerguntaIA() {
     if (!iaInput.trim()) return
-    // TODO: conectar ao backend — enviar a pergunta para a IA e receber a resposta real
     const pergunta = iaInput
     setIaMensagens((prev) => [
       ...prev,
@@ -291,6 +207,25 @@ export function QuestoesVisualizacao() {
     setIaInput('')
   }
 
+  if (carregando) {
+    return (
+      <main className={styles.page}>
+        <p>Carregando questões...</p>
+      </main>
+    )
+  }
+
+  if (erro || !dados || !questao) {
+    return (
+      <main className={styles.page}>
+        <p>{erro ?? 'Não foi possível carregar a lista de questões.'}</p>
+        <Button fullWidth={false} onClick={carregarLista}>
+          Tentar novamente
+        </Button>
+      </main>
+    )
+  }
+
   return (
     <main className={styles.page}>
       <div className={styles.header}>
@@ -301,10 +236,10 @@ export function QuestoesVisualizacao() {
 
         <div className={styles.progress}>
           <span className={styles.progressText}>
-            Questão {currentIndex + 1}/{QUESTOES.length}
+            Questão {currentIndex + 1}/{dados.questoes.length}
           </span>
           <QuestionProgressDots
-            total={QUESTOES.length}
+            total={dados.questoes.length}
             current={currentIndex}
             answered={respondidas}
             flagged={flagged}
@@ -312,10 +247,10 @@ export function QuestoesVisualizacao() {
           />
           <button
             type="button"
-            className={`${styles.flagButton}${flagged[currentIndex] ? ` ${styles['flagButton--active']}` : ''}`}
-            onClick={handleToggleFlag}
-            aria-pressed={flagged[currentIndex]}
-            aria-label={flagged[currentIndex] ? 'Remover marcação de dúvida' : 'Marcar questão com dúvida'}
+            className={`${styles.flagButton}${questao.favorita ? ` ${styles['flagButton--active']}` : ''}`}
+            onClick={handleToggleFavorito}
+            aria-pressed={questao.favorita}
+            aria-label={questao.favorita ? 'Remover dos favoritos' : 'Marcar como favorita'}
           >
             <FlagIcon />
           </button>
@@ -335,14 +270,19 @@ export function QuestoesVisualizacao() {
             key={index}
             letter={LETRAS[index]}
             text={option}
-            selected={selectedOption === index}
+            selected={questao.opcaoSelecionada === index}
             onSelect={() => handleSelecionarOpcao(index)}
           />
         ))}
       </div>
 
       <div className={styles.actions}>
-        <Button fullWidth={false} className={styles.answerButton} disabled={selectedOption === null} onClick={handleResponder}>
+        <Button
+          fullWidth={false}
+          className={styles.answerButton}
+          disabled={questao.opcaoSelecionada === null || enviandoResposta || finalizando}
+          onClick={handleResponder}
+        >
           {isLast ? 'Finalizar' : 'Responder'}
         </Button>
         <Button variant="outline" icon={<LightbulbIcon />} iconPosition="left" fullWidth={false} onClick={handlePedirDica}>

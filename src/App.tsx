@@ -152,7 +152,7 @@ function App() {
           </Route>
           <Route element={<PermissaoDaPagina idPagina="questoes" />}>
             <Route path="/questoes" element={<Questoes />} />
-            <Route path="/questoes/visualizacao" element={<QuestoesVisualizacao />} />
+            <Route path="/questoes/:slug" element={<QuestoesVisualizacao />} />
           </Route>
           <Route element={<PermissaoDaPagina idPagina="simulados" />}>
             <Route path="/simulados" element={<Simulados />} />

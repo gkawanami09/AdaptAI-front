@@ -1,5 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { TitlePage } from '../../components/ui/TitlePage'
+import { Button } from '../../components/ui/Button'
+import { CardDiv } from '../../components/cards/CardDiv'
 import { SettingsNavCard } from '../../components/cards/SettingsNavCard'
 import { ProfileCard } from '../../components/cards/ProfileCard'
 import { NotificationSettingsCard } from '../../components/cards/NotificationSettingsCard'
@@ -7,59 +9,12 @@ import { StudyGoalsCard } from '../../components/cards/StudyGoalsCard'
 import { AppearanceCard } from '../../components/cards/AppearanceCard'
 import { PrivacyCard } from '../../components/cards/PrivacyCard'
 import { useTheme } from '../../hooks/useTheme'
+import type { ThemePreference } from '../../hooks/useTheme'
 import { UserIcon, BellIcon, TargetIcon, PaletteIcon, ShieldIcon } from '../../components/ui/icons'
 import styles from './Configuracoes.module.css'
 
-// TODO: substituir pelos dados reais vindos do backend (perfil do aluno logado)
-const PERFIL = {
-  name: 'Guilherme Santos',
-  email: 'guilherme@email.com',
-  level: 12,
-  xp: 4820,
-  escola: 'Colégio Estadual SP',
-  anoEnem: '2025',
-}
-
-// TODO: substituir pelos dados reais vindos do backend (preferências de notificação do aluno)
-const NOTIFICACOES_INICIAIS = [
-  {
-    id: 'lembrete-diario',
-    label: 'Lembrete diário de estudos',
-    description: 'Receba um lembrete no horário que você definir',
-    enabled: true,
-  },
-  {
-    id: 'alerta-ofensiva',
-    label: 'Alerta de ofensiva',
-    description: 'Aviso quando sua ofensiva estiver em risco',
-    enabled: true,
-  },
-  {
-    id: 'novas-conquistas',
-    label: 'Novas conquistas',
-    description: 'Notificação ao desbloquear conquistas',
-    enabled: true,
-  },
-  {
-    id: 'relatorio-semanal',
-    label: 'Relatório semanal',
-    description: 'Resumo do seu progresso toda segunda-feira',
-    enabled: false,
-  },
-  {
-    id: 'novidades',
-    label: 'Novidades do AdaptAI',
-    description: 'Atualizações e novos recursos da plataforma',
-    enabled: false,
-  },
-]
-
-// TODO: substituir pelos dados reais vindos do backend (metas de estudo do aluno)
-const METAS = {
-  objetivo: 'Passar em universidade pública',
-  tempoEstudo: '2h',
-  notaAlvo: '700',
-}
+import { getConfiguracoesAluno, patchNotificacaoAluno, patchAparenciaAluno } from '../../services/configuracoesAluno'
+import type { GetConfiguracoesAlunoResponse } from '../../types/configuracoesAluno'
 
 const NAV_ITEMS = [
   { id: 'perfil', icon: <UserIcon />, iconColor: 'purple' as const, label: 'Perfil' },
@@ -71,16 +26,86 @@ const NAV_ITEMS = [
 
 export function Configuracoes() {
   const [activeId, setActiveId] = useState('perfil')
-  const [notificacoes, setNotificacoes] = useState(NOTIFICACOES_INICIAIS)
   const [tema, setTema] = useTheme()
 
-  function handleToggleNotificacao(id: string, enabled: boolean) {
-    setNotificacoes((prev) => prev.map((item) => (item.id === id ? { ...item, enabled } : item)))
+  const [dados, setDados] = useState<GetConfiguracoesAlunoResponse | null>(null)
+  const [carregando, setCarregando] = useState(false)
+  const [erro, setErro] = useState(false)
+
+  async function carregarConfiguracoes() {
+    setCarregando(true)
+    setErro(false)
+
+    try {
+      const resposta = await getConfiguracoesAluno()
+      setDados(resposta)
+    } catch (err) {
+      console.error(err)
+      setErro(true)
+    } finally {
+      setCarregando(false)
+    }
+  }
+
+  useEffect(() => {
+    carregarConfiguracoes()
+  }, [])
+
+  async function handleToggleNotificacao(id: string, enabled: boolean) {
+    if (!dados) return
+    const anterior = dados.notificacoes
+
+    setDados({
+      ...dados,
+      notificacoes: dados.notificacoes.map((item) => (item.id === id ? { ...item, enabled } : item)),
+    })
+
+    try {
+      await patchNotificacaoAluno({ id, enabled })
+    } catch (err) {
+      console.error(err)
+      setDados((prev) => (prev ? { ...prev, notificacoes: anterior } : prev))
+    }
+  }
+
+  async function handleChangeTema(novoTema: ThemePreference) {
+    const anterior = tema
+    setTema(novoTema)
+
+    try {
+      await patchAparenciaAluno({ tema: novoTema })
+    } catch (err) {
+      console.error(err)
+      setTema(anterior)
+    }
   }
 
   function handlePrivacyAction(id: string) {
     // TODO: conectar ao backend — abrir o fluxo correspondente (troca de senha, export, exclusão de conta, etc.)
     console.log('ação de privacidade', id)
+  }
+
+  if (carregando) {
+    return (
+      <main className={styles.page}>
+        <CardDiv>
+          <p>Carregando configurações...</p>
+        </CardDiv>
+      </main>
+    )
+  }
+
+  if (erro || !dados) {
+    return (
+      <main className={styles.page}>
+        <CardDiv>
+          <p>Não foi possível carregar as configurações.</p>
+          <Button fullWidth={false} onClick={carregarConfiguracoes}>
+            Tentar novamente
+          </Button>
+        </CardDiv>
+      </main>
+    )
   }
 
   return (
@@ -95,25 +120,29 @@ export function Configuracoes() {
         <div className={styles.mainColumn}>
           {activeId === 'perfil' && (
             <ProfileCard
-              name={PERFIL.name}
-              email={PERFIL.email}
-              level={PERFIL.level}
-              xp={PERFIL.xp}
-              escola={PERFIL.escola}
-              anoEnem={PERFIL.anoEnem}
+              name={dados.perfil.nome}
+              email={dados.perfil.email}
+              level={dados.perfil.nivel}
+              xp={dados.perfil.xp_total}
+              escola={dados.perfil.escola}
+              anoEnem={dados.perfil.ano_enem}
             />
           )}
           {activeId === 'notificacoes' && (
             <NotificationSettingsCard
               title="Notificações"
-              items={notificacoes}
+              items={dados.notificacoes}
               onToggle={handleToggleNotificacao}
             />
           )}
           {activeId === 'metas' && (
-            <StudyGoalsCard objetivo={METAS.objetivo} tempoEstudo={METAS.tempoEstudo} notaAlvo={METAS.notaAlvo} />
+            <StudyGoalsCard
+              objetivo={dados.metas.objetivo}
+              tempoEstudo={dados.metas.tempo_estudo}
+              notaAlvo={dados.metas.nota_alvo}
+            />
           )}
-          {activeId === 'aparencia' && <AppearanceCard value={tema} onChange={setTema} />}
+          {activeId === 'aparencia' && <AppearanceCard value={tema} onChange={handleChangeTema} />}
           {activeId === 'privacidade' && <PrivacyCard onAction={handlePrivacyAction} />}
         </div>
       </div>
