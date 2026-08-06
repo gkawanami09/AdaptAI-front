@@ -1,0 +1,109 @@
+.grid {
+  display: flex;
+  align-items: stretch;
+  gap: 28px;
+
+  @media (max-width: 720px) {
+    flex-direction: column;
+  }
+}
+
+.scoreColumn {
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+}
+
+.scoreLabel {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.scoreValue {
+  font-family: var(--heading);
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--primary);
+  margin-top: 2px;
+}
+
+.scoreMax {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.competencias {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.competenciaTile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  min-width: 48px;
+}
+
+.competenciaNota {
+  font-family: var(--heading);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-h);
+}
+
+.competenciaLabel {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.statusColumn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  padding-left: 28px;
+  border-left: 1px solid var(--border);
+
+  @media (max-width: 720px) {
+    padding-left: 0;
+    border-left: none;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+}
+
+.statusLabel {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.statusValue {
+  font-family: var(--heading);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.statusMessage {
+  margin: 6px 0 0;
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 150%;
+  color: var(--text-muted);
+}

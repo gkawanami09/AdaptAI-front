@@ -1,0 +1,26 @@
+.content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.title {
+  font-family: var(--heading);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.description {
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 145%;
+  color: var(--text-muted);
+}

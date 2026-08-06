@@ -1,0 +1,71 @@
+.page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 48px 32px;
+  box-sizing: border-box;
+}
+
+.section {
+  margin-top: 28px;
+}
+
+.gridInsights {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+
+  @media (max-width: 720px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.gridRepertorios {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 560px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.gridCompetencias {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+
+  @media (max-width: 720px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.resumo {
+  margin: 10px 0 0;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 160%;
+  color: var(--text);
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.finalActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+
+  @media (max-width: 560px) {
+    flex-direction: column;
+  }
+}

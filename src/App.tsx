@@ -13,6 +13,9 @@ import { Questoes } from './pages/Questoes/questoes'
 import { QuestoesVisualizacao } from './pages/Questoes/QuestoesVisualizacao'
 import { Simulados } from './pages/Simulados/Simulados'
 import { Redacao } from './pages/Redacao/redacao'
+import { RedacaoTemas } from './pages/Redacao/RedacaoTemas'
+import { RedacaoProcessando } from './pages/Redacao/RedacaoProcessando'
+import { RedacaoResultado } from './pages/Redacao/RedacaoResultado'
 import { Chat } from './pages/Chat/Chat'
 import { Progresso } from './pages/Progresso/Progresso'
 import { Conquistas } from './pages/Conquistas/Conquistas'
@@ -158,7 +161,10 @@ function App() {
             <Route path="/simulados" element={<Simulados />} />
           </Route>
           <Route element={<PermissaoDaPagina idPagina="redacao" />}>
-            <Route path="/redacao" element={<Redacao />} />
+            <Route path="/redacao" element={<RedacaoTemas />} />
+            <Route path="/redacao/:slug" element={<Redacao />} />
+            <Route path="/redacao/:slug/processando/:envioId" element={<RedacaoProcessando />} />
+            <Route path="/redacao/:slug/resultado/:envioId" element={<RedacaoResultado />} />
           </Route>
           <Route element={<PermissaoDaPagina idPagina="chat" />}>
             <Route path="/chat" element={<Chat />} />

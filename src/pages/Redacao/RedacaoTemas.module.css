@@ -1,0 +1,33 @@
+.page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 48px 32px;
+  box-sizing: border-box;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 28px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.emptyState {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 24px 0;
+}
+
+.retryRow {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
