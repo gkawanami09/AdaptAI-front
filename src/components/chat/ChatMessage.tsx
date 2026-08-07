@@ -1,3 +1,6 @@
+import ReactMarkdown from 'react-markdown'
+import remarkMath from 'remark-math'
+import rehypeKatex from 'rehype-katex'
 import { AdaAvatar } from './AdaAvatar'
 import styles from './ChatMessage.module.css'
 
@@ -18,7 +21,17 @@ export function ChatMessage({ sender, text, time }: ChatMessageProps) {
       {isAda && <AdaAvatar size="sm" />}
 
       <div className={styles.column}>
-        <div className={`${styles.bubble} ${isAda ? styles['bubble--ada'] : styles['bubble--user']}`}>{text}</div>
+        <div className={`${styles.bubble} ${isAda ? styles['bubble--ada'] : styles['bubble--user']}`}>
+          {isAda ? (
+            <div className={styles.markdown}>
+              <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
+                {text}
+              </ReactMarkdown>
+            </div>
+          ) : (
+            text
+          )}
+        </div>
         <span className={styles.time}>{time}</span>
       </div>
     </div>

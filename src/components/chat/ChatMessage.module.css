@@ -48,6 +48,39 @@
   color: #fff;
 }
 
+.markdown p {
+  margin: 0 0 8px;
+}
+
+.markdown p:last-child {
+  margin-bottom: 0;
+}
+
+.markdown strong {
+  font-weight: 600;
+}
+
+.markdown ul,
+.markdown ol {
+  margin: 4px 0 8px;
+  padding-left: 20px;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 8px 0 4px;
+}
+
+.markdown code {
+  background: var(--bg-subtle, rgba(0, 0, 0, 0.05));
+  border-radius: 4px;
+  padding: 1px 4px;
+  font-size: 13px;
+}
+
 .time {
   font-family: var(--sans);
   font-size: 11px;
