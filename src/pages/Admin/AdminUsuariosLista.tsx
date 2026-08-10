@@ -14,6 +14,8 @@ import { SuspensionModal } from '../../components/cards/SuspensionModal'
 import { BanModal } from '../../components/cards/BanModal'
 import { NewUserModal } from '../../components/cards/NewUserModal'
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog'
+import { Toast } from '../../components/ui/Toast'
+import type { ToastType } from '../../components/ui/Toast'
 import { AreaLineChart } from '../../components/charts/AreaLineChart'
 import { DonutChart } from '../../components/charts/DonutChart'
 import type { DonutChartSlice } from '../../components/charts/DonutChart'
@@ -66,6 +68,9 @@ export function AdminUsuariosLista() {
 
   const [usuarioSelecionadoId, setUsuarioSelecionadoId] = useState<string | null>(null)
   const [abrirEdicaoAoSelecionar, setAbrirEdicaoAoSelecionar] = useState(false)
+
+  const [toast, setToast] = useState<{ type: ToastType; message: string } | null>(null)
+  const [novoUsuarioModalKey, setNovoUsuarioModalKey] = useState(0)
 
   async function carregarUsuarios() {
     setCarregando(true)
@@ -160,9 +165,12 @@ export function AdminUsuariosLista() {
     try {
       await postUsuario({ nome, email, cargo })
       setUsuarioParaCriar(false)
+      setNovoUsuarioModalKey((key) => key + 1)
+      setToast({ type: 'success', message: 'Usuário criado com sucesso.' })
       carregarUsuarios()
     } catch (err) {
-      console.error(err)
+      const message = err instanceof Error ? err.message : 'Não foi possível criar o usuário.'
+      setToast({ type: 'error', message })
     } finally {
       setProcessando(false)
     }
@@ -400,8 +408,15 @@ export function AdminUsuariosLista() {
       )}
 
       {usuarioParaCriar && (
-        <NewUserModal criando={processando} onConfirm={handleConfirmarCriacao} onClose={() => setUsuarioParaCriar(false)} />
+        <NewUserModal
+          key={novoUsuarioModalKey}
+          criando={processando}
+          onConfirm={handleConfirmarCriacao}
+          onClose={() => setUsuarioParaCriar(false)}
+        />
       )}
+
+      {toast && <Toast type={toast.type} message={toast.message} onClose={() => setToast(null)} />}
     </AdminPageLayout>
   )
 }

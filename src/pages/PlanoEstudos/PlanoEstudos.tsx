@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { TitlePage } from '../../components/ui/TitlePage'
 import { Button } from '../../components/ui/Button'
 import { SegmentedControl } from '../../components/ui/SegmentedControl'
@@ -34,6 +35,7 @@ function formatarDuracao(minutos: number) {
 }
 
 export function PlanoEstudos() {
+  const navigate = useNavigate()
   const [periodo, setPeriodo] = useState<PlanoEstudosPeriodo>('semana')
   const [dataReferencia, setDataReferencia] = useState(() => new Date())
   const [dados, setDados] = useState<GetPlanoEstudosResponse | null>(null)
@@ -111,6 +113,9 @@ export function PlanoEstudos() {
           </Button>
           <Button variant="outline" pill fullWidth={false} icon={<PlusIcon />} iconPosition="left">
             Adicionar tarefa
+          </Button>
+          <Button pill fullWidth={false} icon={<PlusIcon />} iconPosition="left" onClick={() => navigate('/plano-de-estudos/criar')}>
+            Criar plano de estudos
           </Button>
         </div>
       </div>

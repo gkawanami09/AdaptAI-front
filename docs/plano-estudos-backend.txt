@@ -1,0 +1,226 @@
+====================================================================
+ESPECIFICACAO BACKEND — CRIACAO DE PLANO DE ESTUDOS (WIZARD)
+====================================================================
+Frontend: src/pages/PlanoEstudos/PlanoEstudosCriar.tsx
+Service:  src/services/planoEstudos.ts
+Types:    src/types/planoEstudosCriar.ts
+Rota:     /plano-de-estudos/criar
+
+Autenticacao: todos os endpoints abaixo exigem usuario autenticado
+(Bearer token JWT, mesmo padrao ja usado em /aluno/*). O aluno NUNCA
+e enviado no payload — ele deve ser identificado pelo token.
+
+--------------------------------------------------------------------
+1) GET /aluno/plano-estudos/opcoes
+--------------------------------------------------------------------
+Responsabilidade do backend:
+- identificar o aluno pelo JWT
+- retornar a lista de provas e materias disponiveis para montagem do
+  plano (pode incluir apenas as provas/materias relevantes para o
+  aluno, se fizer sentido futuramente)
+
+Auth: obrigatoria (Bearer token)
+Query params: nenhum
+
+Response 200:
+{
+  "provas": [
+    { "slug": "enem", "nome": "ENEM", "descricao": "Exame Nacional do Ensino Médio" },
+    { "slug": "fuvest", "nome": "Fuvest", "descricao": "Fundação Universitária para o Vestibular" }
+  ],
+  "materias": [
+    { "slug": "matematica", "nome": "Matemática" },
+    { "slug": "redacao", "nome": "Redação" }
+  ]
+}
+
+Tipos TypeScript equivalentes (ja implementados no frontend):
+  type ProvaOpcao = { slug: string; nome: string; descricao?: string }
+  type MateriaOpcao = { slug: string; nome: string }
+  type GetPlanoEstudosOpcoesResponse = { provas: ProvaOpcao[]; materias: MateriaOpcao[] }
+
+Codigos HTTP:
+  200 OK — sucesso
+  401 Unauthorized — token ausente/invalido
+
+Comportamento no frontend:
+- Enquanto este endpoint nao existir ou falhar, a tela usa uma lista
+  fallback local (ENEM, Fuvest, Unicamp, UERJ, Outras provas / 10
+  materias padrao do ENEM). Isso é temporario e claramente isolado em
+  src/pages/PlanoEstudos/planoEstudosCriarFallback.ts — assim que o
+  endpoint responder corretamente, ele passa a ser a fonte real dos
+  dados sem qualquer mudanca de codigo no frontend.
+
+--------------------------------------------------------------------
+2) POST /aluno/plano-estudos
+--------------------------------------------------------------------
+Responsabilidade do backend:
+- validar as preferencias recebidas
+- identificar o aluno pelo JWT (NAO recebe id do aluno no payload)
+- salvar a configuracao escolhida pelo aluno
+- iniciar a geracao do plano (de forma sincrona ou assincrona)
+- futuramente: chamar o servico de IA responsavel por montar o
+  cronograma, salvar o plano gerado no banco
+- retornar o id do plano e o status atual da geracao
+
+Auth: obrigatoria (Bearer token)
+
+Payload (JSON):
+{
+  "provas": ["enem", "fuvest"],
+  "materias": ["matematica", "fisica", "redacao"],
+  "tempo_por_dia_minutos": 120,
+  "dias_estudo": ["monday", "tuesday", "wednesday", "friday"]
+}
+
+Tipo TypeScript equivalente:
+  type DiaSemana = 'monday' | 'tuesday' | 'wednesday' | 'thursday'
+                  | 'friday' | 'saturday' | 'sunday'
+
+  type PostCriarPlanoEstudosParams = {
+    provas: string[]
+    materias: string[]
+    tempo_por_dia_minutos: number
+    dias_estudo: DiaSemana[]
+  }
+
+Regras de validacao esperadas pelo backend (o frontend ja garante
+isso antes de enviar, mas o backend deve validar novamente):
+- provas: array com pelo menos 1 item, slugs validos
+- materias: array com pelo menos 1 item, slugs validos
+- tempo_por_dia_minutos: numero inteiro positivo (> 0)
+- dias_estudo: array com pelo menos 1 item, valores dentre os 7
+  permitidos, sem duplicados
+
+Response 201 (Created):
+{
+  "id": "uuid-do-plano",
+  "status": "gerando",
+  "mensagem": "Seu plano está sendo gerado."
+}
+
+Tipo TypeScript equivalente:
+  type PlanoEstudosGeradoStatus = 'gerando' | 'concluido' | 'erro'
+
+  type PostCriarPlanoEstudosResponse = {
+    id: string
+    status: PlanoEstudosGeradoStatus
+    mensagem?: string
+  }
+
+Codigos HTTP:
+  201 Created — plano criado e geracao iniciada
+  400 Bad Request — payload invalido (ex.: array vazio, tempo <= 0)
+  401 Unauthorized — token ausente/invalido
+  422 Unprocessable Entity — slugs de prova/materia inexistentes
+
+Comportamento de loading no frontend:
+- ao clicar em "Gerar meu plano" (etapa de revisão), o botao entra em
+  estado de carregamento e o card de revisao exibe o componente de
+  loading padrao do projeto ("Gerando seu plano...") ate a resposta
+  chegar.
+- em caso de erro, a mensagem retornada em "detail"/erro é exibida
+  proxima aos botoes de acao, sem perder as selecoes do aluno.
+- em caso de sucesso, a tela mostra uma confirmacao e um botao para
+  ir ate a pagina /plano-de-estudos.
+
+--------------------------------------------------------------------
+3) GET /aluno/plano-estudos/{id}
+--------------------------------------------------------------------
+Responsabilidade do backend:
+- identificar o aluno pelo JWT e validar que o plano pertence a ele
+- retornar o status atual da geracao (gerando / concluido / erro)
+- quando concluido, retornar a estrutura completa do plano gerado
+  pela IA
+
+Auth: obrigatoria (Bearer token)
+Path params: id (uuid do plano retornado pelo POST)
+
+Response 200 (gerando):
+{
+  "id": "uuid-do-plano",
+  "status": "gerando"
+}
+
+Response 200 (concluido):
+{
+  "id": "uuid-do-plano",
+  "status": "concluido",
+  "plano": {
+    "periodo": { "inicio": "2026-08-10", "fim": "2026-11-10" },
+    "semanas": [
+      {
+        "numero": 1,
+        "dias": [
+          {
+            "dia": "monday",
+            "data": "2026-08-10",
+            "sessoes": [
+              { "materia": "matematica", "duracao_minutos": 60, "tipo": "teoria" },
+              { "materia": "redacao", "duracao_minutos": 60, "tipo": "pratica" }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+
+Response 200 (erro na geracao):
+{
+  "id": "uuid-do-plano",
+  "status": "erro",
+  "mensagem": "Não foi possível gerar o plano. Tente novamente."
+}
+
+Tipos TypeScript equivalentes:
+  type PlanoEstudosGeradoSessao = { materia: string; duracao_minutos: number; tipo: string }
+  type PlanoEstudosGeradoDia = { dia: DiaSemana; data: string; sessoes: PlanoEstudosGeradoSessao[] }
+  type PlanoEstudosGeradoSemana = { numero: number; dias: PlanoEstudosGeradoDia[] }
+  type PlanoEstudosGerado = {
+    periodo: { inicio: string; fim: string }
+    semanas: PlanoEstudosGeradoSemana[]
+  }
+  type GetPlanoEstudosGeradoResponse = {
+    id: string
+    status: PlanoEstudosGeradoStatus
+    mensagem?: string
+    plano?: PlanoEstudosGerado
+  }
+
+Codigos HTTP:
+  200 OK — sucesso (independente do status ser gerando/concluido/erro)
+  401 Unauthorized — token ausente/invalido
+  404 Not Found — plano nao existe ou nao pertence ao aluno
+
+Comportamento assincrono esperado pelo frontend:
+- o service "getPlanoEstudosGerado(id)" ja esta implementado e pronto
+  para ser chamado apos o POST, mas a tela de visualizacao do plano
+  gerado (com o cronograma completo) ainda nao foi construida — isso
+  fica para uma proxima entrega.
+- quando essa tela for implementada, o padrao esperado e fazer
+  polling simples neste endpoint enquanto status === "gerando", e
+  parar assim que vier "concluido" ou "erro". Nenhuma mudanca de
+  contrato devera ser necessaria para isso.
+
+--------------------------------------------------------------------
+INTEGRACAO FUTURA COM IA
+--------------------------------------------------------------------
+Fluxo esperado:
+
+  Frontend
+    -> POST /aluno/plano-estudos (envia preferencias)
+    -> Backend valida, salva e responde { id, status: "gerando" }
+    -> Backend aciona o servico de geracao (fila/job assincrono)
+    -> Servico de geracao chama o modelo de IA com as preferencias
+       do aluno (provas, materias, tempo_por_dia_minutos, dias_estudo)
+    -> IA retorna o cronograma, que e salvo no banco associado ao id
+       do plano
+    -> Frontend consulta GET /aluno/plano-estudos/{id} e recebe
+       status "concluido" + o campo "plano" preenchido
+
+O frontend NUNCA chama o modelo de IA diretamente nem conhece
+detalhes do provedor/modelo usado — toda a orquestracao acontece no
+backend. A estrutura de "plano" descrita acima e um contrato inicial;
+pode ser estendida (novos campos dentro de cada sessao, por exemplo)
+sem quebrar o frontend, desde que os campos existentes sejam mantidos.

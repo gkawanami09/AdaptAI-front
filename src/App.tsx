@@ -7,6 +7,7 @@ import { VerificarCodigoPage } from './pages/VerificarCodigo/VerificarCodigoPage
 import { DashboardPage } from './pages/Dashboard/DashboardPage'
 import { OnboardingPage } from './pages/Onboarding/OnboardingPage'
 import { PlanoEstudos } from './pages/PlanoEstudos/PlanoEstudos'
+import { PlanoEstudosCriar } from './pages/PlanoEstudos/PlanoEstudosCriar'
 import { Aulas } from './pages/Aulas/Aulas'
 import { AulaVisualizacao } from './pages/Aulas/AulaVisualizacao'
 import { Questoes } from './pages/Questoes/questoes'
@@ -148,6 +149,7 @@ function App() {
               cada uma ganhar sua própria página, seguindo o mesmo padrão acima */}
           <Route element={<PermissaoDaPagina idPagina="plano-de-estudos" />}>
             <Route path="/plano-de-estudos" element={<PlanoEstudos />} />
+            <Route path="/plano-de-estudos/criar" element={<PlanoEstudosCriar />} />
           </Route>
           <Route element={<PermissaoDaPagina idPagina="aulas" />}>
             <Route path="/aulas" element={<Aulas />} />

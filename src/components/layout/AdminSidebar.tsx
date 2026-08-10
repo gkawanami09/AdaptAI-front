@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import {
+  ArrowLeftIcon,
   BarChartIcon,
   BoltIcon,
   BookIcon,
@@ -139,6 +140,11 @@ export function AdminSidebar({ perfil }: AdminSidebarProps) {
             <span className={styles.navLabel}>{label}</span>
           </NavLink>
         ))}
+
+        <Link to="/dashboard" className={styles.navItem}>
+          <ArrowLeftIcon className={styles.navIcon} />
+          <span className={styles.navLabel}>Voltar ao app</span>
+        </Link>
       </nav>
 
       <button type="button" className={styles.userArea} onClick={handleLogout} title="Sair">

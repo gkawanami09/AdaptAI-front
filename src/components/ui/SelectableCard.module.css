@@ -1,0 +1,84 @@
+.card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius);
+  background: var(--surface);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+  box-sizing: border-box;
+}
+
+.card:hover {
+  border-color: var(--primary-border);
+}
+
+.card--selected {
+  border-color: var(--primary);
+  background: var(--primary-bg);
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--code-bg);
+  color: var(--primary);
+}
+
+.icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-family: var(--heading);
+  font-size: 14px;
+  color: var(--text-h);
+}
+
+.description {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  border: 1.5px solid var(--border);
+  color: #fff;
+}
+
+.checkbox svg {
+  width: 13px;
+  height: 13px;
+}
+
+.checkbox--checked {
+  border-color: var(--primary);
+  background: var(--primary);
+}

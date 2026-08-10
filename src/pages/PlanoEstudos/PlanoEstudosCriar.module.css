@@ -1,0 +1,269 @@
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 32px 32px 64px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.backLink:hover {
+  color: var(--text-h);
+}
+
+.backIcon {
+  width: 14px;
+  height: 14px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.infoCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 340px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  flex-shrink: 0;
+}
+
+.infoCard p {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.progress {
+  display: flex;
+  align-items: flex-start;
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  padding: 18px 20px;
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+}
+
+.progressItem {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.progressStep {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.progressNumber {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--code-bg);
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.progressNumberActive {
+  background: var(--primary);
+  color: #fff;
+}
+
+.progressText {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  white-space: nowrap;
+}
+
+.progressText strong {
+  font-family: var(--heading);
+  font-size: 13px;
+  color: var(--text-h);
+}
+
+.progressText small {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.progressLine {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+  margin: 0 14px;
+}
+
+.stepDescription {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.optionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.optionsGridCompact {
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+}
+
+.validationMessage {
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #ef4444;
+}
+
+.splitRow {
+  display: flex;
+  align-items: stretch;
+  gap: 20px;
+
+  @media (max-width: 900px) {
+    flex-direction: column;
+  }
+}
+
+.splitRow > * {
+  flex: 1;
+  min-width: 0;
+}
+
+.tipBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 12px 14px;
+  border-radius: var(--border-radius);
+  background: var(--primary-bg);
+  color: var(--primary);
+}
+
+.tipBanner svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.tipBanner p {
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.diasGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.loadingHint {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+
+  @media (max-width: 600px) {
+    flex-direction: column-reverse;
+  }
+}
+
+.reviewSection {
+  margin-top: 20px;
+}
+
+.reviewLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.reviewBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.reviewValue {
+  font-family: var(--heading);
+  font-size: 16px;
+  color: var(--text-h);
+}
+
+.successState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  padding: 24px 12px;
+}
+
+.successIcon {
+  display: inline-flex;
+  color: #10b981;
+}
+
+.successIcon svg {
+  width: 48px;
+  height: 48px;
+}
+
+.successText {
+  color: var(--text-muted);
+  font-size: 14px;
+  max-width: 420px;
+}
+
+.successActions {
+  margin-top: 8px;
+}
