@@ -24,7 +24,15 @@ const PERIODO_OPTIONS: { value: PlanoEstudosPeriodo; label: string }[] = [
 ]
 
 function formatarDataISO(data: Date) {
-  return data.toISOString().slice(0, 10)
+  const ano = data.getFullYear()
+  const mes = String(data.getMonth() + 1).padStart(2, '0')
+  const dia = String(data.getDate()).padStart(2, '0')
+  return `${ano}-${mes}-${dia}`
+}
+
+function parseDataISO(dataIso: string) {
+  const [ano, mes, dia] = dataIso.split('-').map(Number)
+  return new Date(ano, mes - 1, dia)
 }
 
 function formatarDuracao(minutos: number) {
@@ -77,7 +85,7 @@ export function PlanoEstudos() {
 
   function handleSelecionarDia(diaSelecionado: number) {
     const dia = dados?.dias_da_semana.find((item) => item.data === diaSelecionado)
-    if (dia) setDataReferencia(new Date(dia.data_iso))
+    if (dia) setDataReferencia(parseDataISO(dia.data_iso))
   }
 
   async function handleReorganizarComIA() {
