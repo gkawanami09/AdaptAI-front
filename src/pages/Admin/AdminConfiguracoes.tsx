@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AdminPageLayout } from '../../components/layout/AdminPageLayout'
 import { Breadcrumb } from '../../components/ui/Breadcrumb'
 import { TitlePage } from '../../components/ui/TitlePage'
@@ -24,6 +24,7 @@ import {
 import styles from './AdminConfiguracoes.module.css'
 
 import {
+  enviarLogo,
   getConfiguracoesAutenticacao,
   getConfiguracoesConteudo,
   getConfiguracoesGerais,
@@ -121,6 +122,9 @@ function TabGeral() {
   const [carregando, setCarregando] = useState(true)
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState(false)
+  const [enviandoLogo, setEnviandoLogo] = useState(false)
+  const [erroLogo, setErroLogo] = useState<string | null>(null)
+  const logoInputRef = useRef<HTMLInputElement>(null)
 
   async function carregar() {
     setCarregando(true)
@@ -150,6 +154,24 @@ function TabGeral() {
       console.error(err)
     } finally {
       setSalvando(false)
+    }
+  }
+
+  async function handleAlterarLogo(event: React.ChangeEvent<HTMLInputElement>) {
+    const arquivo = event.target.files?.[0]
+    event.target.value = ''
+    if (!arquivo || !config) return
+
+    setEnviandoLogo(true)
+    setErroLogo(null)
+    try {
+      const resposta = await enviarLogo(arquivo, 'logo')
+      setConfig(resposta.configuracoes)
+    } catch (err) {
+      console.error(err)
+      setErroLogo(err instanceof Error ? err.message : 'Não foi possível enviar a logo.')
+    } finally {
+      setEnviandoLogo(false)
     }
   }
 
@@ -205,17 +227,32 @@ function TabGeral() {
             <span>Logo da Plataforma</span>
             <div className={styles.logoRow}>
               <span className={styles.logoPreview}>
-                <BoltIcon />
+                {config.logo_url ? <img src={config.logo_url} alt="Logo da plataforma" /> : <BoltIcon />}
               </span>
               <div className={styles.logoActions}>
-                <Button type="button" variant="outline" fullWidth={false} size="sm">
-                  Alterar Logo
+                <input
+                  ref={logoInputRef}
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={handleAlterarLogo}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  fullWidth={false}
+                  size="sm"
+                  disabled={enviandoLogo}
+                  onClick={() => logoInputRef.current?.click()}
+                >
+                  {enviandoLogo ? 'Enviando...' : 'Alterar Logo'}
                 </Button>
-                <Button type="button" variant="outline" fullWidth={false} size="sm">
+                <Button type="button" variant="outline" fullWidth={false} size="sm" disabled title="Remoção de logo ainda não suportada pela API">
                   Remover
                 </Button>
               </div>
             </div>
+            {erroLogo && <p className={styles.validationMessage}>{erroLogo}</p>}
           </div>
 
           <SelectField
@@ -673,6 +710,7 @@ function TabIa() {
   const [promptTeste, setPromptTeste] = useState('')
   const [testando, setTestando] = useState(false)
   const [resultadoTeste, setResultadoTeste] = useState<PostTestarIaResponse | null>(null)
+  const [erroTeste, setErroTeste] = useState<string | null>(null)
 
   async function carregar() {
     setCarregando(true)
@@ -709,6 +747,7 @@ function TabIa() {
     if (!config) return
     setTestando(true)
     setResultadoTeste(null)
+    setErroTeste(null)
     try {
       const resposta = await postTestarIa({
         modelo: config.modelo,
@@ -720,6 +759,7 @@ function TabIa() {
       setResultadoTeste(resposta)
     } catch (err) {
       console.error(err)
+      setErroTeste(err instanceof Error ? err.message : 'Não foi possível testar a configuração.')
     } finally {
       setTestando(false)
     }
@@ -815,6 +855,8 @@ function TabIa() {
             {testando ? 'Testando...' : 'Testar Configuração'}
           </Button>
         </div>
+
+        {erroTeste && <p className={styles.validationMessage}>{erroTeste}</p>}
 
         {resultadoTeste && (
           <div className={styles.testResult}>

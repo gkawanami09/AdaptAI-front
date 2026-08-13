@@ -9,6 +9,7 @@ import type {
     GetIntegracoesResponse,
     GetUsuariosAdminParams,
     GetUsuariosAdminResponse,
+    LogoTipo,
     PatchConfiguracoesAutenticacaoParams,
     PatchConfiguracoesAutenticacaoResponse,
     PatchConfiguracoesConteudoParams,
@@ -23,6 +24,7 @@ import type {
     PatchIntegracaoResponse,
     PatchUsuarioAdminParams,
     PatchUsuarioAdminResponse,
+    PostEnviarLogoResponse,
     PostTestarIaParams,
     PostTestarIaResponse,
 } from "../types/configuracoes"
@@ -43,6 +45,18 @@ export function patchConfiguracoesGerais(params: PatchConfiguracoesGeraisParams)
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(params)
+    })
+}
+
+export function enviarLogo(arquivo: File, tipo: LogoTipo) {
+    const formData = new FormData()
+    formData.append("arquivo", arquivo)
+    formData.append("tipo", tipo)
+
+    // sem Content-Type explícito: o fetch define o boundary do multipart/form-data automaticamente
+    return requestAuthJson<PostEnviarLogoResponse>(`${API_CONFIGURACOES_PREFIX}/gerais/logo`, {
+        method: "POST",
+        body: formData
     })
 }
 

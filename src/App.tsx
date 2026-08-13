@@ -39,6 +39,7 @@ import { AdminListaNova } from './pages/Admin/AdminListaNova'
 import { AdminTiposProvaLista } from './pages/Admin/AdminTiposProvaLista'
 import { AdminTipoProvaNova } from './pages/Admin/AdminTipoProvaNova'
 import { AdminRelatorios } from './pages/Admin/AdminRelatorios'
+import { AdminMonitoramento } from './pages/Admin/AdminMonitoramento'
 import { AdminConfiguracoes } from './pages/Admin/AdminConfiguracoes'
 
 import { Header } from './components/layout/Header'
@@ -219,6 +220,7 @@ function App() {
             <Route path="/admin/tipos-prova/:id/editar" element={<AdminTipoProvaNova />} />
 
             <Route path="/admin/relatorios" element={<AdminRelatorios />} />
+            <Route path="/admin/monitoramento" element={<AdminMonitoramento />} />
 
             <Route path="/admin/configuracoes" element={<AdminConfiguracoes />} />
           </Route>

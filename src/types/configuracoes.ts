@@ -23,6 +23,14 @@ export type PatchConfiguracoesGeraisResponse = {
     configuracoes: ConfiguracoesGerais
 }
 
+export type LogoTipo = 'logo' | 'favicon'
+
+export type PostEnviarLogoResponse = {
+    sucesso: boolean
+    mensagem: string
+    configuracoes: ConfiguracoesGerais
+}
+
 export type UsuarioAdminCargo = 'admin' | 'editor' | 'suporte' | 'aluno'
 export type UsuarioAdminStatus = 'ativo' | 'inativo'
 

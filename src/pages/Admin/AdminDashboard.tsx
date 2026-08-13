@@ -19,7 +19,6 @@ import {
   BookIcon,
   ClipboardIcon,
   ClockIcon,
-  DownloadIcon,
   FileTextIcon,
   FireIcon,
   FlagIcon,
@@ -136,10 +135,6 @@ export function AdminDashboard() {
                 </option>
               ))}
             </SelectField>
-
-            <Button fullWidth={false} icon={<DownloadIcon />} iconPosition="left">
-              Exportar
-            </Button>
           </div>
         </div>
 

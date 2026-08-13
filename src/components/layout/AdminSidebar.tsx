@@ -12,6 +12,7 @@ import {
   HelpCircleIcon,
   LogOutIcon,
   SettingsIcon,
+  TrendingUpIcon,
   UsersIcon,
 } from '../ui/icons'
 import { clearStoredAuth } from '../../services/auth'
@@ -41,6 +42,7 @@ const avaliacoesItems = [
 
 const bottomItems = [
   { to: '/admin/relatorios', label: 'Relatórios', icon: BarChartIcon },
+  { to: '/admin/monitoramento', label: 'Monitoramento', icon: TrendingUpIcon },
   { to: '/admin/configuracoes', label: 'Configurações', icon: SettingsIcon },
 ]
 

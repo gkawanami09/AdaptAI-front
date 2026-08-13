@@ -12,6 +12,8 @@ import { WeekOverviewCard } from '../../components/calendar/WeekOverviewCard'
 import { PriorityListCard } from '../../components/cards/PriorityListCard'
 import { StatsListCard } from '../../components/cards/StatsListCard'
 import { PlusIcon, SparklesIcon } from '../../components/ui/icons'
+import { Toast } from '../../components/ui/Toast'
+import type { ToastType } from '../../components/ui/Toast'
 import styles from './PlanoEstudos.module.css'
 
 import { getPlanoEstudos, postReorganizarPlanoComIA } from '../../services/planoEstudos'
@@ -50,6 +52,7 @@ export function PlanoEstudos() {
   const [carregando, setCarregando] = useState(false)
   const [erro, setErro] = useState(false)
   const [reorganizando, setReorganizando] = useState(false)
+  const [toast, setToast] = useState<{ type: ToastType; message: string } | null>(null)
 
   async function carregarPlano() {
     setCarregando(true)
@@ -93,8 +96,10 @@ export function PlanoEstudos() {
     try {
       await postReorganizarPlanoComIA()
       await carregarPlano()
+      setToast({ type: 'success', message: 'Plano reorganizado com sucesso.' })
     } catch (err) {
       console.error(err)
+      setToast({ type: 'error', message: 'Não foi possível reorganizar o plano. Tente novamente.' })
     } finally {
       setReorganizando(false)
     }
@@ -105,6 +110,8 @@ export function PlanoEstudos() {
 
   return (
     <div className={styles.container}>
+      {toast && <Toast type={toast.type} message={toast.message} onClose={() => setToast(null)} />}
+
       <div className={styles.header}>
         <TitlePage title="Plano de Estudos" subtitle={dados?.intervalo_label ?? ''} />
 

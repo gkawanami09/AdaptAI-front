@@ -5,6 +5,13 @@
   gap: 20px;
 }
 
+.validationMessage {
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #ef4444;
+}
+
 .header {
   display: flex;
   align-items: flex-start;
@@ -119,6 +126,13 @@
 .logoPreview svg {
   width: 26px;
   height: 26px;
+}
+
+.logoPreview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
 }
 
 .logoActions {
