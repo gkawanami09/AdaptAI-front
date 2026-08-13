@@ -52,6 +52,17 @@ function getInitials(nome: string) {
   return (initials ?? 'U').toUpperCase()
 }
 
+function getTipoUsuarioLabel(tipoUsuario: string | undefined) {
+  switch (tipoUsuario) {
+    case 'admin':
+      return 'Admin'
+    case 'professor':
+      return 'Professor'
+    default:
+      return 'Aluno'
+  }
+}
+
 export function AdminSidebar({ perfil }: AdminSidebarProps) {
   const location = useLocation()
   const [conteudosAberto, setConteudosAberto] = useState(
@@ -150,10 +161,12 @@ export function AdminSidebar({ perfil }: AdminSidebarProps) {
       </nav>
 
       <button type="button" className={styles.userArea} onClick={handleLogout} title="Sair">
-        <span className={styles.avatar}>{getInitials(perfil?.nome ?? 'Usuário')}</span>
+        <span className={styles.avatar}>
+          {perfil?.avatarUrl ? <img src={perfil.avatarUrl} alt="" /> : getInitials(perfil?.nome ?? 'Usuário')}
+        </span>
         <span className={styles.userInfo}>
           <span className={styles.userName}>{perfil?.nome ?? 'Usuário'}</span>
-          <span className={styles.userRole}>Admin</span>
+          <span className={styles.userRole}>{getTipoUsuarioLabel(perfil?.nivelAcesso)}</span>
         </span>
         <LogOutIcon className={styles.logoutIcon} />
       </button>

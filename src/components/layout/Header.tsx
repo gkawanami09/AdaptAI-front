@@ -113,7 +113,9 @@ export function Header({ perfil }: HeaderProps) {
       </nav>
 
       <div className={styles.userArea}>
-        <span className={styles.avatar}>{getInitials(perfil?.nome ?? 'Usuário')}</span>
+        <span className={styles.avatar}>
+          {perfil?.avatarUrl ? <img src={perfil.avatarUrl} alt="" /> : getInitials(perfil?.nome ?? 'Usuário')}
+        </span>
         <span className={styles.userInfo}>
           <span className={styles.userName}>{perfil?.nome ?? 'Usuário'}</span>
           {isAdmin ? (

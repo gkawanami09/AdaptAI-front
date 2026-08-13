@@ -49,9 +49,10 @@ import shellStyles from './components/layout/AppShell.module.css'
 
 import { clearStoredAuth, fetchCurrentUser } from './services/auth'
 import { isMockAuthEnabled } from './services/api'
+import { getOnboarding } from './services/onboarding'
 import { getCookie, removeCookie, TOKEN_COOKIE_NAME } from './utils/cookies'
 import type { UserProfile } from './types/auth'
-import { isOnboardingActive } from './utils/onboarding'
+import { isOnboardingActive, setOnboardingActive } from './utils/onboarding'
 
 // 🔒 Camada 1: garante que existe um token válido e carrega o perfil do usuário
 function GaranteAutenticacao() {
@@ -71,10 +72,16 @@ function GaranteAutenticacao() {
       }
 
       try {
-        // implemente fetchCurrentUser quando conexao do back estiver pronta
         const usuario = await fetchCurrentUser()
         setPerfil(usuario)
         setAutenticado(true)
+
+        try {
+          const onboarding = await getOnboarding()
+          setOnboardingActive(!onboarding.onboarding.concluido)
+        } catch (onboardingError) {
+          console.error('Não foi possível consultar o onboarding.', onboardingError)
+        }
       } catch (error) {
         console.error('Token inválido ou expirado', error)
         removeCookie(TOKEN_COOKIE_NAME)

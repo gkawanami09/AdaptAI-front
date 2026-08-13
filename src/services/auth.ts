@@ -2,7 +2,7 @@ import type { UserProfile } from '../types/auth'
 import { setCookie, TOKEN_COOKIE_NAME } from '../utils/cookies'
 
 import { isMockAuthEnabled } from './api'
-import { requestJson } from './api'
+import { requestAuthJson, requestJson } from './api'
 
 const AUTH_PROFILE_STORAGE_KEY = 'adaptai_user_profile'
 const AUTH_REFRESH_TOKEN_STORAGE_KEY = 'adaptai_refresh_token'
@@ -53,6 +53,22 @@ type LoginResponse = {
   }
 }
 
+type UsuarioPerfilResponse = {
+  sucesso: boolean
+  usuario: {
+    id: string
+    nome: string
+    email: string
+    avatar_url: string | null
+    tipo_usuario: 'aluno' | 'professor' | 'admin'
+    escola_nome: string | null
+    situacao: string
+    email_verificado: boolean
+    nivel: number
+    xp: number
+  }
+}
+
 function mapLoginResponseToProfile(data: LoginResponse): UserProfile {
   return {
     id: data.usuario.id,
@@ -60,6 +76,22 @@ function mapLoginResponseToProfile(data: LoginResponse): UserProfile {
     escolaNome: data.usuario.escola_nome ?? null,
     avatarUrl: data.usuario.avatar_url ?? null,
     nivelAcesso: data.usuario.tipo_usuario ?? 'aluno',
+    telasPermitidas: DEFAULT_TELAS_PERMITIDAS,
+  }
+}
+
+function mapPerfilResponseToProfile(data: UsuarioPerfilResponse): UserProfile {
+  return {
+    id: data.usuario.id,
+    nome: data.usuario.nome,
+    email: data.usuario.email,
+    escolaNome: data.usuario.escola_nome,
+    avatarUrl: data.usuario.avatar_url,
+    nivelAcesso: data.usuario.tipo_usuario,
+    situacao: data.usuario.situacao,
+    emailVerificado: data.usuario.email_verificado,
+    nivel: data.usuario.nivel,
+    xp: data.usuario.xp,
     telasPermitidas: DEFAULT_TELAS_PERMITIDAS,
   }
 }
@@ -128,11 +160,13 @@ export async function fetchCurrentUser(): Promise<UserProfile> {
     return MOCK_PROFILE
   }
 
-  const storedProfile = localStorage.getItem(AUTH_PROFILE_STORAGE_KEY)
+  const data = await requestAuthJson<UsuarioPerfilResponse>('/usuarios/perfil', {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  })
 
-  if (!storedProfile) {
-    throw new Error('Perfil local nao encontrado')
-  }
+  const perfil = mapPerfilResponseToProfile(data)
+  localStorage.setItem(AUTH_PROFILE_STORAGE_KEY, JSON.stringify(perfil))
 
-  return JSON.parse(storedProfile) as UserProfile
+  return perfil
 }

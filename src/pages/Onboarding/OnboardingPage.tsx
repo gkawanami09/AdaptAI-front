@@ -9,16 +9,18 @@ import type {
   OnboardingStudyTime,
   OnboardingSubject,
 } from '../../types/onboarding'
+import type { DiaSemana } from '../../types/planoEstudosCriar'
 import { completeOnboarding, isOnboardingActive } from '../../utils/onboarding'
 import styles from './OnboardingPage.module.css'
 
-type OptionId = OnboardingObjective | OnboardingStudyTime | OnboardingSubject | OnboardingMainGoal | 'olimpiadas'
+type OptionId = OnboardingObjective | OnboardingStudyTime | OnboardingSubject | OnboardingMainGoal | DiaSemana | 'olimpiadas'
 type Option = { id: OptionId; emoji: string; title: string; description?: string; disabled?: boolean }
 type Answers = {
   objective: OnboardingObjective | ''
   studyTime: OnboardingStudyTime | ''
   subjects: OnboardingSubject[]
   mainGoal: OnboardingMainGoal | ''
+  studyDays: DiaSemana[]
 }
 
 const steps: Array<{
@@ -80,9 +82,24 @@ const steps: Array<{
       { id: 'treinar-redacao', emoji: '✍️', title: 'Treinar redação', description: 'Focar na nota da redação' },
     ],
   },
+  {
+    message: 'Só mais uma coisa antes de gerar seu plano!',
+    title: 'Em quais dias você vai estudar?',
+    subtitle: 'Selecione pelo menos um dia da semana',
+    columns: 3,
+    options: [
+      { id: 'monday', emoji: '📅', title: 'Segunda' },
+      { id: 'tuesday', emoji: '📅', title: 'Terça' },
+      { id: 'wednesday', emoji: '📅', title: 'Quarta' },
+      { id: 'thursday', emoji: '📅', title: 'Quinta' },
+      { id: 'friday', emoji: '📅', title: 'Sexta' },
+      { id: 'saturday', emoji: '📅', title: 'Sábado' },
+      { id: 'sunday', emoji: '📅', title: 'Domingo' },
+    ],
+  },
 ]
 
-const initialAnswers: Answers = { objective: '', studyTime: '', subjects: [], mainGoal: '' }
+const initialAnswers: Answers = { objective: '', studyTime: '', subjects: [], mainGoal: '', studyDays: [] }
 
 export function OnboardingPage() {
   const navigate = useNavigate()
@@ -101,7 +118,9 @@ export function OnboardingPage() {
         ? answers.subjects
         : step === 3
           ? answers.mainGoal ? [answers.mainGoal] : []
-          : []
+          : step === 4
+            ? answers.studyDays
+            : []
 
   if (!isOnboardingActive()) return <Navigate to="/dashboard" replace />
 
@@ -119,6 +138,15 @@ export function OnboardingPage() {
       }))
     }
     if (step === 3) setAnswers((value) => ({ ...value, mainGoal: option.id as OnboardingMainGoal }))
+    if (step === 4) {
+      const dia = option.id as DiaSemana
+      setAnswers((value) => ({
+        ...value,
+        studyDays: value.studyDays.includes(dia)
+          ? value.studyDays.filter((selectedDia) => selectedDia !== dia)
+          : [...value.studyDays, dia],
+      }))
+    }
   }
 
   async function advance() {
@@ -129,7 +157,7 @@ export function OnboardingPage() {
       return
     }
 
-    if (!answers.objective || !answers.studyTime || !answers.mainGoal || answers.subjects.length === 0) return
+    if (!answers.objective || !answers.studyTime || !answers.mainGoal || answers.subjects.length === 0 || answers.studyDays.length === 0) return
 
     setIsSubmitting(true)
     try {
@@ -138,9 +166,16 @@ export function OnboardingPage() {
         studyTime: answers.studyTime,
         subjects: answers.subjects,
         mainGoal: answers.mainGoal,
+        studyDays: answers.studyDays,
       })
 
       if (!response.sucesso) throw new Error('Não foi possível criar seu plano de estudos.')
+
+      const plano = response.onboarding.plano
+      if (!plano || plano.status_geracao === 'erro') {
+        throw new Error(plano?.mensagem_erro ?? 'Não foi possível gerar seu plano de estudos.')
+      }
+
       setStep((value) => value + 1)
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Não foi possível criar seu plano de estudos.')
