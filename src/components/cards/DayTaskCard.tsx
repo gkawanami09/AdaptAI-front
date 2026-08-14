@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { Link } from 'react-router-dom'
 import { CardDiv } from './CardDiv'
 import { CardIcon } from './CardIcon'
 import type { CardIconColor } from './CardIcon'
@@ -16,31 +17,42 @@ type DayTaskCardProps = {
   subjectColor: BadgeColor
   duration: string
   completed?: boolean
+  href?: string
 }
 
-export function DayTaskCard({ icon, iconColor, title, subject, subjectColor, duration, completed }: DayTaskCardProps) {
+export function DayTaskCard({ icon, iconColor, title, subject, subjectColor, duration, completed, href }: DayTaskCardProps) {
+  const content = (
+    <>
+      <CardIcon color={iconColor}>{icon}</CardIcon>
+
+      <div className={styles.content}>
+        <CardHeading>{title}</CardHeading>
+        <div className={styles.meta}>
+          <Badge color={subjectColor}>{subject}</Badge>
+          <span className={styles.duration}>
+            <ClockIcon className={styles.durationIcon} />
+            {duration}
+          </span>
+        </div>
+      </div>
+
+      {completed && (
+        <span className={styles.checkCircle}>
+          <CheckIcon className={styles.checkIcon} />
+        </span>
+      )}
+    </>
+  )
+
   return (
     <CardDiv tone={completed ? 'green' : undefined}>
-      <div className={styles.row}>
-        <CardIcon color={iconColor}>{icon}</CardIcon>
-
-        <div className={styles.content}>
-          <CardHeading>{title}</CardHeading>
-          <div className={styles.meta}>
-            <Badge color={subjectColor}>{subject}</Badge>
-            <span className={styles.duration}>
-              <ClockIcon className={styles.durationIcon} />
-              {duration}
-            </span>
-          </div>
-        </div>
-
-        {completed && (
-          <span className={styles.checkCircle}>
-            <CheckIcon className={styles.checkIcon} />
-          </span>
-        )}
-      </div>
+      {href ? (
+        <Link to={href} className={`${styles.row} ${styles.rowLink}`}>
+          {content}
+        </Link>
+      ) : (
+        <div className={styles.row}>{content}</div>
+      )}
     </CardDiv>
   )
 }

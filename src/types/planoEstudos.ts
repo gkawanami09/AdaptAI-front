@@ -25,6 +25,7 @@ export type PlanoEstudosTarefa = {
     concluida: boolean
     progresso?: number
     tipo: PlanoEstudosTarefaTipo
+    conteudo_slug: string | null
 }
 
 export type PlanoEstudosVisaoGeralBadge = {

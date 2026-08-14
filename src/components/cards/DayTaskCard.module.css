@@ -4,6 +4,12 @@
   gap: 10px;
 }
 
+.rowLink {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
 .content {
   flex: 1;
   min-width: 0;

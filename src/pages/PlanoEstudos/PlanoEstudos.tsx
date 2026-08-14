@@ -17,7 +17,7 @@ import type { ToastType } from '../../components/ui/Toast'
 import styles from './PlanoEstudos.module.css'
 
 import { getPlanoEstudos, postReorganizarPlanoComIA } from '../../services/planoEstudos'
-import type { GetPlanoEstudosResponse, PlanoEstudosPeriodo } from '../../types/planoEstudos'
+import type { GetPlanoEstudosResponse, PlanoEstudosPeriodo, PlanoEstudosTarefa } from '../../types/planoEstudos'
 
 const PERIODO_OPTIONS: { value: PlanoEstudosPeriodo; label: string }[] = [
   { value: 'dia', label: 'Hoje' },
@@ -42,6 +42,22 @@ function formatarDuracao(minutos: number) {
   const horas = Math.floor(minutos / 60)
   const resto = minutos % 60
   return resto > 0 ? `${horas}h${resto}` : `${horas}h`
+}
+
+function resolverLinkTarefa(tarefa: PlanoEstudosTarefa): string | undefined {
+  if (!tarefa.conteudo_slug) return undefined
+
+  switch (tarefa.tipo) {
+    case 'aula':
+      return `/aulas/${tarefa.conteudo_slug}`
+    case 'questoes':
+    case 'lista':
+      return `/questoes/${tarefa.conteudo_slug}`
+    case 'redacao':
+      return `/redacao/${tarefa.conteudo_slug}`
+    default:
+      return undefined
+  }
 }
 
 export function PlanoEstudos() {
@@ -185,6 +201,7 @@ export function PlanoEstudos() {
                         subjectColor={tarefa.materia_cor}
                         duration={formatarDuracao(tarefa.duracao_min)}
                         completed={tarefa.concluida}
+                        href={resolverLinkTarefa(tarefa)}
                       />
                     ))
                   )}
