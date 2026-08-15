@@ -20,6 +20,8 @@ export type DashboardAlunoDesempenhoMateria = {
 
 export type DashboardAlunoPlanoStatus = 'concluido' | 'em-andamento' | 'nao-iniciado'
 
+export type DashboardAlunoPlanoItemTipo = 'aula' | 'questoes' | 'lista' | 'prova' | 'redacao' | 'revisao'
+
 export type DashboardAlunoPlanoItem = {
     id: string
     icone: string
@@ -29,6 +31,8 @@ export type DashboardAlunoPlanoItem = {
     titulo: string
     duracao_min: number
     progresso?: number
+    tipo: DashboardAlunoPlanoItemTipo
+    conteudo_slug: string | null
 }
 
 export type DashboardAlunoAlerta = {

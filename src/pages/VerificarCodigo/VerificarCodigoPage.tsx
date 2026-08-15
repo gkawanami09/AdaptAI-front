@@ -5,7 +5,9 @@ import { Button } from '../../components/ui/Button'
 import { CodeInput } from '../../components/ui/CodeInput'
 import { AuthLayout } from '../../components/auth/AuthLayout'
 import { ArrowRightIcon, CheckIcon } from '../../components/ui/icons'
-import { confirmEmail } from '../../services/auth'
+import { confirmEmail, loginUser } from '../../services/auth'
+import { getOnboarding } from '../../services/onboarding'
+import { activateOnboardingFor, setOnboardingActive } from '../../utils/onboarding'
 import styles from './VerificarCodigoPage.module.css'
 
 const RESEND_COOLDOWN_SECONDS = 30
@@ -26,10 +28,9 @@ function maskEmail(email: string) {
 export function VerificarCodigoPage() {
   const location = useLocation()
   const navigate = useNavigate()
-  const email =
-    (location.state as { email?: string } | null)?.email ??
-    sessionStorage.getItem('adaptai_pending_email') ??
-    'seu@email.com'
+  const locationState = location.state as { email?: string; password?: string } | null
+  const email = locationState?.email ?? sessionStorage.getItem('adaptai_pending_email') ?? 'seu@email.com'
+  const password = locationState?.password ?? ''
 
   const [code, setCode] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -54,7 +55,29 @@ export function VerificarCodigoPage() {
     try {
       await confirmEmail(email, code)
       sessionStorage.removeItem('adaptai_pending_email')
-      navigate('/login', { replace: true, state: { verifiedEmail: email } })
+
+      if (!password) {
+        navigate('/login', { replace: true, state: { verifiedEmail: email } })
+        return
+      }
+
+      try {
+        await loginUser(email, password)
+        let shouldStartOnboarding = activateOnboardingFor(email)
+
+        try {
+          const response = await getOnboarding()
+          shouldStartOnboarding = !response.onboarding.concluido
+          setOnboardingActive(shouldStartOnboarding)
+        } catch (onboardingError) {
+          console.error('Não foi possível consultar o onboarding.', onboardingError)
+        }
+
+        navigate(shouldStartOnboarding ? '/onboarding' : '/dashboard', { replace: true })
+      } catch (loginError) {
+        console.error('Não foi possível entrar automaticamente após a verificação.', loginError)
+        navigate('/login', { replace: true, state: { verifiedEmail: email } })
+      }
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Nao foi possivel verificar o codigo.')
     } finally {

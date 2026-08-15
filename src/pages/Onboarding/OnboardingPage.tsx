@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { AdaMascot } from '../../components/AdaMascot'
 import { ArrowLeftIcon, ArrowRightIcon, BoltIcon, CheckIcon } from '../../components/ui/icons'
 import { concluirOnboarding } from '../../services/onboarding'
+import { getOpcoesPlanoEstudos } from '../../services/planoEstudos'
 import type {
   OnboardingMainGoal,
   OnboardingObjective,
@@ -23,7 +24,7 @@ type Answers = {
   studyDays: DiaSemana[]
 }
 
-const steps: Array<{
+const baseSteps: Array<{
   message: string
   title: string
   subtitle: string
@@ -58,17 +59,7 @@ const steps: Array<{
     title: 'Quais matérias você sente mais dificuldade?',
     subtitle: 'Selecione todas que se aplicam',
     columns: 3,
-    options: [
-      { id: 'matematica', emoji: '📐', title: 'Matemática' },
-      { id: 'fisica', emoji: '⚡', title: 'Física' },
-      { id: 'quimica', emoji: '⚗️', title: 'Química' },
-      { id: 'biologia', emoji: '🌿', title: 'Biologia' },
-      { id: 'historia', emoji: '🏛️', title: 'História' },
-      { id: 'geografia', emoji: '🌎', title: 'Geografia' },
-      { id: 'portugues', emoji: '📚', title: 'Português' },
-      { id: 'redacao', emoji: '✍️', title: 'Redação' },
-      { id: 'ingles', emoji: '🌐', title: 'Inglês' },
-    ],
+    options: [],
   },
   {
     message: 'Quase lá! Sua meta vai guiar todo o seu plano.',
@@ -107,6 +98,23 @@ export function OnboardingPage() {
   const [answers, setAnswers] = useState(initialAnswers)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [subjectOptions, setSubjectOptions] = useState<Option[]>([])
+
+  useEffect(() => {
+    getOpcoesPlanoEstudos()
+      .then((response) => {
+        setSubjectOptions(
+          response.materias.map((materia) => ({ id: materia.slug, emoji: '📘', title: materia.nome })),
+        )
+      })
+      .catch((error) => {
+        console.error('Não foi possível carregar as matérias disponíveis.', error)
+      })
+  }, [])
+
+  const steps = baseSteps.map((stepDefinition, index) =>
+    index === 2 ? { ...stepDefinition, options: subjectOptions } : stepDefinition,
+  )
   const isComplete = step === steps.length
   const currentStep = steps[step]
 

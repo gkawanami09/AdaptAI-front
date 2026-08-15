@@ -63,7 +63,7 @@ export function CadastroPage() {
 
       markOnboardingPending(email)
       sessionStorage.setItem('adaptai_pending_email', email)
-      navigate('/verificar-codigo', { state: { email } })
+      navigate('/verificar-codigo', { state: { email, password } })
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Nao foi possivel criar sua conta.')
     } finally {

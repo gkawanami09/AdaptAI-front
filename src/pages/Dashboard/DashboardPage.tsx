@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useOutletContext } from 'react-router-dom'
+import { useLocation, useNavigate, useOutletContext } from 'react-router-dom'
 import type { UserProfile } from '../../types/auth'
 import styles from './DashboardPage.module.css'
 import { TitlePage } from '../../components/ui/TitlePage'
@@ -12,9 +12,12 @@ import { CardDiv } from '../../components/cards/CardDiv'
 import { Button } from '../../components/ui/Button'
 import { GraphBars } from '../../components/graph/GraphBars'
 import { SubjectProgressList } from '../../components/graph/SubjectProgressList'
+import { Toast } from '../../components/ui/Toast'
+import type { ToastType } from '../../components/ui/Toast'
+import { useAchievementNotifications } from '../../contexts/AchievementNotificationContext'
 
 import { getDashboardAluno } from '../../services/dashboardAluno'
-import type { GetDashboardAlunoResponse } from '../../types/dashboardAluno'
+import type { DashboardAlunoPlanoItem, GetDashboardAlunoResponse } from '../../types/dashboardAluno'
 
 function formatarDuracao(minutos: number) {
   if (minutos < 60) return `${minutos} min`
@@ -23,12 +26,39 @@ function formatarDuracao(minutos: number) {
   return resto > 0 ? `${horas}h${resto}` : `${horas}h`
 }
 
+function resolverLinkAtividade(item: DashboardAlunoPlanoItem): string | undefined {
+  if (!item.conteudo_slug) return undefined
+
+  switch (item.tipo) {
+    case 'aula':
+      return `/aulas/${item.conteudo_slug}`
+    case 'questoes':
+    case 'lista':
+      return `/questoes/${item.conteudo_slug}`
+    case 'redacao':
+      return `/redacao/${item.conteudo_slug}`
+    default:
+      return undefined
+  }
+}
+
 export function DashboardPage() {
   const perfil = useOutletContext<UserProfile | null>()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { checkForNewAchievements } = useAchievementNotifications()
 
   const [dados, setDados] = useState<GetDashboardAlunoResponse | null>(null)
   const [carregando, setCarregando] = useState(false)
   const [erro, setErro] = useState(false)
+  const [toast, setToast] = useState<{ type: ToastType; message: string } | null>(
+    (location.state as { toast?: { type: ToastType; message: string } } | null)?.toast ?? null,
+  )
+
+  useEffect(() => {
+    if (location.state) navigate('.', { replace: true, state: null })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   async function carregarDashboard() {
     setCarregando(true)
@@ -47,10 +77,14 @@ export function DashboardPage() {
 
   useEffect(() => {
     carregarDashboard()
+    checkForNewAchievements()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
     <main className={styles.page}>
+      {toast && <Toast type={toast.type} message={toast.message} onClose={() => setToast(null)} />}
+
       <TitlePage
         title={`E aí, ${perfil?.nome ?? 'Aluno'}! 👋`}
         subtitle="Aqui está seu plano de estudos de hoje. Você está indo muito bem!"
@@ -117,6 +151,10 @@ export function DashboardPage() {
                       title={item.titulo}
                       duration={formatarDuracao(item.duracao_min)}
                       progress={item.progresso}
+                      onStart={() => {
+                        const link = resolverLinkAtividade(item)
+                        if (link) navigate(link)
+                      }}
                     />
                   ))
                 )}

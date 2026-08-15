@@ -14,13 +14,23 @@ type WeekDayPickerProps = {
   onSelect: (date: number) => void
   onPrevWeek?: () => void
   onNextWeek?: () => void
+  prevLabel?: string
+  nextLabel?: string
 }
 
-export function WeekDayPicker({ days, selected, onSelect, onPrevWeek, onNextWeek }: WeekDayPickerProps) {
+export function WeekDayPicker({
+  days,
+  selected,
+  onSelect,
+  onPrevWeek,
+  onNextWeek,
+  prevLabel = 'Semana anterior',
+  nextLabel = 'Próxima semana',
+}: WeekDayPickerProps) {
   return (
     <CardDiv>
       <div className={styles.row}>
-        <button type="button" className={styles.navButton} onClick={onPrevWeek} aria-label="Semana anterior">
+        <button type="button" className={styles.navButton} onClick={onPrevWeek} aria-label={prevLabel}>
           <ChevronLeftIcon />
         </button>
 
@@ -48,7 +58,7 @@ export function WeekDayPicker({ days, selected, onSelect, onPrevWeek, onNextWeek
           })}
         </div>
 
-        <button type="button" className={styles.navButton} onClick={onNextWeek} aria-label="Próxima semana">
+        <button type="button" className={styles.navButton} onClick={onNextWeek} aria-label={nextLabel}>
           <ChevronRightIcon />
         </button>
       </div>

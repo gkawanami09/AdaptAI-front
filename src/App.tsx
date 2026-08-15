@@ -46,6 +46,7 @@ import { Header } from './components/layout/Header'
 import { AdminLayout } from './components/layout/AdminLayout'
 import { Loading } from './components/ui/Loading'
 import shellStyles from './components/layout/AppShell.module.css'
+import { AchievementNotificationProvider } from './contexts/AchievementNotificationContext'
 
 import { clearStoredAuth, fetchCurrentUser } from './services/auth'
 import { isMockAuthEnabled } from './services/api'
@@ -98,7 +99,13 @@ function GaranteAutenticacao() {
   if (carregando) return <Loading fullScreen text="Verificando credenciais..." />
 
   // 📥 Passa o perfil encontrado no contexto do Outlet para os filhos usarem
-  return autenticado ? <Outlet context={perfil} /> : <Navigate to="/login" replace />
+  return autenticado ? (
+    <AchievementNotificationProvider>
+      <Outlet context={perfil} />
+    </AchievementNotificationProvider>
+  ) : (
+    <Navigate to="/login" replace />
+  )
 }
 
 // 🌐 Camada 2: layout com header para as áreas autenticadas

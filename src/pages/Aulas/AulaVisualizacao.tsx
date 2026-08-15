@@ -10,18 +10,24 @@ import { ModuleLessonsCard } from '../../components/cards/ModuleLessonsCard'
 import { NextLessonCard } from '../../components/cards/NextLessonCard'
 import { DicaCard } from '../../components/cards/DicaCard'
 import { ArrowLeftIcon, ClockIcon, CheckCircleIcon, BookIcon, BarChartIcon } from '../../components/ui/icons'
+import { Toast } from '../../components/ui/Toast'
+import type { ToastType } from '../../components/ui/Toast'
 import styles from './AulaVisualizacao.module.css'
 
 import { getAula, marcarAulaConcluida, atualizarProgressoAula, marcarConceito } from '../../services/aulaVisualizacao'
 import type { GetAulaVisualizacaoResponse } from '../../types/aulaVisualizacao'
+import { useAchievementNotifications } from '../../contexts/AchievementNotificationContext'
 
 export function AulaVisualizacao() {
   const { slug } = useParams<{ slug: string }>()
   const navigate = useNavigate()
+  const { checkForNewAchievements } = useAchievementNotifications()
 
   const [aula, setAula] = useState<GetAulaVisualizacaoResponse | null>(null)
   const [carregando, setCarregando] = useState(false)
   const [erro, setErro] = useState(false)
+  const [concluindo, setConcluindo] = useState(false)
+  const [toast, setToast] = useState<{ type: ToastType; message: string } | null>(null)
 
   const carregarAula = useCallback(async () => {
     if (!slug) return
@@ -71,16 +77,17 @@ export function AulaVisualizacao() {
   }
 
   async function handleMarcarConcluido() {
-    if (!slug) return
+    if (!slug || concluindo) return
+    setConcluindo(true)
+
     try {
-      const atualizada = await marcarAulaConcluida(slug)
-      if (atualizada.proxima_aula) {
-        navigate(`/aulas/${atualizada.proxima_aula.slug}`)
-      } else {
-        navigate('/aulas')
-      }
+      await marcarAulaConcluida(slug)
+      checkForNewAchievements()
+      navigate('/dashboard', { replace: true, state: { toast: { type: 'success', message: 'Aula concluída com sucesso!' } } })
     } catch (err) {
       console.error(err)
+      setToast({ type: 'error', message: 'Não foi possível concluir a aula. Tente novamente.' })
+      setConcluindo(false)
     }
   }
 
@@ -121,6 +128,8 @@ export function AulaVisualizacao() {
 
   return (
     <main className={styles.page}>
+      {toast && <Toast type={toast.type} message={toast.message} onClose={() => setToast(null)} />}
+
       <div className={styles.breadcrumb}>
         <Link to="/aulas" className={styles.backLink}>
           <ArrowLeftIcon className={styles.backIcon} />
@@ -161,8 +170,14 @@ export function AulaVisualizacao() {
           />
 
           <div className={styles.actions}>
-            <Button icon={<CheckCircleIcon />} iconPosition="left" fullWidth={false} onClick={handleMarcarConcluido}>
-              Marcar como concluído
+            <Button
+              icon={<CheckCircleIcon />}
+              iconPosition="left"
+              fullWidth={false}
+              onClick={handleMarcarConcluido}
+              disabled={concluindo}
+            >
+              {concluindo ? 'Concluindo...' : 'Marcar como concluído'}
             </Button>
             <Button
               variant="outline"

@@ -4,16 +4,7 @@ export type OnboardingObjective = 'enem' | 'fuvest' | 'unicamp' | 'vestibulares'
 
 export type OnboardingStudyTime = '30-minutos' | '1-hora' | '2-horas' | '3-horas-ou-mais'
 
-export type OnboardingSubject =
-  | 'matematica'
-  | 'fisica'
-  | 'quimica'
-  | 'biologia'
-  | 'historia'
-  | 'geografia'
-  | 'portugues'
-  | 'redacao'
-  | 'ingles'
+export type OnboardingSubject = string
 
 export type OnboardingMainGoal =
   | 'melhorar-nota'

@@ -18,6 +18,7 @@ import styles from './PlanoEstudos.module.css'
 
 import { getPlanoEstudos, postReorganizarPlanoComIA } from '../../services/planoEstudos'
 import type { GetPlanoEstudosResponse, PlanoEstudosPeriodo, PlanoEstudosTarefa } from '../../types/planoEstudos'
+import { useAchievementNotifications } from '../../contexts/AchievementNotificationContext'
 
 const PERIODO_OPTIONS: { value: PlanoEstudosPeriodo; label: string }[] = [
   { value: 'dia', label: 'Hoje' },
@@ -62,7 +63,8 @@ function resolverLinkTarefa(tarefa: PlanoEstudosTarefa): string | undefined {
 
 export function PlanoEstudos() {
   const navigate = useNavigate()
-  const [periodo, setPeriodo] = useState<PlanoEstudosPeriodo>('semana')
+  const { checkForNewAchievements } = useAchievementNotifications()
+  const [periodo, setPeriodo] = useState<PlanoEstudosPeriodo>('dia')
   const [dataReferencia, setDataReferencia] = useState(() => new Date())
   const [dados, setDados] = useState<GetPlanoEstudosResponse | null>(null)
   const [carregando, setCarregando] = useState(false)
@@ -92,19 +94,23 @@ export function PlanoEstudos() {
 
   function handlePrevWeek() {
     const proxima = new Date(dataReferencia)
-    proxima.setDate(proxima.getDate() - 7)
+    if (periodo === 'mes') proxima.setMonth(proxima.getMonth() - 1)
+    else proxima.setDate(proxima.getDate() - 7)
     setDataReferencia(proxima)
   }
 
   function handleNextWeek() {
     const proxima = new Date(dataReferencia)
-    proxima.setDate(proxima.getDate() + 7)
+    if (periodo === 'mes') proxima.setMonth(proxima.getMonth() + 1)
+    else proxima.setDate(proxima.getDate() + 7)
     setDataReferencia(proxima)
   }
 
   function handleSelecionarDia(diaSelecionado: number) {
     const dia = dados?.dias_da_semana.find((item) => item.data === diaSelecionado)
-    if (dia) setDataReferencia(parseDataISO(dia.data_iso))
+    if (!dia) return
+    setPeriodo('dia')
+    setDataReferencia(parseDataISO(dia.data_iso))
   }
 
   async function handleReorganizarComIA() {
@@ -112,6 +118,7 @@ export function PlanoEstudos() {
     try {
       await postReorganizarPlanoComIA()
       await carregarPlano()
+      checkForNewAchievements()
       setToast({ type: 'success', message: 'Plano reorganizado com sucesso.' })
     } catch (err) {
       console.error(err)
@@ -123,6 +130,11 @@ export function PlanoEstudos() {
 
   const diaSelecionadoNumero = dataReferencia.getDate()
   const diaAtual = dados?.dias_da_semana.find((item) => item.data_iso === formatarDataISO(dataReferencia))
+
+  const tarefasTitulo = periodo === 'dia' ? diaAtual?.label ?? '' : periodo === 'semana' ? 'Tarefas da semana' : 'Tarefas do mês'
+  const tarefasVaziasLabel =
+    periodo === 'dia' ? 'Nenhuma tarefa para este dia.' : periodo === 'semana' ? 'Nenhuma tarefa para esta semana.' : 'Nenhuma tarefa para este mês.'
+  const visaoGeralTitulo = periodo === 'mes' ? 'Visão geral do mês' : 'Visão geral da semana'
 
   return (
     <div className={styles.container}>
@@ -182,14 +194,16 @@ export function PlanoEstudos() {
                 onSelect={handleSelecionarDia}
                 onPrevWeek={handlePrevWeek}
                 onNextWeek={handleNextWeek}
+                prevLabel={periodo === 'mes' ? 'Mês anterior' : 'Semana anterior'}
+                nextLabel={periodo === 'mes' ? 'Próximo mês' : 'Próxima semana'}
               />
 
               <div className={styles.dayTasks}>
-                <CardHeading>{diaAtual?.label ?? ''}</CardHeading>
+                <CardHeading>{tarefasTitulo}</CardHeading>
 
                 <div className={styles.dayTasksList}>
                   {dados.tarefas_do_dia.length === 0 ? (
-                    <p className={styles.emptyState}>Nenhuma tarefa para este dia.</p>
+                    <p className={styles.emptyState}>{tarefasVaziasLabel}</p>
                   ) : (
                     dados.tarefas_do_dia.map((tarefa) => (
                       <DayTaskCard
@@ -210,7 +224,7 @@ export function PlanoEstudos() {
 
               <div className={styles.weekOverview}>
                 <WeekOverviewCard
-                  title="Visão geral da semana"
+                  title={visaoGeralTitulo}
                   rows={dados.visao_geral_semana.map((linha) => ({
                     day: linha.dia,
                     badges: linha.badges,
