@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react'
 import { getRedacaoCorrecao } from '../services/redacaoCorrecao'
 import type { GetRedacaoCorrecaoResponse } from '../types/redacaoCorrecao'
 
-// TODO: quando o endpoint de correção estiver disponível, trocar a busca única abaixo
-// por polling (setInterval) ou assinatura websocket até `status` chegar em "concluida",
-// e então a página de processamento deve navegar para a tela de resultado.
+// Busca única do resultado já concluído. O polling até a correção ficar pronta acontece
+// em RedacaoProcessando.tsx, que navega para a tela de resultado quando status === 'concluida'.
 export function useRedacaoCorrecao(envioId: string | undefined) {
     const [dados, setDados] = useState<GetRedacaoCorrecaoResponse | null>(null)
     const [carregando, setCarregando] = useState(false)

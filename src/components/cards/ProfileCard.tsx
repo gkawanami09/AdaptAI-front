@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import type { FormEvent } from 'react'
+import { useRef, useState } from 'react'
+import type { ChangeEvent, FormEvent } from 'react'
 import { CardDiv } from './CardDiv'
 import { CardHeading } from './CardHeading'
 import { Badge } from '../ui/Badge'
@@ -15,23 +15,72 @@ type ProfileCardProps = {
   xp: number
   escola: string
   anoEnem: string
+  avatarUrl?: string | null
+  onSave: (dados: { nome: string; escola: string; anoEnem: string }) => Promise<void>
+  onUploadAvatar: (arquivo: File) => Promise<void>
 }
 
-export function ProfileCard({ name, email, level, xp, escola, anoEnem }: ProfileCardProps) {
+export function ProfileCard({
+  name,
+  email,
+  level,
+  xp,
+  escola,
+  anoEnem,
+  avatarUrl,
+  onSave,
+  onUploadAvatar,
+}: ProfileCardProps) {
   const [nomeCompleto, setNomeCompleto] = useState(name)
-  const [emailValue, setEmailValue] = useState(email)
   const [escolaValue, setEscolaValue] = useState(escola)
   const [anoEnemValue, setAnoEnemValue] = useState(anoEnem)
+  const [salvando, setSalvando] = useState(false)
+  const [erro, setErro] = useState('')
+  const [sucesso, setSucesso] = useState(false)
+
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [preview, setPreview] = useState<string | null>(null)
+  const [enviandoFoto, setEnviandoFoto] = useState(false)
+  const [erroFoto, setErroFoto] = useState('')
 
   function handleAlterarFoto() {
-    // TODO: abrir seletor de imagem / upload de avatar
-    console.log('alterar foto de perfil')
+    fileInputRef.current?.click()
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleArquivoSelecionado(event: ChangeEvent<HTMLInputElement>) {
+    const arquivo = event.target.files?.[0]
+    event.target.value = ''
+    if (!arquivo) return
+
+    setErroFoto('')
+    const previewUrl = URL.createObjectURL(arquivo)
+    setPreview(previewUrl)
+    setEnviandoFoto(true)
+
+    try {
+      await onUploadAvatar(arquivo)
+    } catch (err) {
+      setErroFoto(err instanceof Error ? err.message : 'Não foi possível atualizar a foto de perfil.')
+      setPreview(null)
+    } finally {
+      setEnviandoFoto(false)
+    }
+  }
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    // TODO: conectar ao backend — salvar alterações do perfil (PATCH /me)
-    console.log('salvar perfil', { nomeCompleto, emailValue, escolaValue, anoEnemValue })
+    setErro('')
+    setSucesso(false)
+    setSalvando(true)
+
+    try {
+      await onSave({ nome: nomeCompleto, escola: escolaValue, anoEnem: anoEnemValue })
+      setSucesso(true)
+    } catch (err) {
+      setErro(err instanceof Error ? err.message : 'Não foi possível salvar as alterações.')
+    } finally {
+      setSalvando(false)
+    }
   }
 
   return (
@@ -40,15 +89,27 @@ export function ProfileCard({ name, email, level, xp, escola, anoEnem }: Profile
 
       <div className={styles.identity}>
         <div className={styles.avatarWrap}>
-          <span className={styles.avatar}>🤖</span>
+          {preview || avatarUrl ? (
+            <img className={styles.avatarImage} src={preview ?? avatarUrl ?? ''} alt="" />
+          ) : (
+            <span className={styles.avatar}>🤖</span>
+          )}
           <button
             type="button"
             className={styles.avatarEdit}
             onClick={handleAlterarFoto}
             aria-label="Alterar foto de perfil"
+            disabled={enviandoFoto}
           >
             <CameraIcon />
           </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className={styles.avatarInput}
+            onChange={handleArquivoSelecionado}
+          />
         </div>
 
         <div className={styles.identityInfo}>
@@ -59,6 +120,8 @@ export function ProfileCard({ name, email, level, xp, escola, anoEnem }: Profile
               Nível {level} · {xp.toLocaleString('pt-BR')} XP
             </Badge>
           </span>
+          {enviandoFoto && <span className={styles.avatarStatus}>Enviando foto...</span>}
+          {erroFoto && <span className={styles.avatarError}>{erroFoto}</span>}
         </div>
       </div>
 
@@ -75,8 +138,8 @@ export function ProfileCard({ name, email, level, xp, escola, anoEnem }: Profile
           type="email"
           label="E-mail"
           labelVariant="caps"
-          value={emailValue}
-          onChange={(event) => setEmailValue(event.target.value)}
+          value={email}
+          disabled
         />
         <TextField
           id="escola"
@@ -93,8 +156,11 @@ export function ProfileCard({ name, email, level, xp, escola, anoEnem }: Profile
           onChange={(event) => setAnoEnemValue(event.target.value)}
         />
 
-        <Button type="submit" fullWidth={false} className={styles.submitButton}>
-          Salvar alterações
+        {erro && <p className={styles.errorMessage}>{erro}</p>}
+        {sucesso && <p className={styles.successMessage}>Perfil atualizado com sucesso.</p>}
+
+        <Button type="submit" fullWidth={false} className={styles.submitButton} disabled={salvando}>
+          {salvando ? 'Salvando...' : 'Salvar alterações'}
         </Button>
       </form>
     </CardDiv>

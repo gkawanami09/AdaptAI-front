@@ -63,3 +63,11 @@ export async function patchAula(aulaId: string, params: Partial<AulaAtualizarPar
         body: JSON.stringify(params)
     })
 }
+
+export async function patchAulasOrdem(topicoId: string, ordem: { id: string; ordem: number }[]) {
+    return requestAuthJson<void>(`/admin/modulos/${topicoId}/aulas/ordem`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ordem })
+    })
+}

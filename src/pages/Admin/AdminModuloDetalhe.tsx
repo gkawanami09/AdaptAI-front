@@ -27,7 +27,7 @@ import styles from './AdminModuloDetalhe.module.css'
 
 import { getMateriaPorId } from '../../services/materias'
 import { getTopicosPorMateria } from '../../services/modulos'
-import { getAulasPorMateria } from '../../services/aulas'
+import { getAulasPorMateria, patchAulasOrdem } from '../../services/aulas'
 import type { Topico } from '../../types/modulos'
 import type { Aula } from '../../types/aulas'
 
@@ -66,6 +66,7 @@ export function AdminModuloDetalhe() {
   const [aulas, setAulas] = useState<Aula[]>([])
   const [dragIndex, setDragIndex] = useState<number | null>(null)
   const [overIndex, setOverIndex] = useState<number | null>(null)
+  const [erroOrdem, setErroOrdem] = useState('')
   // Refs porque os handlers de pointer precisam do valor mais atual sem esperar o re-render.
   const dragIndexRef = useRef<number | null>(null)
   const overIndexRef = useRef<number | null>(null)
@@ -161,18 +162,35 @@ export function AdminModuloDetalhe() {
     }
   }
 
+  async function persistirOrdem(novaOrdem: Aula[], anterior: Aula[]) {
+    if (!topicoId) return
+    setErroOrdem('')
+
+    try {
+      await patchAulasOrdem(
+        topicoId,
+        novaOrdem.map((aula) => ({ id: aula.id, ordem: aula.ordem })),
+      )
+    } catch (err) {
+      console.error(err)
+      setAulas(anterior)
+      setErroOrdem('Não foi possível salvar a nova ordem das aulas.')
+    }
+  }
+
   function handlePointerUp(event: ReactPointerEvent<HTMLButtonElement>) {
     const origem = dragIndexRef.current
     const destino = overIndexRef.current
 
     if (origem !== null && destino !== null && origem !== destino) {
-      setAulas((prev) => {
-        const next = [...prev]
-        const [moved] = next.splice(origem, 1)
-        next.splice(destino, 0, moved)
-        // TODO: persistir a nova ordem no backend (PATCH /admin/modulos/:id/aulas/ordem)
-        return next.map((aula, position) => ({ ...aula, ordem: position + 1 }))
-      })
+      const anterior = aulas
+      const next = [...aulas]
+      const [moved] = next.splice(origem, 1)
+      next.splice(destino, 0, moved)
+      const novaOrdem = next.map((aula, position) => ({ ...aula, ordem: position + 1 }))
+
+      setAulas(novaOrdem)
+      persistirOrdem(novaOrdem, anterior)
     }
 
     event.currentTarget.releasePointerCapture(event.pointerId)
@@ -267,6 +285,8 @@ export function AdminModuloDetalhe() {
                 Filtrar por status
               </Button>
             </div>
+
+            {erroOrdem && <p className={styles.emptyTab}>{erroOrdem}</p>}
 
             <div className={styles.tableWrap}>
               <table className={styles.table}>

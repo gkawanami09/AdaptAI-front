@@ -142,8 +142,8 @@ export function AdminNovaMateria() {
   }
 
   function handleVerModulos() {
-    // TODO: conectar à navegação real — só disponível depois da matéria ser criada
-    console.log('ver módulos')
+    if (!id) return
+    navigate(`/admin/materias/${id}`)
   }
 
   return (
@@ -283,7 +283,14 @@ export function AdminNovaMateria() {
                 <p className={styles.previewMeta}>
                   <FolderIcon className={styles.previewMetaIcon} /> 0 módulos · 0 aulas
                 </p>
-                <Button type="button" icon={<FolderIcon />} iconPosition="left" onClick={handleVerModulos}>
+                <Button
+                  type="button"
+                  icon={<FolderIcon />}
+                  iconPosition="left"
+                  onClick={handleVerModulos}
+                  disabled={!id}
+                  title={id ? undefined : 'Disponível depois de salvar a matéria'}
+                >
                   Ver módulos
                 </Button>
               </div>

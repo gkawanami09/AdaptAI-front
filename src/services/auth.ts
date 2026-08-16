@@ -155,6 +155,39 @@ export function clearStoredAuth(): void {
   localStorage.removeItem(AUTH_REFRESH_TOKEN_STORAGE_KEY)
 }
 
+export async function logoutUser(): Promise<void> {
+  if (isMockAuthEnabled()) return
+
+  try {
+    await requestAuthJson('/auth/logout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    })
+  } catch (error) {
+    console.error('Não foi possível invalidar a sessão no servidor.', error)
+  }
+}
+
+export async function solicitarRecuperacaoSenha(email: string): Promise<void> {
+  await requestJson('/auth/esqueci-senha', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email }),
+  })
+}
+
+export async function redefinirSenha(token: string, novaSenha: string): Promise<void> {
+  await requestJson('/auth/redefinir-senha', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ token, nova_senha: novaSenha }),
+  })
+}
+
 export async function fetchCurrentUser(): Promise<UserProfile> {
   if (isMockAuthEnabled()) {
     return MOCK_PROFILE

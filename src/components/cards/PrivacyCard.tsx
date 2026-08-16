@@ -11,9 +11,7 @@ export type PrivacyAction = {
 }
 
 const ACTIONS: PrivacyAction[] = [
-  { id: 'alterar-senha', label: 'Alterar senha', description: 'Última alteração: 30 dias atrás' },
-  { id: 'dados-uso', label: 'Dados de uso', description: 'Gerenciar dados coletados pela IA' },
-  { id: 'exportar-dados', label: 'Exportar meus dados', description: 'Baixar todo o seu histórico' },
+  { id: 'alterar-senha', label: 'Alterar senha', description: 'Atualize a senha da sua conta' },
   { id: 'excluir-conta', label: 'Excluir conta', description: 'Ação irreversível', danger: true },
 ]
 

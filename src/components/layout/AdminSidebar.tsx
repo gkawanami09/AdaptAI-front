@@ -15,7 +15,7 @@ import {
   TrendingUpIcon,
   UsersIcon,
 } from '../ui/icons'
-import { clearStoredAuth } from '../../services/auth'
+import { clearStoredAuth, logoutUser } from '../../services/auth'
 import { removeCookie, TOKEN_COOKIE_NAME } from '../../utils/cookies'
 import type { UserProfile } from '../../types/auth'
 import styles from './AdminSidebar.module.css'
@@ -72,11 +72,14 @@ export function AdminSidebar({ perfil }: AdminSidebarProps) {
     avaliacoesItems.some((item) => location.pathname.startsWith(item.to)),
   )
 
-  function handleLogout() {
-    // TODO: conectar ao backend — invalidar a sessão/token no servidor, se aplicável
-    removeCookie(TOKEN_COOKIE_NAME)
-    clearStoredAuth()
-    window.location.href = '/login'
+  async function handleLogout() {
+    try {
+      await logoutUser()
+    } finally {
+      removeCookie(TOKEN_COOKIE_NAME)
+      clearStoredAuth()
+      window.location.href = '/login'
+    }
   }
 
   return (

@@ -11,3 +11,12 @@ export type UserProfile = {
   nivel?: number
   xp?: number
 }
+
+export type SolicitarRecuperacaoSenhaPayload = {
+  email: string
+}
+
+export type RedefinirSenhaPayload = {
+  token: string
+  nova_senha: string
+}

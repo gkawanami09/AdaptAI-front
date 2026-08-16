@@ -130,8 +130,8 @@ export function AdminNovoModulo() {
   }
 
   function handleGerenciarAulas() {
-    // TODO: conectar à navegação real — só disponível depois do módulo ser criado
-    console.log('gerenciar aulas')
+    if (!materiaId || !topicoId) return
+    navigate(`/admin/materias/${materiaId}/modulos/${topicoId}`)
   }
 
   function handleAbrirNovoIcone() {

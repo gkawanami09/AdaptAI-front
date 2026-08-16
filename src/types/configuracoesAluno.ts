@@ -5,6 +5,7 @@ export type ConfiguracoesAlunoPerfil = {
     xp_total: number
     escola: string
     ano_enem: string
+    avatar_url?: string | null
 }
 
 export type ConfiguracoesAlunoNotificacao = {
@@ -12,12 +13,6 @@ export type ConfiguracoesAlunoNotificacao = {
     label: string
     description: string
     enabled: boolean
-}
-
-export type ConfiguracoesAlunoMetas = {
-    objetivo: string
-    tempo_estudo: string
-    nota_alvo: string
 }
 
 export type ConfiguracoesAlunoTema = 'claro' | 'escuro' | 'sistema'
@@ -29,7 +24,6 @@ export type ConfiguracoesAlunoAparencia = {
 export type GetConfiguracoesAlunoResponse = {
     perfil: ConfiguracoesAlunoPerfil
     notificacoes: ConfiguracoesAlunoNotificacao[]
-    metas: ConfiguracoesAlunoMetas
     aparencia: ConfiguracoesAlunoAparencia
 }
 
@@ -43,18 +37,66 @@ export type PatchNotificacaoAlunoResponse = {
     enabled: boolean
 }
 
-export type PatchMetasAlunoPayload = {
-    objetivo?: string
-    tempo_estudo?: string
-    nota_alvo?: string
-}
-
-export type PatchMetasAlunoResponse = ConfiguracoesAlunoMetas
-
 export type PatchAparenciaAlunoPayload = {
     tema: ConfiguracoesAlunoTema
 }
 
 export type PatchAparenciaAlunoResponse = {
     tema: ConfiguracoesAlunoTema
+}
+
+export type PatchPerfilAlunoPayload = {
+    nome?: string
+    escola?: string
+    ano_enem?: string
+}
+
+export type PatchPerfilAlunoResponse = ConfiguracoesAlunoPerfil
+
+export type UploadAvatarAlunoResponse = {
+    avatar_url: string
+}
+
+export type AlterarSenhaAlunoPayload = {
+    senha_atual: string
+    nova_senha: string
+}
+
+export type AlterarSenhaAlunoResponse = {
+    sucesso: boolean
+}
+
+export type ExcluirContaAlunoPayload = {
+    senha: string
+}
+
+export type DadoIA = {
+    id: string
+    nome: string
+    descricao: string
+    categoria: string
+    utilizado: boolean
+}
+
+export type InsightIA = {
+    id: string
+    titulo: string
+    descricao: string
+    materia?: string
+    tipo?: string
+}
+
+export type DadosIAResponse = {
+    dados: DadoIA[]
+    insights: InsightIA[]
+}
+
+export type PatchDadoIAPayload = {
+    id: string
+    utilizado: boolean
+}
+
+export type PatchDadoIAResponse = {
+    id: string
+    utilizado: boolean
 }

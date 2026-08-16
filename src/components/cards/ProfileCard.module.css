@@ -44,6 +44,30 @@
   height: 13px;
 }
 
+.avatarImage {
+  display: block;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+.avatarInput {
+  display: none;
+}
+
+.avatarStatus {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.avatarError {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: #ef4444;
+}
+
 .identityInfo {
   display: flex;
   flex-direction: column;
@@ -77,4 +101,18 @@
 
 .submitButton {
   align-self: flex-start;
+}
+
+.errorMessage {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: #ef4444;
+}
+
+.successMessage {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: #22c55e;
 }

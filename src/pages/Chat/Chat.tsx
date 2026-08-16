@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { ChatHeaderCard } from '../../components/cards/ChatHeaderCard'
 import { ChatMessage } from '../../components/chat/ChatMessage'
 import { ChatComposer } from '../../components/chat/ChatComposer'
@@ -8,6 +9,7 @@ import { useChat } from '../../hooks/useChat'
 import styles from './Chat.module.css'
 
 export function Chat() {
+  const navigate = useNavigate()
   const [mensagem, setMensagem] = useState('')
   const {
     mensagens,
@@ -27,13 +29,11 @@ export function Chat() {
   }, [mensagens, adaEscrevendo])
 
   function handleQuestoes() {
-    // TODO: conectar à navegação/ação real de "Questões" a partir do chat
-    console.log('abrir questões')
+    navigate('/questoes')
   }
 
   function handleRevisao() {
-    // TODO: conectar à navegação/ação real de "Revisão" a partir do chat
-    console.log('abrir revisão')
+    navigate('/simulados')
   }
 
   function handleEnviarMensagem() {

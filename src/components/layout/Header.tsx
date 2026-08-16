@@ -17,7 +17,7 @@ import {
   TrendingUpIcon,
   TrophyIcon,
 } from '../ui/icons'
-import { clearStoredAuth } from '../../services/auth'
+import { clearStoredAuth, logoutUser } from '../../services/auth'
 import { removeCookie, TOKEN_COOKIE_NAME } from '../../utils/cookies'
 import type { UserProfile } from '../../types/auth'
 import styles from './Header.module.css'
@@ -51,11 +51,14 @@ export function Header({ perfil }: HeaderProps) {
   const [busca, setBusca] = useState('')
   const isAdmin = perfil?.nivelAcesso === 'admin'
 
-  function handleLogout() {
-    // TODO: conectar ao backend — invalidar a sessão/token no servidor, se aplicável
-    removeCookie(TOKEN_COOKIE_NAME)
-    clearStoredAuth()
-    window.location.href = '/login'
+  async function handleLogout() {
+    try {
+      await logoutUser()
+    } finally {
+      removeCookie(TOKEN_COOKIE_NAME)
+      clearStoredAuth()
+      window.location.href = '/login'
+    }
   }
 
   function handleBuscaSubmit(event: FormEvent<HTMLFormElement>) {

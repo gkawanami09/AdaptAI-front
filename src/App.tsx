@@ -4,6 +4,8 @@ import { Navigate, Outlet, Route, Routes, useLocation, useOutletContext } from '
 import { LoginPage } from './pages/Login/LoginPage'
 import { CadastroPage } from './pages/Cadastro/CadastroPage'
 import { VerificarCodigoPage } from './pages/VerificarCodigo/VerificarCodigoPage'
+import { EsqueciSenhaPage } from './pages/EsqueciSenha/EsqueciSenhaPage'
+import { RedefinirSenhaPage } from './pages/RedefinirSenha/RedefinirSenhaPage'
 import { DashboardPage } from './pages/Dashboard/DashboardPage'
 import { OnboardingPage } from './pages/Onboarding/OnboardingPage'
 import { PlanoEstudos } from './pages/PlanoEstudos/PlanoEstudos'
@@ -148,6 +150,8 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/cadastro" element={<CadastroPage />} />
       <Route path="/verificar-codigo" element={<VerificarCodigoPage />} />
+      <Route path="/esqueci-senha" element={<EsqueciSenhaPage />} />
+      <Route path="/redefinir-senha" element={<RedefinirSenhaPage />} />
 
       {/* 🔒 Camada 1: garante que está logado e pega o perfil */}
       <Route element={<GaranteAutenticacao />}>

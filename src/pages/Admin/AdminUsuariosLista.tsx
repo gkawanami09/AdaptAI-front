@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { AdminPageLayout } from '../../components/layout/AdminPageLayout'
 import { Breadcrumb } from '../../components/ui/Breadcrumb'
 import { TitlePage } from '../../components/ui/TitlePage'
@@ -43,7 +44,9 @@ const STATUS_FILTERS: { value: UsuarioStatus | 'todos'; label: string }[] = [
 ]
 
 export function AdminUsuariosLista() {
-  const [busca, setBusca] = useState('')
+  const location = useLocation()
+  const buscaInicial = (location.state as { busca?: string } | null)?.busca ?? ''
+  const [busca, setBusca] = useState(buscaInicial)
   const [cargo, setCargo] = useState<UsuarioCargo | 'todos'>('todos')
   const [status, setStatus] = useState<UsuarioStatus | 'todos'>('todos')
   const [ordenacao, setOrdenacao] = useState('nome-az')
