@@ -18,14 +18,37 @@ type DayTaskCardProps = {
   duration: string
   completed?: boolean
   href?: string
+  onToggleComplete?: () => void
 }
 
-export function DayTaskCard({ icon, iconColor, title, subject, subjectColor, duration, completed, href }: DayTaskCardProps) {
+export function DayTaskCard({ icon, iconColor, title, subject, subjectColor, duration, completed, href, onToggleComplete }: DayTaskCardProps) {
+  const checkButton = onToggleComplete ? (
+    <button
+      type="button"
+      className={`${styles.checkCircle}${completed ? ` ${styles.checkCircleDone}` : ''}`}
+      aria-pressed={completed}
+      aria-label={completed ? 'Marcar tarefa como não concluída' : 'Marcar tarefa como concluída'}
+      onClick={(event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        onToggleComplete()
+      }}
+    >
+      {completed && <CheckIcon className={styles.checkIcon} />}
+    </button>
+  ) : (
+    completed && (
+      <span className={`${styles.checkCircle} ${styles.checkCircleDone}`}>
+        <CheckIcon className={styles.checkIcon} />
+      </span>
+    )
+  )
+
   const content = (
     <>
       <CardIcon color={iconColor}>{icon}</CardIcon>
 
-      <div className={styles.content}>
+      <div className={`${styles.content}${completed ? ` ${styles.contentDone}` : ''}`}>
         <CardHeading>{title}</CardHeading>
         <div className={styles.meta}>
           <Badge color={subjectColor}>{subject}</Badge>
@@ -36,11 +59,7 @@ export function DayTaskCard({ icon, iconColor, title, subject, subjectColor, dur
         </div>
       </div>
 
-      {completed && (
-        <span className={styles.checkCircle}>
-          <CheckIcon className={styles.checkIcon} />
-        </span>
-      )}
+      {checkButton}
     </>
   )
 

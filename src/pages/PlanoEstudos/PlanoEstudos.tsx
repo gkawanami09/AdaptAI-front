@@ -16,7 +16,7 @@ import { Toast } from '../../components/ui/Toast'
 import type { ToastType } from '../../components/ui/Toast'
 import styles from './PlanoEstudos.module.css'
 
-import { getPlanoEstudos, postReorganizarPlanoComIA } from '../../services/planoEstudos'
+import { getPlanoEstudos, patchConcluirTarefa, postReorganizarPlanoComIA } from '../../services/planoEstudos'
 import type { GetPlanoEstudosResponse, PlanoEstudosPeriodo, PlanoEstudosTarefa } from '../../types/planoEstudos'
 import { useAchievementNotifications } from '../../contexts/AchievementNotificationContext'
 
@@ -128,6 +128,38 @@ export function PlanoEstudos() {
     }
   }
 
+  async function handleConcluirTarefa(tarefaId: string) {
+    const tarefaAtual = dados?.tarefas_do_dia.find((tarefa) => tarefa.id === tarefaId)
+    if (!tarefaAtual || tarefaAtual.concluida) return
+
+    setDados((atual) =>
+      atual
+        ? {
+            ...atual,
+            tarefas_do_dia: atual.tarefas_do_dia.map((tarefa) => (tarefa.id === tarefaId ? { ...tarefa, concluida: true } : tarefa)),
+            tarefas_concluidas_total: atual.tarefas_concluidas_total + 1,
+          }
+        : atual,
+    )
+
+    try {
+      await patchConcluirTarefa(tarefaId)
+      checkForNewAchievements()
+    } catch (err) {
+      console.error(err)
+      setDados((atual) =>
+        atual
+          ? {
+              ...atual,
+              tarefas_do_dia: atual.tarefas_do_dia.map((tarefa) => (tarefa.id === tarefaId ? { ...tarefa, concluida: false } : tarefa)),
+              tarefas_concluidas_total: atual.tarefas_concluidas_total - 1,
+            }
+          : atual,
+      )
+      setToast({ type: 'error', message: 'Não foi possível concluir a tarefa. Tente novamente.' })
+    }
+  }
+
   const diaSelecionadoNumero = dataReferencia.getDate()
   const diaAtual = dados?.dias_da_semana.find((item) => item.data_iso === formatarDataISO(dataReferencia))
 
@@ -216,6 +248,7 @@ export function PlanoEstudos() {
                         duration={formatarDuracao(tarefa.duracao_min)}
                         completed={tarefa.concluida}
                         href={resolverLinkTarefa(tarefa)}
+                        onToggleComplete={() => handleConcluirTarefa(tarefa.id)}
                       />
                     ))
                   )}

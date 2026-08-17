@@ -1,0 +1,35 @@
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 32px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-h);
+  text-decoration: none;
+}
+
+.backLink:hover {
+  color: var(--primary);
+}
+
+.backIcon {
+  width: 16px;
+  height: 16px;
+}
+
+.questions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

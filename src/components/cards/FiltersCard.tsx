@@ -21,6 +21,7 @@ export type FilterGroup = {
 export type FilterShortcut = {
   label: string
   icon?: ReactNode
+  active?: boolean
   onClick?: () => void
 }
 
@@ -75,7 +76,13 @@ export function FiltersCard({ title, groups, shortcuts }: FiltersCardProps) {
       {shortcuts && shortcuts.length > 0 && (
         <div className={styles.shortcuts}>
           {shortcuts.map((shortcut) => (
-            <button key={shortcut.label} type="button" className={styles.shortcut} onClick={shortcut.onClick}>
+            <button
+              key={shortcut.label}
+              type="button"
+              className={`${styles.shortcut}${shortcut.active ? ` ${styles['shortcut--active']}` : ''}`}
+              aria-pressed={shortcut.active}
+              onClick={shortcut.onClick}
+            >
               <span className={styles.shortcutDot} />
               {shortcut.label}
             </button>

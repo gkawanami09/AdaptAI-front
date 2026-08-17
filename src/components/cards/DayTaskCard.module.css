@@ -49,6 +49,14 @@
   flex-shrink: 0;
   border-radius: 50%;
   background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 0;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.checkCircleDone {
+  background: var(--surface);
   border: 1px solid rgba(16, 185, 129, 0.35);
 }
 
@@ -56,4 +64,9 @@
   width: 15px;
   height: 15px;
   color: #10b981;
+}
+
+.contentDone > :first-child {
+  text-decoration: line-through;
+  opacity: 0.7;
 }

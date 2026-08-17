@@ -14,7 +14,12 @@ import { Aulas } from './pages/Aulas/Aulas'
 import { AulaVisualizacao } from './pages/Aulas/AulaVisualizacao'
 import { Questoes } from './pages/Questoes/questoes'
 import { QuestoesVisualizacao } from './pages/Questoes/QuestoesVisualizacao'
+import { QuestoesExecucaoRevisao } from './pages/Questoes/QuestoesExecucaoRevisao'
 import { Simulados } from './pages/Simulados/Simulados'
+import { SimuladoDetalhe } from './pages/Simulados/SimuladoDetalhe'
+import { SimuladoResolucao } from './pages/Simulados/SimuladoResolucao'
+import { SimuladoResultado } from './pages/Simulados/SimuladoResultado'
+import { SimuladoRevisao } from './pages/Simulados/SimuladoRevisao'
 import { Redacao } from './pages/Redacao/redacao'
 import { RedacaoTemas } from './pages/Redacao/RedacaoTemas'
 import { RedacaoProcessando } from './pages/Redacao/RedacaoProcessando'
@@ -176,10 +181,15 @@ function App() {
           </Route>
           <Route element={<PermissaoDaPagina idPagina="questoes" />}>
             <Route path="/questoes" element={<Questoes />} />
+            <Route path="/questoes/execucoes/:execucaoId/revisao" element={<QuestoesExecucaoRevisao />} />
             <Route path="/questoes/:slug" element={<QuestoesVisualizacao />} />
           </Route>
           <Route element={<PermissaoDaPagina idPagina="simulados" />}>
             <Route path="/simulados" element={<Simulados />} />
+            <Route path="/simulados/tentativas/:id/resultado" element={<SimuladoResultado />} />
+            <Route path="/simulados/tentativas/:id/revisao" element={<SimuladoRevisao />} />
+            <Route path="/simulados/tentativas/:id" element={<SimuladoResolucao />} />
+            <Route path="/simulados/:slug" element={<SimuladoDetalhe />} />
           </Route>
           <Route element={<PermissaoDaPagina idPagina="redacao" />}>
             <Route path="/redacao" element={<RedacaoTemas />} />

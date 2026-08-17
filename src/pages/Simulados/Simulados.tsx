@@ -101,6 +101,7 @@ export function Simulados() {
                 tempo: item.tempo,
                 score: item.nota,
                 acertos: item.acertos_percentual,
+                onClick: () => navigate(`/simulados/tentativas/${item.id}/resultado`),
               }))}
             />
           </div>

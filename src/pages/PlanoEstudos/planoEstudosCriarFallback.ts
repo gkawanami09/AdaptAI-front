@@ -1,5 +1,4 @@
-// Dados temporários usados enquanto o backend não implementa GET /aluno/plano-estudos/opcoes.
-// Assim que o endpoint existir, a página passa a consumir a resposta real automaticamente.
+// Dados usados apenas enquanto GET /aluno/plano-estudos/opcoes ainda não respondeu ou falhou.
 import type { ProvaOpcao, MateriaOpcao } from '../../types/planoEstudosCriar'
 
 export const PROVAS_FALLBACK: ProvaOpcao[] = [
@@ -11,11 +10,9 @@ export const PROVAS_FALLBACK: ProvaOpcao[] = [
 ]
 
 export const MATERIAS_FALLBACK: MateriaOpcao[] = [
-  { slug: 'linguagens', nome: 'Linguagens' },
+  { slug: 'portugues', nome: 'Português' },
   { slug: 'matematica', nome: 'Matemática' },
   { slug: 'redacao', nome: 'Redação' },
-  { slug: 'ciencias-natureza', nome: 'Ciências da Natureza' },
-  { slug: 'ciencias-humanas', nome: 'Ciências Humanas' },
   { slug: 'fisica', nome: 'Física' },
   { slug: 'quimica', nome: 'Química' },
   { slug: 'biologia', nome: 'Biologia' },

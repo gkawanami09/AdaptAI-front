@@ -46,6 +46,11 @@
   border-color: rgba(108, 92, 231, 0.2);
 }
 
+.tone--red {
+  background: rgba(239, 68, 68, 0.06);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
 :global(.dark) .tone--green {
   background: rgba(52, 211, 153, 0.1);
   border-color: rgba(52, 211, 153, 0.3);
@@ -54,4 +59,9 @@
 :global(.dark) .tone--purple {
   background: rgba(139, 127, 240, 0.12);
   border-color: rgba(139, 127, 240, 0.3);
+}
+
+:global(.dark) .tone--red {
+  background: rgba(248, 113, 113, 0.1);
+  border-color: rgba(248, 113, 113, 0.3);
 }

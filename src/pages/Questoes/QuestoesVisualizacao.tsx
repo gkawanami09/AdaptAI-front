@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { Button } from '../../components/ui/Button'
 import { QuestionProgressDots } from '../../components/ui/QuestionProgressDots'
 import { QuestionPromptCard } from '../../components/cards/QuestionPromptCard'
@@ -29,6 +29,8 @@ function horaAtual() {
 export function QuestoesVisualizacao() {
   const { slug } = useParams<{ slug: string }>()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const questaoAlvo = searchParams.get('questao')
 
   const [dados, setDados] = useState<GetListaQuestoesResponse | null>(null)
   const [carregando, setCarregando] = useState(false)
@@ -50,7 +52,8 @@ export function QuestoesVisualizacao() {
     try {
       const resposta = await getListaQuestoes(slug)
       setDados(resposta)
-      setCurrentIndex(0)
+      const indiceAlvo = questaoAlvo ? resposta.questoes.findIndex((item) => item.id === questaoAlvo) : -1
+      setCurrentIndex(indiceAlvo >= 0 ? indiceAlvo : 0)
     } catch (err) {
       console.error(err)
       setErro(err instanceof Error ? err.message : 'Não foi possível carregar a lista de questões.')

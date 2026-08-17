@@ -5,7 +5,7 @@ import { CardHeading } from './CardHeading'
 import { Badge } from '../ui/Badge'
 import { ProgressBar } from '../ui/ProgressBar'
 import { Button } from '../ui/Button'
-import { ClockIcon, PlayIcon } from '../ui/icons'
+import { ClockIcon, PlayIcon, CheckIcon } from '../ui/icons'
 import styles from './ActivityCard.module.css'
 
 export type ActivityStatus = 'concluido' | 'em-andamento' | 'nao-iniciado'
@@ -40,9 +40,10 @@ type ActivityCardProps = {
   duration: string
   progress?: number
   onStart?: () => void
+  onComplete?: () => void
 }
 
-export function ActivityCard({ icon, subject, subjectColor, status, title, duration, progress, onStart }: ActivityCardProps) {
+export function ActivityCard({ icon, subject, subjectColor, status, title, duration, progress, onStart, onComplete }: ActivityCardProps) {
   const config = STATUS_CONFIG[status]
 
   return (
@@ -72,9 +73,16 @@ export function ActivityCard({ icon, subject, subjectColor, status, title, durat
         </div>
 
         {config.showButton && (
-          <Button pill size="sm" fullWidth={false} icon={<PlayIcon />} iconPosition="left" onClick={onStart}>
-            Começar
-          </Button>
+          <div className={styles.actions}>
+            {onComplete && (
+              <Button pill size="sm" fullWidth={false} variant="outline" icon={<CheckIcon />} iconPosition="left" onClick={onComplete}>
+                Concluir
+              </Button>
+            )}
+            <Button pill size="sm" fullWidth={false} icon={<PlayIcon />} iconPosition="left" onClick={onStart}>
+              Começar
+            </Button>
+          </div>
         )}
       </div>
     </CardDiv>

@@ -24,6 +24,18 @@
   box-shadow: 0 0 0 3px var(--primary-bg);
 }
 
+.option--correct {
+  cursor: default;
+  border-color: rgba(16, 185, 129, 0.5);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
+}
+
+.option--incorrect {
+  cursor: default;
+  border-color: rgba(239, 68, 68, 0.5);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+
 .letter {
   display: inline-flex;
   align-items: center;
@@ -41,6 +53,16 @@
 
 .letter--selected {
   background: var(--primary);
+  color: #fff;
+}
+
+.letter--correct {
+  background: #10b981;
+  color: #fff;
+}
+
+.letter--incorrect {
+  background: #ef4444;
   color: #fff;
 }
 

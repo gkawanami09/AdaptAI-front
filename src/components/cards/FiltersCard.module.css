@@ -95,6 +95,14 @@
   color: var(--primary);
 }
 
+.shortcut--active {
+  color: var(--primary);
+}
+
+.shortcut--active .shortcutDot {
+  box-shadow: 0 0 0 3px var(--primary-bg);
+}
+
 .shortcutDot {
   width: 6px;
   height: 6px;

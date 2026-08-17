@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import styles from './CardDiv.module.css'
 
 export type CardAccent = 'blue' | 'green' | 'purple' | 'gold' | 'teal'
-export type CardTone = 'green' | 'purple'
+export type CardTone = 'green' | 'purple' | 'red'
 
 type CardDivProps = {
   children: ReactNode

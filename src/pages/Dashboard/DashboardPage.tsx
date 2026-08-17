@@ -17,6 +17,7 @@ import type { ToastType } from '../../components/ui/Toast'
 import { useAchievementNotifications } from '../../contexts/AchievementNotificationContext'
 
 import { getDashboardAluno } from '../../services/dashboardAluno'
+import { patchConcluirTarefa } from '../../services/planoEstudos'
 import type { DashboardAlunoPlanoItem, GetDashboardAlunoResponse } from '../../types/dashboardAluno'
 
 function formatarDuracao(minutos: number) {
@@ -80,6 +81,38 @@ export function DashboardPage() {
     checkForNewAchievements()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  async function handleConcluirAtividade(itemId: string) {
+    const itemAtual = dados?.plano_do_dia.find((item) => item.id === itemId)
+    if (!itemAtual || itemAtual.status === 'concluido') return
+
+    setDados((atual) =>
+      atual
+        ? {
+            ...atual,
+            plano_do_dia: atual.plano_do_dia.map((item) => (item.id === itemId ? { ...item, status: 'concluido' } : item)),
+            resumo: { ...atual.resumo, tarefas_concluidas: atual.resumo.tarefas_concluidas + 1 },
+          }
+        : atual,
+    )
+
+    try {
+      await patchConcluirTarefa(itemId)
+      checkForNewAchievements()
+    } catch (err) {
+      console.error(err)
+      setDados((atual) =>
+        atual
+          ? {
+              ...atual,
+              plano_do_dia: atual.plano_do_dia.map((item) => (item.id === itemId ? { ...item, status: itemAtual.status } : item)),
+              resumo: { ...atual.resumo, tarefas_concluidas: atual.resumo.tarefas_concluidas - 1 },
+            }
+          : atual,
+      )
+      setToast({ type: 'error', message: 'Não foi possível concluir a tarefa. Tente novamente.' })
+    }
+  }
 
   return (
     <main className={styles.page}>
@@ -155,6 +188,7 @@ export function DashboardPage() {
                         const link = resolverLinkAtividade(item)
                         if (link) navigate(link)
                       }}
+                      onComplete={() => handleConcluirAtividade(item.id)}
                     />
                   ))
                 )}

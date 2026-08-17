@@ -89,7 +89,7 @@ export function PlanoEstudosCriar() {
         if (ativo) setOpcoes(resposta)
       })
       .catch(() => {
-        // backend ainda não implementou /aluno/plano-estudos/opcoes — mantém o fallback local
+        // falha ao carregar /aluno/plano-estudos/opcoes — mantém o fallback local
       })
       .finally(() => {
         if (ativo) setCarregandoOpcoes(false)

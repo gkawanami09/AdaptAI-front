@@ -9,6 +9,7 @@ export type HistoricoItem = {
   tempo: string
   score: number
   acertos: number
+  onClick?: () => void
 }
 
 type HistoricoCardProps = {
@@ -23,7 +24,7 @@ export function HistoricoCard({ title, items }: HistoricoCardProps) {
 
       <div className={styles.list}>
         {items.map((item) => (
-          <button type="button" className={styles.row} key={item.title}>
+          <button type="button" className={styles.row} key={item.title} onClick={item.onClick}>
             <span className={styles.dayBadge}>{item.day}</span>
 
             <div className={styles.info}>

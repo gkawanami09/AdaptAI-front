@@ -558,6 +558,20 @@ export function XIcon({ className }: IconProps) {
   )
 }
 
+export function RefreshIcon({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M3 12a9 9 0 0 1 15.4-6.36M21 12a9 9 0 0 1-15.4 6.36M3 12V6m0 6h6M21 12v6m0-6h-6"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
 export function LogOutIcon({ className }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
