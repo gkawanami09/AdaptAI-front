@@ -89,34 +89,3 @@ export type DeleteListaResponse = {
   mensagem: string
 }
 
-export type AdicionarItemParams = {
-  questao_id: string
-  ordem?: number
-}
-
-export type AdicionarItemResponse = {
-  sucesso: boolean
-  mensagem: string
-  lista: ListaDetalhe
-}
-
-export type RemoverItemResponse = {
-  sucesso: boolean
-  mensagem: string
-  lista: ListaDetalhe
-}
-
-export type ItemReordenar = {
-  questao_id: string
-  ordem: number
-}
-
-export type ReordenarItensParams = {
-  itens: ItemReordenar[]
-}
-
-export type ReordenarItensResponse = {
-  sucesso: boolean
-  mensagem: string
-  lista: ListaDetalhe
-}

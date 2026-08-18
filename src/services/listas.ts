@@ -5,9 +5,6 @@ import type {
     PostListaParams, PostListaResponse,
     PatchListaParams, PatchListaResponse,
     DeleteListaResponse,
-    AdicionarItemParams, AdicionarItemResponse,
-    RemoverItemResponse,
-    ReordenarItensParams, ReordenarItensResponse
 } from "../types/listas"
 
 const API_LISTAS_PREFIX = "/admin/listas-questoes"
@@ -71,35 +68,5 @@ export function deleteLista(id: string) {
         headers: {
             "Content-Type": "application/json"
         }
-    })
-}
-
-// itens da lista
-export function adicionarItemLista(listaId: string, params: AdicionarItemParams) {
-    return requestAuthJson<AdicionarItemResponse>(`${API_LISTAS_PREFIX}/${listaId}/itens`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(params)
-    })
-}
-
-export function removerItemLista(listaId: string, questaoId: string) {
-    return requestAuthJson<RemoverItemResponse>(`${API_LISTAS_PREFIX}/${listaId}/itens/${questaoId}`, {
-        method: "DELETE",
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
-}
-
-export function reordenarItensLista(listaId: string, params: ReordenarItensParams) {
-    return requestAuthJson<ReordenarItensResponse>(`${API_LISTAS_PREFIX}/${listaId}/itens/ordem`, {
-        method: "PATCH",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(params)
     })
 }

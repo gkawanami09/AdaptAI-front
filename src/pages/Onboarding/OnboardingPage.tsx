@@ -90,6 +90,22 @@ const baseSteps: Array<{
   },
 ]
 
+// O backend de onboarding (schemas/onboarding_schema.py) só aceita estes 9 slugs de
+// matéria — o catálogo geral de matérias (GET /aluno/plano-estudos/opcoes) inclui outras
+// matérias/duplicatas usadas em outras telas (banco de questões, plano de estudos), então
+// filtramos aqui para nunca mandar um valor fora do que o onboarding aceita.
+const ONBOARDING_VALID_SUBJECTS = [
+  'matematica',
+  'fisica',
+  'quimica',
+  'biologia',
+  'historia',
+  'geografia',
+  'portugues',
+  'redacao',
+  'ingles',
+] as const
+
 const initialAnswers: Answers = { objective: '', studyTime: '', subjects: [], mainGoal: '', studyDays: [] }
 
 export function OnboardingPage() {
@@ -103,9 +119,15 @@ export function OnboardingPage() {
   useEffect(() => {
     getOpcoesPlanoEstudos()
       .then((response) => {
-        setSubjectOptions(
-          response.materias.map((materia) => ({ id: materia.slug, emoji: '📘', title: materia.nome })),
-        )
+        const vistos = new Set<string>()
+        const opcoesValidas = response.materias.filter((materia) => {
+          if (!ONBOARDING_VALID_SUBJECTS.includes(materia.slug as (typeof ONBOARDING_VALID_SUBJECTS)[number])) return false
+          if (vistos.has(materia.slug)) return false
+          vistos.add(materia.slug)
+          return true
+        })
+
+        setSubjectOptions(opcoesValidas.map((materia) => ({ id: materia.slug, emoji: '📘', title: materia.nome })))
       })
       .catch((error) => {
         console.error('Não foi possível carregar as matérias disponíveis.', error)
@@ -138,12 +160,13 @@ export function OnboardingPage() {
     if (step === 1) setAnswers((value) => ({ ...value, studyTime: option.id as OnboardingStudyTime }))
     if (step === 2) {
       const subject = option.id as OnboardingSubject
-      setAnswers((value) => ({
-        ...value,
-        subjects: value.subjects.includes(subject)
-          ? value.subjects.filter((selectedSubject) => selectedSubject !== subject)
-          : [...value.subjects, subject],
-      }))
+      setAnswers((value) => {
+        if (value.subjects.includes(subject)) {
+          return { ...value, subjects: value.subjects.filter((selectedSubject) => selectedSubject !== subject) }
+        }
+        if (value.subjects.length >= ONBOARDING_VALID_SUBJECTS.length) return value
+        return { ...value, subjects: [...value.subjects, subject] }
+      })
     }
     if (step === 3) setAnswers((value) => ({ ...value, mainGoal: option.id as OnboardingMainGoal }))
     if (step === 4) {

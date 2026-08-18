@@ -1,6 +1,6 @@
 import { requestAuthJson } from "./api"
 
-import type { AulaAtualizarParams, AulaCriarParams, GetAulaResponse, GetAulasParams, GetAulasPorMateriaParams, GetAulasPorMateriaResponse, GetAulasResponse, PatchAulaResponse, PostAulaResponse } from "../types/aulas"
+import type { AulaAtualizarParams, AulaCriarParams, DeleteAulaResponse, GetAulaResponse, GetAulasParams, GetAulasPorMateriaParams, GetAulasPorMateriaResponse, GetAulasResponse, PatchAulaResponse, PostAulaResponse } from "../types/aulas"
 
 const API_AULAS_PREFIX = "/admin/aulas"
 
@@ -69,5 +69,12 @@ export async function patchAulasOrdem(topicoId: string, ordem: { id: string; ord
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ordem })
+    })
+}
+
+export async function deleteAula(aulaId: string) {
+    return requestAuthJson<DeleteAulaResponse>(`${API_AULAS_PREFIX}/${aulaId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" }
     })
 }

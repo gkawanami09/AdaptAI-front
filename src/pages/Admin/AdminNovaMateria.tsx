@@ -41,15 +41,19 @@ export function AdminNovaMateria() {
   const { id } = useParams<{ id: string }>()
   const emEdicao = Boolean(id)
   const [nome, setNome] = useState('')
+  const [descricao, setDescricao] = useState('')
   const [area, setArea] = useState<MateriaArea | ''>('')
   const [ordem, setOrdem] = useState('1')
   const [status, setStatus] = useState('ativa')
   const [icone, setIcone] = useState(ICONE_OPTIONS[0])
   const [cor, setCor] = useState(COR_OPTIONS[0].hex)
+  const [slug, setSlug] = useState<string | undefined>(undefined)
   const [modalAberto, setModalAberto] = useState<'icone' | 'cor' | null>(null)
   const [carregando, setCarregando] = useState(false)
   const [carregandoMateria, setCarregandoMateria] = useState(emEdicao)
   const [erroCarregamento, setErroCarregamento] = useState('')
+  const [erroSalvar, setErroSalvar] = useState('')
+  const [erroValidacao, setErroValidacao] = useState('')
 
   const nomePreview = nome || 'Nova matéria'
 
@@ -67,11 +71,13 @@ export function AdminNovaMateria() {
 
         const materia = response.materia
         setNome(materia.nome)
+        setDescricao(materia.descricao ?? '')
         setArea(materia.area)
         setIcone(materia.icone)
         setCor(materia.cor)
         setOrdem(String(materia.ordem))
         setStatus(materia.ativo ? 'ativa' : 'rascunho')
+        setSlug(materia.slug)
       } catch (err) {
         console.error(err)
         if (!cancelado) setErroCarregamento('Não foi possível carregar essa matéria.')
@@ -118,24 +124,41 @@ export function AdminNovaMateria() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (!area) return
+    setErroValidacao('')
+    setErroSalvar('')
+
+    if (!nome.trim()) {
+      setErroValidacao('Informe o nome da matéria.')
+      return
+    }
+    if (!area) {
+      setErroValidacao('Selecione a área do conhecimento.')
+      return
+    }
+    if (!ordem || Number(ordem) < 1) {
+      setErroValidacao('A ordem de exibição deve ser um número maior ou igual a 1.')
+      return
+    }
 
     const payload = {
-      nome,
+      nome: nome.trim(),
       area,
       icone,
       cor,
       ordem: Number(ordem),
       ativo: status === 'ativa',
+      descricao: descricao.trim() || null,
     }
 
     setCarregando(true)
     try {
       const response = emEdicao ? await patchMateria(id!, payload) : await postMaterias(payload)
-      console.log(response)
-      navigate('/admin/materias')
+      navigate('/admin/materias', {
+        state: { toast: { type: 'success', message: response.mensagem || 'Matéria salva com sucesso.' } },
+      })
     } catch (err) {
       console.error(err)
+      setErroSalvar(err instanceof Error ? err.message : 'Não foi possível salvar a matéria. Tente novamente.')
     } finally {
       setCarregando(false)
     }
@@ -194,6 +217,12 @@ export function AdminNovaMateria() {
           <CardDiv>
             <p className={styles.fieldHint}>{erroCarregamento}</p>
           </CardDiv>
+        )}
+
+        {(erroValidacao || erroSalvar) && (
+          <div className={styles.alert} role="alert">
+            {erroValidacao || erroSalvar}
+          </div>
         )}
 
         <form id="nova-materia-form" className={styles.contentRow} onSubmit={handleSubmit}>
@@ -265,6 +294,23 @@ export function AdminNovaMateria() {
                 <span className={styles.fieldHint}>Define a posição da matéria na listagem.</span>
               </div>
 
+              <label className={styles.textareaField}>
+                <span>Descrição</span>
+                <textarea
+                  value={descricao}
+                  onChange={(event) => setDescricao(event.target.value)}
+                  rows={4}
+                  placeholder="Descreva o conteúdo abordado nesta matéria..."
+                  disabled={carregando}
+                />
+              </label>
+
+              {slug && (
+                <div className={styles.fieldGroup}>
+                  <span className={styles.fieldLabel}>Slug</span>
+                  <span className={styles.fieldHint}>{slug} — gerado automaticamente, usado como identificador em outras telas.</span>
+                </div>
+              )}
             </CardDiv>
           </div>
 

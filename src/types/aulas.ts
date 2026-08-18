@@ -99,6 +99,11 @@ export type GetAulasParams = {
     ordenar?: 'nome-az' | 'nome-za' | 'recentes'
 }
 
+export type DeleteAulaResponse = {
+    sucesso: boolean
+    mensagem: string
+}
+
 export type GetAulasResponse = {
     sucesso: boolean
     pagina: number

@@ -59,3 +59,30 @@
   border-color: var(--primary-border);
   color: var(--primary);
 }
+
+.deleteButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.deleteButton svg {
+  width: 14px;
+  height: 14px;
+}
+
+.deleteButton:hover {
+  border-color: rgba(220, 38, 38, 0.4);
+  color: #dc2626;
+}

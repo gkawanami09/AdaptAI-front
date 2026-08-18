@@ -11,6 +11,10 @@ export type UsuarioResumo = {
     ofensiva_atual: number
     xp: number
     ultimo_acesso: string | null
+    // ainda não confirmados no contrato do backend — ver BACKEND_ADMIN_REQUIREMENTS.md
+    nivel?: number
+    escola?: string | null
+    ano_enem?: string | null
 }
 
 export type GetUsuariosParams = {

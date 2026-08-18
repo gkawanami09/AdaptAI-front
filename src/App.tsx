@@ -32,6 +32,8 @@ import { AdminDashboard } from './pages/Admin/AdminDashboard'
 import { AdminUsuariosLista } from './pages/Admin/AdminUsuariosLista'
 import { AdminUsuarioDetalhe } from './pages/Admin/AdminUsuarioDetalhe'
 import { AdminMateriasLista } from './pages/Admin/AdminMateriasLista'
+import { AdminAreasConhecimentoLista } from './pages/Admin/AdminAreasConhecimentoLista'
+import { AdminAreaConhecimentoNova } from './pages/Admin/AdminAreaConhecimentoNova'
 import { AdminMateriaDetalhe } from './pages/Admin/AdminMateriaDetalhe'
 import { AdminNovaMateria } from './pages/Admin/AdminNovaMateria'
 import { AdminNovoModulo } from './pages/Admin/AdminNovoModulo'
@@ -221,6 +223,10 @@ function App() {
 
             <Route path="/admin/usuarios" element={<AdminUsuariosLista />} />
             <Route path="/admin/usuarios/:id" element={<AdminUsuarioDetalhe />} />
+
+            <Route path="/admin/areas-conhecimento" element={<AdminAreasConhecimentoLista />} />
+            <Route path="/admin/areas-conhecimento/nova" element={<AdminAreaConhecimentoNova />} />
+            <Route path="/admin/areas-conhecimento/:id/editar" element={<AdminAreaConhecimentoNova />} />
 
             <Route path="/admin/materias" element={<AdminMateriasLista />} />
             <Route path="/admin/materias/:id" element={<AdminMateriaDetalhe />} />

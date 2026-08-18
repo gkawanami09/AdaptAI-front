@@ -11,6 +11,8 @@ import { AdminStatCard } from '../../components/cards/AdminStatCard'
 import { RankingBarList } from '../../components/cards/RankingBarList'
 import { ActivityFeed } from '../../components/cards/ActivityFeed'
 import { RankingConteudosTable } from '../../components/cards/RankingConteudosTable'
+import { Toast } from '../../components/ui/Toast'
+import type { ToastType } from '../../components/ui/Toast'
 import { AreaLineChart } from '../../components/charts/AreaLineChart'
 import { DonutChart } from '../../components/charts/DonutChart'
 import type { DonutChartSliceColor } from '../../components/charts/DonutChart'
@@ -81,6 +83,7 @@ export function AdminRelatorios() {
   const [totalPaginas, setTotalPaginas] = useState(1)
 
   const [exportando, setExportando] = useState(false)
+  const [toast, setToast] = useState<{ type: ToastType; message: string } | null>(null)
 
   async function carregarRelatorios() {
     setCarregando(true)
@@ -132,6 +135,7 @@ export function AdminRelatorios() {
       URL.revokeObjectURL(url)
     } catch (err) {
       console.error(err)
+      setToast({ type: 'error', message: err instanceof Error ? err.message : 'Não foi possível exportar o relatório.' })
     } finally {
       setExportando(false)
     }
@@ -139,6 +143,8 @@ export function AdminRelatorios() {
 
   return (
     <AdminPageLayout>
+      {toast && <Toast type={toast.type} message={toast.message} onClose={() => setToast(null)} />}
+
       <div className={styles.page}>
         <Breadcrumb items={[{ label: 'Relatórios' }]} />
 

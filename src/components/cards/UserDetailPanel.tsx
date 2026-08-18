@@ -20,7 +20,7 @@ import { ConfirmDialog } from '../ui/ConfirmDialog'
 import {
   ArrowLeftIcon, PencilIcon, CalendarIcon, ClockIcon, CheckCircleIcon,
   FireIcon, TrophyIcon, BoltIcon, CheckSquareIcon, TargetIcon, ClipboardIcon,
-  FileTextIcon, AlertCircleIcon, XIcon, LockIcon,
+  FileTextIcon, AlertCircleIcon, XIcon, LockIcon, FolderIcon, TrendingUpIcon,
 } from '../ui/icons'
 import styles from './UserDetailPanel.module.css'
 
@@ -293,10 +293,25 @@ export function UserDetailPanel({ usuarioId, editarAoAbrir, onVoltar, onUsuarioA
               {usuario.email_verificado ? 'Sim' : 'Não'}
             </span>
           </div>
+          {usuario.escola && (
+            <div className={styles.metaRow}>
+              <FolderIcon />
+              <span className={styles.metaLabel}>Escola</span>
+              <span className={styles.metaValue}>{usuario.escola}</span>
+            </div>
+          )}
+          {usuario.ano_enem && (
+            <div className={styles.metaRow}>
+              <TargetIcon />
+              <span className={styles.metaLabel}>Ano do ENEM</span>
+              <span className={styles.metaValue}>{usuario.ano_enem}</span>
+            </div>
+          )}
         </div>
       </CardDiv>
 
       <div className={styles.statsGrid}>
+        {usuario.nivel !== undefined && <StatTile icon={<TrendingUpIcon />} iconColor="purple" label="Nível" value={usuario.nivel} />}
         <StatTile icon={<FireIcon />} iconColor="gold" label="Ofensiva atual" value={`${usuario.ofensiva_atual ?? 0} dias`} />
         <StatTile icon={<TrophyIcon />} iconColor="purple" label="Maior ofensiva" value={`${usuario.maior_ofensiva ?? 0} dias`} />
         <StatTile icon={<BoltIcon />} iconColor="gold" label="XP" value={(usuario.xp ?? 0).toLocaleString('pt-BR')} />

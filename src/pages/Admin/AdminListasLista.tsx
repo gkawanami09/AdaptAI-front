@@ -11,6 +11,8 @@ import { CardDiv } from '../../components/cards/CardDiv'
 import { AdminStatCard } from '../../components/cards/AdminStatCard'
 import { QuestionListCard } from '../../components/cards/QuestionListCard'
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog'
+import { Toast } from '../../components/ui/Toast'
+import type { ToastType } from '../../components/ui/Toast'
 import type { CardIconColor } from '../../components/cards/CardIcon'
 import { ClipboardIcon, FileTextIcon, PlusIcon, SearchIcon } from '../../components/ui/icons'
 import styles from './AdminListasLista.module.css'
@@ -55,6 +57,7 @@ export function AdminListasLista() {
 
   const [listaParaExcluir, setListaParaExcluir] = useState<ListaResumo | null>(null)
   const [excluindo, setExcluindo] = useState(false)
+  const [toast, setToast] = useState<{ type: ToastType; message: string } | null>(null)
 
   useEffect(() => {
     getMaterias({ limite: 100 })
@@ -106,9 +109,11 @@ export function AdminListasLista() {
     try {
       await deleteLista(listaParaExcluir.id)
       setListaParaExcluir(null)
+      setToast({ type: 'success', message: 'Lista excluída com sucesso.' })
       carregarListas()
     } catch (err) {
       console.error(err)
+      setToast({ type: 'error', message: err instanceof Error ? err.message : 'Não foi possível excluir esta lista.' })
     } finally {
       setExcluindo(false)
     }
@@ -121,6 +126,8 @@ export function AdminListasLista() {
 
   return (
     <AdminPageLayout>
+      {toast && <Toast type={toast.type} message={toast.message} onClose={() => setToast(null)} />}
+
       <div className={styles.page}>
         <Breadcrumb items={[{ label: 'Listas' }]} />
 

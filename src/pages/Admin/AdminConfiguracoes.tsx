@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { AdminPageLayout } from '../../components/layout/AdminPageLayout'
 import { Breadcrumb } from '../../components/ui/Breadcrumb'
 import { TitlePage } from '../../components/ui/TitlePage'
@@ -15,6 +16,8 @@ import { PermissionTable } from '../../components/cards/PermissionTable'
 import { IntegrationCard } from '../../components/cards/IntegrationCard'
 import { ApiKeyInput } from '../../components/cards/ApiKeyInput'
 import { SaveBar } from '../../components/layout/SaveBar'
+import { Toast } from '../../components/ui/Toast'
+import type { ToastType } from '../../components/ui/Toast'
 import {
   BoltIcon,
   GoogleIcon,
@@ -56,15 +59,17 @@ import type {
 
 const ITENS_POR_PAGINA = 8
 
+// Somente estas 4 áreas estão liberadas por enquanto (Geral, Usuários, Permissões,
+// Autenticação). As demais telas (Conteúdo, IA, Notificações, Integrações) continuam
+// implementadas abaixo, mas ficam fora da navegação até serem habilitadas.
 const TABS = [
   { value: 'geral', label: 'Geral' },
-  { value: 'usuarios', label: 'Usuários e Permissões' },
+  { value: 'usuarios', label: 'Usuários' },
+  { value: 'permissoes', label: 'Permissões' },
   { value: 'autenticacao', label: 'Autenticação' },
-  { value: 'conteudo', label: 'Conteúdo' },
-  { value: 'ia', label: 'IA' },
-  { value: 'notificacoes', label: 'Notificações' },
-  { value: 'integracoes', label: 'Integrações' },
 ]
+
+const TAB_VALUES = TABS.map((item) => item.value)
 
 const CARGO_FILTERS: { value: UsuarioAdminCargo | 'todos'; label: string }[] = [
   { value: 'todos', label: 'Todos' },
@@ -90,7 +95,13 @@ const INTEGRACOES_ICON: Record<string, { icon: React.ReactNode; color: 'purple' 
 }
 
 export function AdminConfiguracoes() {
-  const [tab, setTab] = useState('geral')
+  // Guarda contra estado inválido (ex.: valor antigo de uma seção desativada) — sempre
+  // cai em "geral" se algo tentar forçar uma aba fora das 4 liberadas.
+  const [tab, setTab] = useState(() => (TAB_VALUES.includes('geral') ? 'geral' : TAB_VALUES[0]))
+
+  function handleChangeTab(value: string) {
+    setTab(TAB_VALUES.includes(value) ? value : 'geral')
+  }
 
   return (
     <AdminPageLayout>
@@ -102,18 +113,32 @@ export function AdminConfiguracoes() {
         </div>
 
         <div className={styles.tabsRow}>
-          <UnderlineTabs options={TABS} value={tab} onChange={setTab} />
+          <UnderlineTabs options={TABS} value={tab} onChange={handleChangeTab} />
         </div>
 
         {tab === 'geral' && <TabGeral />}
-        {tab === 'usuarios' && <TabUsuarios />}
+        {tab === 'usuarios' && <TabUsuariosLink />}
+        {tab === 'permissoes' && <TabPermissoes />}
         {tab === 'autenticacao' && <TabAutenticacao />}
-        {tab === 'conteudo' && <TabConteudo />}
-        {tab === 'ia' && <TabIa />}
-        {tab === 'notificacoes' && <TabNotificacoes />}
-        {tab === 'integracoes' && <TabIntegracoes />}
       </div>
     </AdminPageLayout>
+  )
+}
+
+function TabUsuariosLink() {
+  const navigate = useNavigate()
+
+  return (
+    <div className={styles.tabContent}>
+      <SettingsSection
+        title="Usuários da plataforma"
+        description="A administração completa de usuários (cargos, status, suspensão, ofensiva, histórico) já existe na tela de Usuários."
+      >
+        <Button fullWidth={false} onClick={() => navigate('/admin/usuarios')}>
+          Ir para Usuários
+        </Button>
+      </SettingsSection>
+    </div>
   )
 }
 
@@ -308,7 +333,10 @@ function TabGeral() {
   )
 }
 
-function TabUsuarios() {
+// Gerencia cargo (permissão) e status dos usuários administrativos — é o sistema de
+// permissões existente no projeto (UsuarioAdminCargo), reaproveitado aqui sem duplicar
+// lógica nova.
+function TabPermissoes() {
   const [busca, setBusca] = useState('')
   const [cargo, setCargo] = useState<UsuarioAdminCargo | 'todos'>('todos')
   const [status, setStatus] = useState<UsuarioAdminStatus | 'todos'>('todos')
@@ -1011,6 +1039,7 @@ function TabIntegracoes() {
   const [integracoes, setIntegracoes] = useState<Integracao[]>([])
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState(false)
+  const [toast, setToast] = useState<{ type: ToastType; message: string } | null>(null)
 
   async function carregar() {
     setCarregando(true)
@@ -1036,6 +1065,7 @@ function TabIntegracoes() {
       await patchIntegracao(integracao.id, { ativo })
     } catch (err) {
       console.error(err)
+      setToast({ type: 'error', message: err instanceof Error ? err.message : `Não foi possível atualizar a integração "${integracao.nome}".` })
       carregar()
     }
   }
@@ -1046,8 +1076,11 @@ function TabIntegracoes() {
     )
     try {
       await patchIntegracao(integracao.id, { [campo]: valor })
+      setToast({ type: 'success', message: `Configuração de "${integracao.nome}" salva com sucesso.` })
     } catch (err) {
       console.error(err)
+      setToast({ type: 'error', message: err instanceof Error ? err.message : `Não foi possível salvar a configuração de "${integracao.nome}".` })
+      carregar()
     }
   }
 
@@ -1074,6 +1107,8 @@ function TabIntegracoes() {
 
   return (
     <div className={styles.tabContent}>
+      {toast && <Toast type={toast.type} message={toast.message} onClose={() => setToast(null)} />}
+
       <div className={styles.integrationsGrid}>
         {integracoes.map((integracao) => (
           <IntegrationCard

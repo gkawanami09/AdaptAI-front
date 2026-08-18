@@ -6,7 +6,7 @@ import { CardHeading } from './CardHeading'
 import { Badge } from '../ui/Badge'
 import type { BadgeColor } from '../ui/Badge'
 import { Button } from '../ui/Button'
-import { ClockIcon, FileTextIcon, FolderIcon, PencilIcon, PlayIcon, StarIcon } from '../ui/icons'
+import { ClockIcon, FileTextIcon, FolderIcon, PencilIcon, PlayIcon, StarIcon, XIcon } from '../ui/icons'
 import type { AulaDificuldade } from '../../types/aulas'
 import styles from './AulaAdminCard.module.css'
 
@@ -35,6 +35,7 @@ type AulaAdminCardProps = {
   duracaoTotalMin: number
   onVerConteudos?: () => void
   onEditar?: () => void
+  onExcluir?: () => void
 }
 
 export function AulaAdminCard({
@@ -50,6 +51,7 @@ export function AulaAdminCard({
   duracaoTotalMin,
   onVerConteudos,
   onEditar,
+  onExcluir,
 }: AulaAdminCardProps) {
   return (
     <CardDiv>
@@ -95,6 +97,9 @@ export function AulaAdminCard({
         </Button>
         <button type="button" className={styles.editButton} aria-label={`Editar ${title}`} onClick={onEditar}>
           <PencilIcon />
+        </button>
+        <button type="button" className={styles.deleteButton} aria-label={`Excluir ${title}`} onClick={onExcluir}>
+          <XIcon />
         </button>
       </div>
     </CardDiv>

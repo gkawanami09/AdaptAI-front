@@ -114,9 +114,11 @@ export function AdminUsuariosLista() {
     try {
       await suspenderUsuario(usuarioParaSuspender.id, { motivo, duracao_dias: duracaoDias })
       setUsuarioParaSuspender(null)
+      setToast({ type: 'success', message: 'Usuário suspenso com sucesso.' })
       carregarUsuarios()
     } catch (err) {
       console.error(err)
+      setToast({ type: 'error', message: err instanceof Error ? err.message : 'Não foi possível suspender este usuário.' })
     } finally {
       setProcessando(false)
     }
@@ -128,9 +130,11 @@ export function AdminUsuariosLista() {
     try {
       await banirUsuario(usuarioParaBanir.id, { motivo })
       setUsuarioParaBanir(null)
+      setToast({ type: 'success', message: 'Usuário banido com sucesso.' })
       carregarUsuarios()
     } catch (err) {
       console.error(err)
+      setToast({ type: 'error', message: err instanceof Error ? err.message : 'Não foi possível banir este usuário.' })
     } finally {
       setProcessando(false)
     }
@@ -142,9 +146,11 @@ export function AdminUsuariosLista() {
     try {
       await reativarUsuario(usuarioParaReativar.id)
       setUsuarioParaReativar(null)
+      setToast({ type: 'success', message: 'Usuário reativado com sucesso.' })
       carregarUsuarios()
     } catch (err) {
       console.error(err)
+      setToast({ type: 'error', message: err instanceof Error ? err.message : 'Não foi possível reativar este usuário.' })
     } finally {
       setProcessando(false)
     }
@@ -156,8 +162,10 @@ export function AdminUsuariosLista() {
     try {
       await resetarSenha(usuarioParaResetarSenha.id)
       setUsuarioParaResetarSenha(null)
+      setToast({ type: 'success', message: 'Email de redefinição de senha enviado.' })
     } catch (err) {
       console.error(err)
+      setToast({ type: 'error', message: err instanceof Error ? err.message : 'Não foi possível resetar a senha deste usuário.' })
     } finally {
       setProcessando(false)
     }
@@ -198,9 +206,11 @@ export function AdminUsuariosLista() {
     try {
       await resetarOfensiva(usuarioParaResetarOfensiva.id)
       setUsuarioParaResetarOfensiva(null)
+      setToast({ type: 'success', message: 'Ofensiva resetada com sucesso.' })
       carregarUsuarios()
     } catch (err) {
       console.error(err)
+      setToast({ type: 'error', message: err instanceof Error ? err.message : 'Não foi possível resetar a ofensiva deste usuário.' })
     } finally {
       setProcessando(false)
     }

@@ -8,6 +8,7 @@ import {
   ChevronDownIcon,
   ClipboardIcon,
   FileTextIcon,
+  FolderIcon,
   GridIcon,
   HelpCircleIcon,
   LogOutIcon,
@@ -30,6 +31,7 @@ const topItems = [
 ]
 
 const conteudosItems = [
+  { to: '/admin/areas-conhecimento', label: 'Áreas do Conhecimento', icon: FolderIcon },
   { to: '/admin/materias', label: 'Matérias', icon: BookIcon },
   { to: '/admin/aulas', label: 'Aulas', icon: BookIcon },
 ]

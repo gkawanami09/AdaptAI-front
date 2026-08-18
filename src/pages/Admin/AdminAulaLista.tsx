@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { AdminPageLayout } from '../../components/layout/AdminPageLayout'
 import { Breadcrumb } from '../../components/ui/Breadcrumb'
 import { TitlePage } from '../../components/ui/TitlePage'
@@ -10,11 +10,14 @@ import { Pagination } from '../../components/ui/Pagination'
 import { CardDiv } from '../../components/cards/CardDiv'
 import { AdminStatCard } from '../../components/cards/AdminStatCard'
 import { AulaAdminCard } from '../../components/cards/AulaAdminCard'
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog'
+import { Toast } from '../../components/ui/Toast'
+import type { ToastType } from '../../components/ui/Toast'
 import type { CardIconColor } from '../../components/cards/CardIcon'
 import { BookIcon, CheckCircleIcon, FileTextIcon, PlusIcon, SearchIcon, StarIcon } from '../../components/ui/icons'
 import styles from './AdminAulaLista.module.css'
 
-import { getAulas } from '../../services/aulas'
+import { deleteAula, getAulas } from '../../services/aulas'
 import type { AulaResumo, AulaDificuldade } from '../../types/aulas'
 
 const ITENS_POR_PAGINA = 6
@@ -50,6 +53,7 @@ function duracaoTotal(aula: AulaResumo) {
 
 export function AdminAulaLista() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [busca, setBusca] = useState('')
   const [dificuldade, setDificuldade] = useState<AulaDificuldade | 'todas'>('todas')
   const [status, setStatus] = useState<'todas' | 'ativas' | 'inativas' | 'mais-cobradas'>('todas')
@@ -64,6 +68,17 @@ export function AdminAulaLista() {
   const [totalMaisCobradas, setTotalMaisCobradas] = useState(0)
   const [carregando, setCarregando] = useState(false)
   const [erro, setErro] = useState(false)
+
+  const [aulaParaExcluir, setAulaParaExcluir] = useState<AulaResumo | null>(null)
+  const [excluindo, setExcluindo] = useState(false)
+  const [toast, setToast] = useState<{ type: ToastType; message: string } | null>(
+    (location.state as { toast?: { type: ToastType; message: string } } | null)?.toast ?? null,
+  )
+
+  useEffect(() => {
+    if (location.state) navigate('.', { replace: true, state: null })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   async function carregarAulas() {
     setCarregando(true)
@@ -110,8 +125,26 @@ export function AdminAulaLista() {
     navigate(`/admin/materias/${aula.materia_id}/modulos/${aula.topico_id}/aulas/${aula.id}/editar`)
   }
 
+  async function handleExcluir() {
+    if (!aulaParaExcluir) return
+    setExcluindo(true)
+    try {
+      await deleteAula(aulaParaExcluir.id)
+      setAulaParaExcluir(null)
+      setToast({ type: 'success', message: 'Aula excluída com sucesso.' })
+      carregarAulas()
+    } catch (err) {
+      console.error(err)
+      setToast({ type: 'error', message: err instanceof Error ? err.message : 'Não foi possível excluir esta aula.' })
+    } finally {
+      setExcluindo(false)
+    }
+  }
+
   return (
     <AdminPageLayout>
+      {toast && <Toast type={toast.type} message={toast.message} onClose={() => setToast(null)} />}
+
       <div className={styles.page}>
         <Breadcrumb items={[{ label: 'Conteúdos', to: '/admin' }, { label: 'Aulas' }]} />
 
@@ -226,6 +259,7 @@ export function AdminAulaLista() {
                 duracaoTotalMin={duracaoTotal(aula)}
                 onVerConteudos={() => handleVerConteudos(aula)}
                 onEditar={() => handleEditar(aula)}
+                onExcluir={() => setAulaParaExcluir(aula)}
               />
             ))}
           </div>
@@ -242,6 +276,16 @@ export function AdminAulaLista() {
           <Pagination page={pagina} totalPages={totalPaginas} onChange={setPagina} />
         </div>
       </div>
+
+      {aulaParaExcluir && (
+        <ConfirmDialog
+          title="Excluir aula"
+          description={`Tem certeza que deseja excluir "${aulaParaExcluir.titulo}"? Os conteúdos (vídeos e textos) desta aula também serão removidos.`}
+          confirmando={excluindo}
+          onConfirm={handleExcluir}
+          onClose={() => setAulaParaExcluir(null)}
+        />
+      )}
     </AdminPageLayout>
   )
 }

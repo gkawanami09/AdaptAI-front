@@ -41,6 +41,7 @@ export function UsersTable({ usuarios, onVisualizar, onEditar, onSuspender, onBa
             <th>Usuário</th>
             <th>Cargo</th>
             <th>Status</th>
+            <th>Nível</th>
             <th>Ofensiva atual</th>
             <th>XP</th>
             <th>Último acesso</th>
@@ -67,6 +68,7 @@ export function UsersTable({ usuarios, onVisualizar, onEditar, onSuspender, onBa
               <td>
                 <UserStatusBadge status={usuario.status} />
               </td>
+              <td>{usuario.nivel !== undefined ? usuario.nivel : '—'}</td>
               <td>
                 <span className={styles.streakCell}>
                   <FireIcon /> {usuario.ofensiva_atual ?? 0} dias

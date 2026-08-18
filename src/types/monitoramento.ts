@@ -14,6 +14,7 @@ export type OperacaoIaMonitorada = {
 }
 
 export type GetMonitoramentoResponse = {
+    sucesso: boolean
     rotas: RotaMonitorada[]
     operacoes_ia: OperacaoIaMonitorada[]
 }

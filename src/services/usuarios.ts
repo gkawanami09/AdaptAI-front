@@ -13,7 +13,6 @@ import type {
     PostResetarSenhaResponse,
     PostResetarOfensivaResponse,
     GetTimelineResponse,
-    UsuarioCargo,
 } from "../types/usuarios"
 
 const API_USUARIOS_PREFIX = "/admin/usuarios"
@@ -123,15 +122,6 @@ export function patchUsuario(id: string, params: PatchUsuarioParams) {
     })
 }
 
-export function patchCargo(id: string, cargo: UsuarioCargo) {
-    return requestAuthJson<PatchUsuarioResponse>(`${API_USUARIOS_PREFIX}/${id}/cargo`, {
-        method: "PATCH",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ cargo })
-    })
-}
 
 // post functions (ações administrativas)
 export function suspenderUsuario(id: string, params: PostSuspenderParams) {

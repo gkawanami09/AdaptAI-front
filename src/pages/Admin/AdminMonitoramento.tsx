@@ -29,7 +29,7 @@ export function AdminMonitoramento() {
 
     try {
       const resposta = await getMonitoramento()
-      setDados(resposta)
+      setDados({ ...resposta, rotas: resposta.rotas ?? [], operacoes_ia: resposta.operacoes_ia ?? [] })
     } catch (err) {
       console.error(err)
       setErro(true)

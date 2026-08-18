@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { AdminPageLayout } from '../../components/layout/AdminPageLayout'
 import { Breadcrumb } from '../../components/ui/Breadcrumb'
 import { TitlePage } from '../../components/ui/TitlePage'
@@ -10,12 +10,15 @@ import { Pagination } from '../../components/ui/Pagination'
 import { CardDiv } from '../../components/cards/CardDiv'
 import { AdminStatCard } from '../../components/cards/AdminStatCard'
 import { MateriaCard } from '../../components/cards/MateriaCard'
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog'
+import { Toast } from '../../components/ui/Toast'
+import type { ToastType } from '../../components/ui/Toast'
 import type { CardIconColor } from '../../components/cards/CardIcon'
 import { BookIcon, CheckCircleIcon, FileTextIcon, FolderIcon, PlusIcon, SearchIcon } from '../../components/ui/icons'
 import styles from './AdminMateriasLista.module.css'
 
 // api functions
-import { getMaterias } from '../../services/materias'
+import { deleteMateria, getMaterias } from '../../services/materias'
 import type { Materias } from '../../types/materias'
 import { MATERIA_AREAS, getMateriaAreaLabel } from '../../constants/materias'
 import type { MateriaArea } from '../../constants/materias'
@@ -40,6 +43,7 @@ function getAreaVisual(area: MateriaArea) {
 
 export function AdminMateriasLista() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [busca, setBusca] = useState('')
   const [area, setArea] = useState<MateriaArea | 'todas'>('todas')
   const [ordenacao, setOrdenacao] = useState('nome-az')
@@ -49,6 +53,18 @@ export function AdminMateriasLista() {
   const [totalPaginas, setTotalPaginas] = useState(1)
   const [totalRegistros, setTotalRegistros] = useState(0)
   const [carregando, setCarregando] = useState(false)
+  const [erro, setErro] = useState(false)
+  const [toast, setToast] = useState<{ type: ToastType; message: string } | null>(
+    (location.state as { toast?: { type: ToastType; message: string } } | null)?.toast ?? null,
+  )
+
+  const [materiaParaExcluir, setMateriaParaExcluir] = useState<Materias | null>(null)
+  const [excluindo, setExcluindo] = useState(false)
+
+  useEffect(() => {
+    if (location.state) navigate('.', { replace: true, state: null })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   //Materias functions
   function handleNovaMateria() {
@@ -58,6 +74,7 @@ export function AdminMateriasLista() {
   //obtem a lista de todas as materias
   async function carregarMaterias() {
     setCarregando(true)
+    setErro(false)
 
     try {
       const response = await getMaterias({
@@ -72,6 +89,7 @@ export function AdminMateriasLista() {
       setTotalRegistros(response.total_registros)
     } catch (err) {
       console.error(err)
+      setErro(true)
     } finally {
       setCarregando(false)
     }
@@ -90,6 +108,22 @@ export function AdminMateriasLista() {
     navigate(`/admin/materias/${id}/editar`)
   }
 
+  async function handleExcluir() {
+    if (!materiaParaExcluir) return
+    setExcluindo(true)
+    try {
+      await deleteMateria(materiaParaExcluir.id)
+      setMateriaParaExcluir(null)
+      setToast({ type: 'success', message: 'Matéria excluída com sucesso.' })
+      carregarMaterias()
+    } catch (err) {
+      console.error(err)
+      setToast({ type: 'error', message: err instanceof Error ? err.message : 'Não foi possível excluir esta matéria.' })
+    } finally {
+      setExcluindo(false)
+    }
+  }
+
   const materiasOrdenadas = [...materias].sort((a, b) => {
     if (ordenacao === 'nome-za') return b.nome.localeCompare(a.nome)
     return a.nome.localeCompare(b.nome)
@@ -97,6 +131,8 @@ export function AdminMateriasLista() {
 
   return (
     <AdminPageLayout>
+      {toast && <Toast type={toast.type} message={toast.message} onClose={() => setToast(null)} />}
+
       <div className={styles.page}>
         <Breadcrumb items={[{ label: 'Conteúdos', to: '/admin' }, { label: 'Matérias' }]} />
 
@@ -183,6 +219,15 @@ export function AdminMateriasLista() {
           <CardDiv>
             <p className={styles.emptyState}>Carregando matérias...</p>
           </CardDiv>
+        ) : erro ? (
+          <CardDiv>
+            <p className={styles.emptyState}>Não foi possível carregar as matérias.</p>
+            <div className={styles.retryRow}>
+              <Button fullWidth={false} onClick={carregarMaterias}>
+                Tentar novamente
+              </Button>
+            </div>
+          </CardDiv>
         ) : materiasOrdenadas.length > 0 ? (
           <div className={styles.grid}>
             {materiasOrdenadas.map((materia) => {
@@ -199,6 +244,7 @@ export function AdminMateriasLista() {
                   aulas={materia.total_aulas}
                   onVerModulos={() => handleVerModulos(materia.id)}
                   onEditar={() => handleEditar(materia.id)}
+                  onExcluir={() => setMateriaParaExcluir(materia)}
                 />
               )
             })}
@@ -216,6 +262,16 @@ export function AdminMateriasLista() {
           <Pagination page={pagina} totalPages={totalPaginas} onChange={setPagina} />
         </div>
       </div>
+
+      {materiaParaExcluir && (
+        <ConfirmDialog
+          title="Excluir matéria"
+          description={`Tem certeza que deseja excluir "${materiaParaExcluir.nome}"? Módulos e aulas vinculados a esta matéria também deixarão de estar disponíveis.`}
+          confirmando={excluindo}
+          onConfirm={handleExcluir}
+          onClose={() => setMateriaParaExcluir(null)}
+        />
+      )}
     </AdminPageLayout>
   )
 }

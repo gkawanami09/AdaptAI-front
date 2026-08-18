@@ -7,6 +7,7 @@ import type { PostMateriasParams } from "../types/materias"
 import type { PostMateriasResponse } from "../types/materias"
 import type { PatchMateriaParams } from "../types/materias"
 import type { PatchMateriaResponse } from "../types/materias"
+import type { DeleteMateriaResponse } from "../types/materias"
 import type { Materia } from "../types/materias"
 
 const API_MATERIAS_PREFIX = "/admin/materias"
@@ -66,5 +67,15 @@ export function patchMateria(id: string, params: PatchMateriaParams) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify(params)
+    })
+}
+
+// delete functions
+export function deleteMateria(id: string) {
+    return requestAuthJson<DeleteMateriaResponse>(`${API_MATERIAS_PREFIX}/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json"
+        }
     })
 }

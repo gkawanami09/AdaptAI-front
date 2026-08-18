@@ -9,6 +9,8 @@ export type Materias = {
   ativo: boolean
   total_topicos: number
   total_aulas: number
+  slug?: string
+  descricao?: string | null
 }
 
 export type Materia = {
@@ -19,6 +21,9 @@ export type Materia = {
   cor: string
   ordem: number
   ativo: boolean
+  // ainda não confirmados no contrato do backend — ver BACKEND_ADMIN_REQUIREMENTS.md
+  slug?: string
+  descricao?: string | null
 }
 
 export type GetMateriasResponse = {
@@ -46,6 +51,7 @@ export type PostMateriasParams = {
   cor: string
   ordem: number
   ativo: boolean
+  descricao?: string | null
 }
 
 export type PostMateriasResponse = {
@@ -65,4 +71,9 @@ export type PatchMateriaResponse = {
   sucesso: boolean
   mensagem: string
   materia: Materia
+}
+
+export type DeleteMateriaResponse = {
+  sucesso: boolean
+  mensagem: string
 }
