@@ -8,6 +8,8 @@ import type {
     GetBancoQuestoesRespondidasResponse,
     GetExecucaoRevisaoParams,
     GetExecucaoRevisaoResponse,
+    GetGeracaoListaIAResponse,
+    PostGerarListaComIAParams,
     PostGerarListaComIAResponse,
     PostRefazerListaResponse,
 } from "../types/bancoQuestoes"
@@ -30,6 +32,7 @@ export function getBancoQuestoesListas(params: GetBancoQuestoesListasParams = {}
     params.dificuldades?.forEach((valor) => query.append("dificuldades", valor))
     params.materias?.forEach((valor) => query.append("materias", valor))
     if (params.apenas_favoritas) query.set("apenas_favoritas", "true")
+    if (params.apenas_personalizadas) query.set("apenas_personalizadas", "true")
 
     const queryString = query.toString()
 
@@ -44,6 +47,15 @@ export function getBancoQuestoesListas(params: GetBancoQuestoesListasParams = {}
 export function postRefazerLista(listaId: string): Promise<PostRefazerListaResponse> {
     return requestAuthJson<PostRefazerListaResponse>(`${API_BANCO_QUESTOES_PREFIX}/listas/${listaId}/refazer`, {
         method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+}
+
+export function deletarLista(listaId: string): Promise<void> {
+    return requestAuthJson<void>(`${API_BANCO_QUESTOES_PREFIX}/listas/${listaId}`, {
+        method: "DELETE",
         headers: {
             "Content-Type": "application/json"
         }
@@ -91,9 +103,19 @@ export function getExecucaoRevisao(execucaoId: string, params: GetExecucaoRevisa
     )
 }
 
-export function postGerarListaComIA(): Promise<PostGerarListaComIAResponse> {
+export function postGerarListaComIA(params: PostGerarListaComIAParams): Promise<PostGerarListaComIAResponse> {
     return requestAuthJson<PostGerarListaComIAResponse>(`${API_BANCO_QUESTOES_PREFIX}/listas/gerar-ia`, {
         method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(params)
+    })
+}
+
+export function getGeracaoListaIA(jobId: string): Promise<GetGeracaoListaIAResponse> {
+    return requestAuthJson<GetGeracaoListaIAResponse>(`${API_BANCO_QUESTOES_PREFIX}/geracoes/${jobId}`, {
+        method: "GET",
         headers: {
             "Content-Type": "application/json"
         }

@@ -6,6 +6,7 @@ import { QuestionPromptCard } from '../../components/cards/QuestionPromptCard'
 import { AnswerOption } from '../../components/cards/AnswerOption'
 import { DicaCard } from '../../components/cards/DicaCard'
 import { AskAiCard } from '../../components/cards/AskAiCard'
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog'
 import type { AskAiMessage } from '../../components/cards/AskAiCard'
 import {
   ArrowLeftIcon,
@@ -43,6 +44,7 @@ export function QuestoesVisualizacao() {
   const [iaInput, setIaInput] = useState('')
   const [enviandoResposta, setEnviandoResposta] = useState(false)
   const [finalizando, setFinalizando] = useState(false)
+  const [confirmandoFinalizacao, setConfirmandoFinalizacao] = useState(false)
 
   async function carregarLista() {
     if (!slug) return
@@ -109,11 +111,7 @@ export function QuestoesVisualizacao() {
         }
       })
 
-      const todasRespondidas = dados.questoes.every((item, i) => (i === currentIndex ? true : item.respondida))
-
-      if (todasRespondidas) {
-        await handleFinalizarLista()
-      } else if (!isLast) {
+      if (!isLast) {
         setCurrentIndex((prev) => prev + 1)
       }
     } catch (err) {
@@ -137,6 +135,11 @@ export function QuestoesVisualizacao() {
     } finally {
       setFinalizando(false)
     }
+  }
+
+  function handleConfirmarFinalizacao() {
+    setConfirmandoFinalizacao(false)
+    handleFinalizarLista()
   }
 
   function handleAnterior() {
@@ -286,13 +289,21 @@ export function QuestoesVisualizacao() {
           disabled={questao.opcaoSelecionada === null || enviandoResposta || finalizando}
           onClick={handleResponder}
         >
-          {isLast ? 'Finalizar' : 'Responder'}
+          {enviandoResposta ? 'Enviando...' : 'Responder'}
         </Button>
         <Button variant="outline" icon={<LightbulbIcon />} iconPosition="left" fullWidth={false} onClick={handlePedirDica}>
           Pedir dica
         </Button>
         <Button variant="outline" icon={<SparklesIcon />} iconPosition="left" fullWidth={false} onClick={handleExplicarComIA}>
           Explicar com IA
+        </Button>
+        <Button
+          variant="outline"
+          fullWidth={false}
+          disabled={finalizando}
+          onClick={() => setConfirmandoFinalizacao(true)}
+        >
+          Finalizar lista
         </Button>
       </div>
 
@@ -332,6 +343,17 @@ export function QuestoesVisualizacao() {
           Próxima
         </Button>
       </div>
+
+      {confirmandoFinalizacao && (
+        <ConfirmDialog
+          title="Finalizar lista de questões"
+          description="Tem certeza que deseja finalizar? Após finalizar você não poderá alterar as respostas dessa lista."
+          confirmLabel="Finalizar"
+          confirmando={finalizando}
+          onConfirm={handleConfirmarFinalizacao}
+          onClose={() => setConfirmandoFinalizacao(false)}
+        />
+      )}
     </main>
   )
 }

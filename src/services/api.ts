@@ -23,6 +23,10 @@ export async function requestJson<T>(path: string, init: RequestInit): Promise<T
     throw new Error(await parseApiError(response))
   }
 
+  if (response.status === 204) {
+    return undefined as T
+  }
+
   return response.json() as Promise<T>
 }
 

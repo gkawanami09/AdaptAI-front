@@ -25,6 +25,7 @@ export type BancoQuestoesLista = {
     questoes_corretas?: number
     progresso_cor: BancoQuestoesProgressoCor
     ultima_execucao_id?: string
+    personalizada?: boolean
 }
 
 export type BancoQuestoesRespondidaStatus = 'corretas' | 'erradas'
@@ -82,6 +83,7 @@ export type GetBancoQuestoesListasParams = {
     dificuldades?: string[]
     materias?: string[]
     apenas_favoritas?: boolean
+    apenas_personalizadas?: boolean
 }
 
 export type GetBancoQuestoesListasResponse = {
@@ -89,9 +91,28 @@ export type GetBancoQuestoesListasResponse = {
     listas: BancoQuestoesLista[]
 }
 
+export type PostGerarListaComIAParams = {
+    quantidade: number
+    materias?: string[]
+    assuntos?: string[]
+    dificuldades?: string[]
+    vestibulares?: string[]
+    instrucao?: string
+}
+
 export type PostGerarListaComIAResponse = {
-    id: string
-    slug: string | null
+    job_id: string
+    status: 'processando'
+}
+
+export type BancoQuestoesGeracaoStatus = 'processando' | 'concluido' | 'erro'
+
+export type GetGeracaoListaIAResponse = {
+    job_id: string
+    status: BancoQuestoesGeracaoStatus
+    lista_id?: string
+    slug?: string | null
+    erro_mensagem?: string
 }
 
 export type PostRefazerListaResponse = {

@@ -7,14 +7,20 @@ import { FiltersCard } from '../../components/cards/FiltersCard'
 import type { FilterGroup } from '../../components/cards/FiltersCard'
 import { QuestionListItem } from '../../components/cards/QuestionListItem'
 import { AnsweredQuestionListItem } from '../../components/cards/AnsweredQuestionListItem'
+import { GerarListaIAModal } from '../../components/cards/GerarListaIAModal'
 import { Pagination } from '../../components/ui/Pagination'
+import { Toast } from '../../components/ui/Toast'
+import type { ToastType } from '../../components/ui/Toast'
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog'
 import { SparklesIcon } from '../../components/ui/icons'
 import styles from './Questoes.module.css'
 
 import {
+  deletarLista,
   getBancoQuestoesFiltros,
   getBancoQuestoesListas,
   getBancoQuestoesRespondidas,
+  getGeracaoListaIA,
   postGerarListaComIA,
   postRefazerLista,
 } from '../../services/bancoQuestoes'
@@ -23,7 +29,11 @@ import type {
   GetBancoQuestoesFiltrosResponse,
   GetBancoQuestoesListasResponse,
   GetBancoQuestoesRespondidasResponse,
+  PostGerarListaComIAParams,
 } from '../../types/bancoQuestoes'
+
+const INTERVALO_POLL_GERACAO_MS = 2500
+const TIMEOUT_POLL_GERACAO_MS = 120000
 
 const LIMITE_POR_PAGINA = 20
 
@@ -38,6 +48,7 @@ export function Questoes() {
   const [materias, setMaterias] = useState<string[]>([])
   const [assuntos, setAssuntos] = useState<string[]>([])
   const [apenasFavoritas, setApenasFavoritas] = useState(false)
+  const [apenasPersonalizadas, setApenasPersonalizadas] = useState(false)
   const [statusRevisao, setStatusRevisao] = useState<BancoQuestoesRespondidaStatus | null>(null)
   const [paginaRevisao, setPaginaRevisao] = useState(1)
 
@@ -47,7 +58,11 @@ export function Questoes() {
   const [carregando, setCarregando] = useState(false)
   const [erro, setErro] = useState(false)
   const [gerandoComIA, setGerandoComIA] = useState(false)
+  const [modalGerarIAAberto, setModalGerarIAAberto] = useState(false)
   const [listaEmAcao, setListaEmAcao] = useState<string | null>(null)
+  const [toast, setToast] = useState<{ type: ToastType; message: string } | null>(null)
+  const [listaParaExcluir, setListaParaExcluir] = useState<string | null>(null)
+  const [excluindoLista, setExcluindoLista] = useState(false)
 
   useEffect(() => {
     getBancoQuestoesFiltros()
@@ -65,6 +80,7 @@ export function Questoes() {
         dificuldades,
         materias,
         apenas_favoritas: apenasFavoritas,
+        apenas_personalizadas: apenasPersonalizadas,
       })
       setListas(resposta)
     } catch (err) {
@@ -103,20 +119,44 @@ export function Questoes() {
     if (statusRevisao) carregarRespondidas(statusRevisao, paginaRevisao)
     else carregarListas()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [vestibulares, dificuldades, materias, assuntos, apenasFavoritas, statusRevisao, paginaRevisao])
+  }, [vestibulares, dificuldades, materias, assuntos, apenasFavoritas, apenasPersonalizadas, statusRevisao, paginaRevisao])
 
   useEffect(() => {
     setPaginaRevisao(1)
-  }, [vestibulares, dificuldades, materias, assuntos, apenasFavoritas, statusRevisao])
+  }, [vestibulares, dificuldades, materias, assuntos, apenasFavoritas, apenasPersonalizadas, statusRevisao])
 
-  async function handleGerarListaComIA() {
+  function aguardar(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms))
+  }
+
+  async function handleGerarListaComIA(params: PostGerarListaComIAParams) {
     setGerandoComIA(true)
     try {
-      const resultado = await postGerarListaComIA()
-      await carregarListas()
-      navigate(`/questoes/${resultado.slug ?? resultado.id}`)
+      const job = await postGerarListaComIA(params)
+      const inicio = Date.now()
+
+      while (Date.now() - inicio < TIMEOUT_POLL_GERACAO_MS) {
+        const status = await getGeracaoListaIA(job.job_id)
+
+        if (status.status === 'concluido') {
+          setModalGerarIAAberto(false)
+          await carregarListas()
+          navigate(`/questoes/${status.slug ?? status.lista_id}`)
+          return
+        }
+
+        if (status.status === 'erro') {
+          setToast({ type: 'error', message: status.erro_mensagem ?? 'Não foi possível gerar a lista com IA.' })
+          return
+        }
+
+        await aguardar(INTERVALO_POLL_GERACAO_MS)
+      }
+
+      setToast({ type: 'error', message: 'A geração da lista está demorando mais que o esperado. Tente novamente em instantes.' })
     } catch (err) {
       console.error(err)
+      setToast({ type: 'error', message: 'Não foi possível gerar a lista com IA.' })
     } finally {
       setGerandoComIA(false)
     }
@@ -134,6 +174,22 @@ export function Questoes() {
     } catch (err) {
       console.error(err)
       setListaEmAcao(null)
+    }
+  }
+
+  async function handleExcluirLista() {
+    if (!listaParaExcluir) return
+    setExcluindoLista(true)
+
+    try {
+      await deletarLista(listaParaExcluir)
+      setListaParaExcluir(null)
+      await carregarListas()
+    } catch (err) {
+      console.error(err)
+      setToast({ type: 'error', message: 'Não foi possível excluir a lista. Tente novamente.' })
+    } finally {
+      setExcluindoLista(false)
     }
   }
 
@@ -188,12 +244,37 @@ export function Questoes() {
           fullWidth={false}
           icon={<SparklesIcon />}
           iconPosition="left"
-          onClick={handleGerarListaComIA}
+          onClick={() => setModalGerarIAAberto(true)}
           disabled={gerandoComIA}
         >
           Gerar lista com IA
         </Button>
       </div>
+
+      {toast && <Toast type={toast.type} message={toast.message} onClose={() => setToast(null)} />}
+
+      {modalGerarIAAberto && (
+        <GerarListaIAModal
+          materias={filtros?.materias ?? []}
+          assuntos={filtros?.assuntos ?? []}
+          dificuldades={filtros?.dificuldades ?? []}
+          vestibulares={filtros?.vestibulares ?? []}
+          enviando={gerandoComIA}
+          onConfirm={handleGerarListaComIA}
+          onClose={() => setModalGerarIAAberto(false)}
+        />
+      )}
+
+      {listaParaExcluir && (
+        <ConfirmDialog
+          title="Excluir lista"
+          description="Tem certeza que deseja excluir esta lista personalizada? Essa ação não pode ser desfeita."
+          confirmLabel="Excluir"
+          confirmando={excluindoLista}
+          onConfirm={handleExcluirLista}
+          onClose={() => setListaParaExcluir(null)}
+        />
+      )}
 
       <div className={styles.contentRow}>
         <div className={styles.sideColumn}>
@@ -204,6 +285,7 @@ export function Questoes() {
               { label: 'Questões corretas', active: statusRevisao === 'corretas', onClick: () => toggleStatusRevisao('corretas') },
               { label: 'Questões erradas', active: statusRevisao === 'erradas', onClick: () => toggleStatusRevisao('erradas') },
               { label: 'Questões favoritas', active: apenasFavoritas, onClick: () => setApenasFavoritas((value) => !value) },
+              { label: 'Listas personalizadas', active: apenasPersonalizadas, onClick: () => setApenasPersonalizadas((value) => !value) },
             ]}
           />
         </div>
@@ -297,10 +379,13 @@ export function Questoes() {
                           : undefined
                       }
                       progressColor={lista.progresso_cor}
+                      personalizada={lista.personalizada}
                       refazerLoading={listaEmAcao === lista.id}
+                      excluirLoading={excluindoLista && listaParaExcluir === lista.id}
                       onIniciar={() => handleAbrirLista(lista.id, lista.slug)}
                       onRefazer={() => handleRefazerLista(lista.id, lista.slug)}
                       onRevisar={lista.ultima_execucao_id ? () => handleRevisarExecucao(lista.ultima_execucao_id!) : undefined}
+                      onExcluir={() => setListaParaExcluir(lista.id)}
                     />
                   ))
                 )}

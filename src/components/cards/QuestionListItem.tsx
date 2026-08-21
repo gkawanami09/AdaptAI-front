@@ -8,7 +8,7 @@ import type { BadgeColor } from '../ui/Badge'
 import { ProgressBar } from '../ui/ProgressBar'
 import type { ProgressBarColor } from '../ui/ProgressBar'
 import { Button } from '../ui/Button'
-import { PlayIcon, ChevronRightIcon, RefreshIcon, EyeIcon } from '../ui/icons'
+import { PlayIcon, ChevronRightIcon, RefreshIcon, EyeIcon, TrashIcon } from '../ui/icons'
 import type { BancoQuestoesListaStatus } from '../../types/bancoQuestoes'
 import styles from './QuestionListItem.module.css'
 
@@ -31,10 +31,13 @@ type QuestionListItemProps = {
   total: number
   accuracyPercent?: number
   progressColor?: ProgressBarColor
+  personalizada?: boolean
   onIniciar?: () => void
   onRevisar?: () => void
   onRefazer?: () => void
+  onExcluir?: () => void
   refazerLoading?: boolean
+  excluirLoading?: boolean
 }
 
 export function QuestionListItem({
@@ -50,10 +53,13 @@ export function QuestionListItem({
   total,
   accuracyPercent,
   progressColor = 'purple',
+  personalizada,
   onIniciar,
   onRevisar,
   onRefazer,
+  onExcluir,
   refazerLoading,
+  excluirLoading,
 }: QuestionListItemProps) {
   const statusConfig = STATUS_LABEL[status]
 
@@ -129,6 +135,22 @@ export function QuestionListItem({
               onClick={onIniciar}
             >
               {status === 'em_andamento' ? 'Continuar' : 'Começar'}
+            </Button>
+          )}
+
+          {personalizada && onExcluir && (
+            <Button
+              variant="outline"
+              pill
+              size="sm"
+              fullWidth={false}
+              icon={<TrashIcon />}
+              iconPosition="left"
+              onClick={onExcluir}
+              disabled={excluirLoading}
+              title="Excluir esta lista personalizada."
+            >
+              Excluir
             </Button>
           )}
         </div>
