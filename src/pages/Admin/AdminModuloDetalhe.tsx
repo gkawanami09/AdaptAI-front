@@ -12,6 +12,9 @@ import { Loading } from '../../components/ui/Loading'
 import { CardDiv } from '../../components/cards/CardDiv'
 import { CardIcon } from '../../components/cards/CardIcon'
 import { AdminStatCard } from '../../components/cards/AdminStatCard'
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog'
+import { Toast } from '../../components/ui/Toast'
+import type { ToastType } from '../../components/ui/Toast'
 import {
   PencilIcon,
   PlusIcon,
@@ -20,14 +23,14 @@ import {
   TargetIcon,
   SearchIcon,
   ChevronDownIcon,
-  MoreHorizontalIcon,
+  XIcon,
   GripVerticalIcon,
 } from '../../components/ui/icons'
 import styles from './AdminModuloDetalhe.module.css'
 
 import { getMateriaPorId } from '../../services/materias'
 import { getTopicosPorMateria } from '../../services/modulos'
-import { getAulasPorMateria, patchAulasOrdem } from '../../services/aulas'
+import { deleteAula, getAulasPorMateria, patchAulasOrdem } from '../../services/aulas'
 import type { Topico } from '../../types/modulos'
 import type { Aula } from '../../types/aulas'
 
@@ -67,6 +70,9 @@ export function AdminModuloDetalhe() {
   const [dragIndex, setDragIndex] = useState<number | null>(null)
   const [overIndex, setOverIndex] = useState<number | null>(null)
   const [erroOrdem, setErroOrdem] = useState('')
+  const [aulaParaExcluir, setAulaParaExcluir] = useState<Aula | null>(null)
+  const [excluindo, setExcluindo] = useState(false)
+  const [toast, setToast] = useState<{ type: ToastType; message: string } | null>(null)
   // Refs porque os handlers de pointer precisam do valor mais atual sem esperar o re-render.
   const dragIndexRef = useRef<number | null>(null)
   const overIndexRef = useRef<number | null>(null)
@@ -129,6 +135,22 @@ export function AdminModuloDetalhe() {
 
   function handleEditarAula(id: string) {
     navigate(`/admin/materias/${materiaId}/modulos/${topicoId}/aulas/${id}/editar`)
+  }
+
+  async function handleExcluirAula() {
+    if (!aulaParaExcluir) return
+    setExcluindo(true)
+    try {
+      await deleteAula(aulaParaExcluir.id)
+      setAulas((atuais) => atuais.filter((aula) => aula.id !== aulaParaExcluir.id))
+      setAulaParaExcluir(null)
+      setToast({ type: 'success', message: 'Aula excluída com sucesso.' })
+    } catch (err) {
+      console.error(err)
+      setToast({ type: 'error', message: err instanceof Error ? err.message : 'Não foi possível excluir esta aula.' })
+    } finally {
+      setExcluindo(false)
+    }
   }
 
   function handlePointerDown(event: ReactPointerEvent<HTMLButtonElement>, index: number) {
@@ -202,6 +224,8 @@ export function AdminModuloDetalhe() {
 
   return (
     <AdminPageLayout>
+      {toast && <Toast type={toast.type} message={toast.message} onClose={() => setToast(null)} />}
+
       <div className={styles.page}>
         <Breadcrumb
           items={[
@@ -367,8 +391,13 @@ export function AdminModuloDetalhe() {
                             >
                               Editar
                             </Button>
-                            <button type="button" className={styles.rowActionButton} aria-label={`Mais ações para ${aula.titulo}`}>
-                              <MoreHorizontalIcon />
+                            <button
+                              type="button"
+                              className={styles.rowActionButton}
+                              aria-label={`Excluir ${aula.titulo}`}
+                              onClick={() => setAulaParaExcluir(aula)}
+                            >
+                              <XIcon />
                             </button>
                           </div>
                         </td>
@@ -394,6 +423,16 @@ export function AdminModuloDetalhe() {
           </CardDiv>
         )}
       </div>
+
+      {aulaParaExcluir && (
+        <ConfirmDialog
+          title="Excluir aula"
+          description={`Tem certeza que deseja excluir "${aulaParaExcluir.titulo}"? Os conteúdos (vídeos e textos) desta aula também serão removidos.`}
+          confirmando={excluindo}
+          onConfirm={handleExcluirAula}
+          onClose={() => setAulaParaExcluir(null)}
+        />
+      )}
     </AdminPageLayout>
   )
 }
