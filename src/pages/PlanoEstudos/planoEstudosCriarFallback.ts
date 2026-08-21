@@ -5,8 +5,7 @@ export const PROVAS_FALLBACK: ProvaOpcao[] = [
   { slug: 'enem', nome: 'ENEM', descricao: 'Exame Nacional do Ensino Médio' },
   { slug: 'fuvest', nome: 'Fuvest', descricao: 'Fundação Universitária para o Vestibular' },
   { slug: 'unicamp', nome: 'Unicamp', descricao: 'Universidade Estadual de Campinas' },
-  { slug: 'uerj', nome: 'UERJ', descricao: 'Universidade do Estado do Rio de Janeiro' },
-  { slug: 'outras', nome: 'Outras provas', descricao: 'Outras provas e concursos' },
+  { slug: 'vestibulares-gerais', nome: 'Vestibulares gerais', descricao: 'Outros vestibulares e concursos' },
 ]
 
 export const MATERIAS_FALLBACK: MateriaOpcao[] = [
