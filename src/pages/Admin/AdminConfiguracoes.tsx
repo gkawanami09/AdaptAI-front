@@ -604,7 +604,7 @@ function TabAutenticacao() {
   )
 }
 
-function TabConteudo() {
+export function TabConteudo() {
   const [config, setConfig] = useState<ConfiguracoesConteudo | null>(null)
   const [carregando, setCarregando] = useState(true)
   const [salvando, setSalvando] = useState(false)
@@ -729,7 +729,7 @@ function TabConteudo() {
   )
 }
 
-function TabIa() {
+export function TabIa() {
   const [config, setConfig] = useState<ConfiguracoesIa | null>(null)
   const [carregando, setCarregando] = useState(true)
   const [salvando, setSalvando] = useState(false)
@@ -902,7 +902,7 @@ function TabIa() {
   )
 }
 
-function TabNotificacoes() {
+export function TabNotificacoes() {
   const [config, setConfig] = useState<ConfiguracoesNotificacoes | null>(null)
   const [carregando, setCarregando] = useState(true)
   const [salvando, setSalvando] = useState(false)
@@ -1035,7 +1035,7 @@ function TabNotificacoes() {
   )
 }
 
-function TabIntegracoes() {
+export function TabIntegracoes() {
   const [integracoes, setIntegracoes] = useState<Integracao[]>([])
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState(false)
