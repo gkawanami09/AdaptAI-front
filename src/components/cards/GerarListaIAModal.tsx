@@ -10,9 +10,9 @@ import styles from './SuspensionModal.module.css'
 const QUANTIDADE_STEPS = [
   { value: 5, label: '5 questões' },
   { value: 10, label: '10 questões' },
-  { value: 15, label: '15 questões' },
-  { value: 20, label: '20 questões' },
 ]
+
+const MAX_ITENS_POR_FILTRO = 5
 
 type GerarListaIAModalProps = {
   materias: BancoQuestoesFiltroOpcao[]
@@ -25,8 +25,10 @@ type GerarListaIAModalProps = {
   onClose: () => void
 }
 
-function toggleValue(list: string[], value: string) {
-  return list.includes(value) ? list.filter((item) => item !== value) : [...list, value]
+function toggleValue(list: string[], value: string, max: number) {
+  if (list.includes(value)) return list.filter((item) => item !== value)
+  if (list.length >= max) return list
+  return [...list, value]
 }
 
 export function GerarListaIAModal({
@@ -66,64 +68,96 @@ export function GerarListaIAModal({
 
       {materias.length > 0 && (
         <div className={styles.field}>
-          <span className={styles.label}>Matéria (opcional)</span>
+          <span className={styles.label}>
+            Matéria (opcional) — {materiasSelecionadas.length}/{MAX_ITENS_POR_FILTRO}
+          </span>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {materias.map((opcao) => (
-              <FilterChip
-                key={opcao.value}
-                label={opcao.label}
-                selected={materiasSelecionadas.includes(opcao.value)}
-                onClick={() => setMateriasSelecionadas((current) => toggleValue(current, opcao.value))}
-              />
-            ))}
+            {materias.map((opcao) => {
+              const selecionada = materiasSelecionadas.includes(opcao.value)
+              return (
+                <FilterChip
+                  key={opcao.value}
+                  label={opcao.label}
+                  selected={selecionada}
+                  disabled={!selecionada && materiasSelecionadas.length >= MAX_ITENS_POR_FILTRO}
+                  onClick={() =>
+                    setMateriasSelecionadas((current) => toggleValue(current, opcao.value, MAX_ITENS_POR_FILTRO))
+                  }
+                />
+              )
+            })}
           </div>
         </div>
       )}
 
       {assuntos.length > 0 && (
         <div className={styles.field}>
-          <span className={styles.label}>Assunto (opcional)</span>
+          <span className={styles.label}>
+            Assunto (opcional) — {assuntosSelecionados.length}/{MAX_ITENS_POR_FILTRO}
+          </span>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {assuntos.map((opcao) => (
-              <FilterChip
-                key={opcao.value}
-                label={opcao.label}
-                selected={assuntosSelecionados.includes(opcao.value)}
-                onClick={() => setAssuntosSelecionados((current) => toggleValue(current, opcao.value))}
-              />
-            ))}
+            {assuntos.map((opcao) => {
+              const selecionada = assuntosSelecionados.includes(opcao.value)
+              return (
+                <FilterChip
+                  key={opcao.value}
+                  label={opcao.label}
+                  selected={selecionada}
+                  disabled={!selecionada && assuntosSelecionados.length >= MAX_ITENS_POR_FILTRO}
+                  onClick={() =>
+                    setAssuntosSelecionados((current) => toggleValue(current, opcao.value, MAX_ITENS_POR_FILTRO))
+                  }
+                />
+              )
+            })}
           </div>
         </div>
       )}
 
       {dificuldades.length > 0 && (
         <div className={styles.field}>
-          <span className={styles.label}>Dificuldade (opcional)</span>
+          <span className={styles.label}>
+            Dificuldade (opcional) — {dificuldadesSelecionadas.length}/{MAX_ITENS_POR_FILTRO}
+          </span>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {dificuldades.map((opcao) => (
-              <FilterChip
-                key={opcao.value}
-                label={opcao.label}
-                selected={dificuldadesSelecionadas.includes(opcao.value)}
-                onClick={() => setDificuldadesSelecionadas((current) => toggleValue(current, opcao.value))}
-              />
-            ))}
+            {dificuldades.map((opcao) => {
+              const selecionada = dificuldadesSelecionadas.includes(opcao.value)
+              return (
+                <FilterChip
+                  key={opcao.value}
+                  label={opcao.label}
+                  selected={selecionada}
+                  disabled={!selecionada && dificuldadesSelecionadas.length >= MAX_ITENS_POR_FILTRO}
+                  onClick={() =>
+                    setDificuldadesSelecionadas((current) => toggleValue(current, opcao.value, MAX_ITENS_POR_FILTRO))
+                  }
+                />
+              )
+            })}
           </div>
         </div>
       )}
 
       {vestibulares.length > 0 && (
         <div className={styles.field}>
-          <span className={styles.label}>Vestibular (opcional)</span>
+          <span className={styles.label}>
+            Vestibular (opcional) — {vestibularesSelecionados.length}/{MAX_ITENS_POR_FILTRO}
+          </span>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {vestibulares.map((opcao) => (
-              <FilterChip
-                key={opcao.value}
-                label={opcao.label}
-                selected={vestibularesSelecionados.includes(opcao.value)}
-                onClick={() => setVestibularesSelecionados((current) => toggleValue(current, opcao.value))}
-              />
-            ))}
+            {vestibulares.map((opcao) => {
+              const selecionada = vestibularesSelecionados.includes(opcao.value)
+              return (
+                <FilterChip
+                  key={opcao.value}
+                  label={opcao.label}
+                  selected={selecionada}
+                  disabled={!selecionada && vestibularesSelecionados.length >= MAX_ITENS_POR_FILTRO}
+                  onClick={() =>
+                    setVestibularesSelecionados((current) => toggleValue(current, opcao.value, MAX_ITENS_POR_FILTRO))
+                  }
+                />
+              )
+            })}
           </div>
         </div>
       )}

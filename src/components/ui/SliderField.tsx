@@ -19,7 +19,7 @@ export function SliderField({ steps, value, onChange, valueLabel }: SliderFieldP
   return (
     <div className={styles.wrapper}>
       <div className={styles.trackWrapper}>
-        <span className={styles.bubble} style={{ left: `${percent}%` }}>
+        <span className={styles.bubble} style={{ left: `${percent}%`, transform: `translateX(-${percent}%)` }}>
           {valueLabel}
         </span>
         <input

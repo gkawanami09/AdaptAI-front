@@ -31,3 +31,12 @@
   padding: 12px 20px;
   font-size: 14px;
 }
+
+.filter-chip--disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.filter-chip--disabled:hover {
+  background: var(--code-bg);
+}

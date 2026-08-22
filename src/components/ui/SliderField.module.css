@@ -9,7 +9,6 @@
 .bubble {
   position: absolute;
   top: -30px;
-  transform: translateX(-50%);
   background: var(--primary);
   color: #fff;
   font-size: 12px;
