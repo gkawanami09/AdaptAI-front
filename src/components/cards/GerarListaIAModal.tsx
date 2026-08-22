@@ -1,18 +1,14 @@
 import { useState } from 'react'
 import { Modal } from '../ui/Modal'
 import { Button } from '../ui/Button'
-import { SliderField } from '../ui/SliderField'
 import { FilterChip } from '../ui/FilterChip'
 import type { BancoQuestoesFiltroOpcao } from '../../types/bancoQuestoes'
 import type { PostGerarListaComIAParams } from '../../types/bancoQuestoes'
 import styles from './SuspensionModal.module.css'
 
-const QUANTIDADE_STEPS = [
-  { value: 5, label: '5 questões' },
-  { value: 10, label: '10 questões' },
-]
-
-const MAX_ITENS_POR_FILTRO = 5
+const QUANTIDADE_QUESTOES = 5
+const MAX_ITENS_POR_FILTRO = 3
+const MAX_CARACTERES_INSTRUCAO = 300
 
 type GerarListaIAModalProps = {
   materias: BancoQuestoesFiltroOpcao[]
@@ -41,7 +37,6 @@ export function GerarListaIAModal({
   onConfirm,
   onClose,
 }: GerarListaIAModalProps) {
-  const [quantidade, setQuantidade] = useState(10)
   const [materiasSelecionadas, setMateriasSelecionadas] = useState<string[]>([])
   const [assuntosSelecionados, setAssuntosSelecionados] = useState<string[]>([])
   const [dificuldadesSelecionadas, setDificuldadesSelecionadas] = useState<string[]>([])
@@ -58,12 +53,7 @@ export function GerarListaIAModal({
 
       <div className={styles.field}>
         <span className={styles.label}>Quantidade de questões</span>
-        <SliderField
-          steps={QUANTIDADE_STEPS}
-          value={quantidade}
-          onChange={setQuantidade}
-          valueLabel={`${quantidade} questões`}
-        />
+        <p className={styles.helperText}>A IA gera {QUANTIDADE_QUESTOES} questões por lista.</p>
       </div>
 
       {materias.length > 0 && (
@@ -168,8 +158,12 @@ export function GerarListaIAModal({
           className={styles.textarea}
           placeholder="Ex: foque em questões de interpretação de texto, no estilo ENEM..."
           value={instrucao}
+          maxLength={MAX_CARACTERES_INSTRUCAO}
           onChange={(event) => setInstrucao(event.target.value)}
         />
+        <span className={styles.charCount}>
+          {instrucao.length}/{MAX_CARACTERES_INSTRUCAO}
+        </span>
       </div>
 
       <div className={styles.actions}>
@@ -182,7 +176,7 @@ export function GerarListaIAModal({
           disabled={enviando}
           onClick={() =>
             onConfirm({
-              quantidade,
+              quantidade: QUANTIDADE_QUESTOES,
               materias: materiasSelecionadas.length > 0 ? materiasSelecionadas : undefined,
               assuntos: assuntosSelecionados.length > 0 ? assuntosSelecionados : undefined,
               dificuldades: dificuldadesSelecionadas.length > 0 ? dificuldadesSelecionadas : undefined,

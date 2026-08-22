@@ -40,6 +40,18 @@
   border-color: var(--primary);
 }
 
+.helperText {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.charCount {
+  align-self: flex-end;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
 .actions {
   display: flex;
   justify-content: flex-end;
