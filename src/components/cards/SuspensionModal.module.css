@@ -1,3 +1,14 @@
+.errorBanner {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #f5c2c7;
+  background: #fdecea;
+  color: #842029;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
 .field {
   display: flex;
   flex-direction: column;

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { TitlePage } from '../../components/ui/TitlePage'
 import { Button } from '../../components/ui/Button'
 import { CardDiv } from '../../components/cards/CardDiv'
@@ -14,16 +14,22 @@ import { getRedacaoTema } from '../../services/redacaoTemas'
 import { enviarRedacao } from '../../services/redacao'
 import type { GetRedacaoTemaResponse } from '../../types/redacaoTemas'
 
+function chaveRascunho(slug: string) {
+  return `redacao-rascunho-${slug}`
+}
+
 export function Redacao() {
   const { slug } = useParams<{ slug: string }>()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const [tema, setTema] = useState<GetRedacaoTemaResponse | null>(null)
   const [carregando, setCarregando] = useState(false)
   const [erro, setErro] = useState(false)
 
-  const [texto, setTexto] = useState('')
+  const [texto, setTexto] = useState(() => (slug ? sessionStorage.getItem(chaveRascunho(slug)) ?? '' : ''))
   const [enviando, setEnviando] = useState(false)
+  const [erroCorrecao, setErroCorrecao] = useState(Boolean((location.state as { erroCorrecao?: boolean } | null)?.erroCorrecao))
 
   const carregarTema = useCallback(async () => {
     if (!slug) return
@@ -48,9 +54,11 @@ export function Redacao() {
   async function handleEnviar() {
     if (!slug) return
     setEnviando(true)
+    setErroCorrecao(false)
 
     try {
       const envio = await enviarRedacao(slug, texto)
+      sessionStorage.setItem(chaveRascunho(slug), texto)
       // A IA de correção ainda não roda de forma síncrona aqui — a tela de
       // processamento (RedacaoProcessando) é quem acompanha o andamento via
       // polling/websocket usando o id do envio retornado pelo backend.
@@ -95,6 +103,18 @@ export function Redacao() {
 
       <div className={styles.contentRow}>
         <div className={styles.mainColumn}>
+          {erroCorrecao && (
+            <div className={styles.errorBanner} role="alert">
+              <p>
+                Não foi possível corrigir sua redação agora. Seu texto foi mantido — revise e tente enviar
+                novamente.
+              </p>
+              <button type="button" className={styles.errorBannerClose} onClick={() => setErroCorrecao(false)}>
+                ×
+              </button>
+            </div>
+          )}
+
           <ThemeCard tag={tema.tag} tagColor={tema.tag_cor} title={tema.titulo} description={tema.descricao} />
 
           <div className={styles.writing}>

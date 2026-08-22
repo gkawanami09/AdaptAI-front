@@ -58,6 +58,7 @@ export function Questoes() {
   const [carregando, setCarregando] = useState(false)
   const [erro, setErro] = useState(false)
   const [gerandoComIA, setGerandoComIA] = useState(false)
+  const [erroGeracaoIA, setErroGeracaoIA] = useState<string | null>(null)
   const [modalGerarIAAberto, setModalGerarIAAberto] = useState(false)
   const [listaEmAcao, setListaEmAcao] = useState<string | null>(null)
   const [toast, setToast] = useState<{ type: ToastType; message: string } | null>(null)
@@ -131,8 +132,17 @@ export function Questoes() {
 
   async function handleGerarListaComIA(params: PostGerarListaComIAParams) {
     setGerandoComIA(true)
+    setErroGeracaoIA(null)
+
     try {
       const job = await postGerarListaComIA(params)
+
+      if (!job?.job_id) {
+        console.error('Resposta de geração de lista com IA sem job_id:', job)
+        setErroGeracaoIA('O servidor não retornou um identificador de geração válido. Tente novamente.')
+        return
+      }
+
       const inicio = Date.now()
 
       while (Date.now() - inicio < TIMEOUT_POLL_GERACAO_MS) {
@@ -146,17 +156,23 @@ export function Questoes() {
         }
 
         if (status.status === 'erro') {
-          setToast({ type: 'error', message: status.erro_mensagem ?? 'Não foi possível gerar a lista com IA.' })
+          setErroGeracaoIA(status.erro_mensagem ?? 'Não foi possível gerar a lista com IA.')
+          return
+        }
+
+        if (status.status !== 'processando') {
+          console.error('Status de geração de lista com IA desconhecido:', status)
+          setErroGeracaoIA('O servidor retornou uma resposta inesperada ao gerar a lista. Tente novamente.')
           return
         }
 
         await aguardar(INTERVALO_POLL_GERACAO_MS)
       }
 
-      setToast({ type: 'error', message: 'A geração da lista está demorando mais que o esperado. Tente novamente em instantes.' })
+      setErroGeracaoIA('A geração da lista está demorando mais que o esperado. Tente novamente em instantes.')
     } catch (err) {
       console.error(err)
-      setToast({ type: 'error', message: 'Não foi possível gerar a lista com IA.' })
+      setErroGeracaoIA('Não foi possível gerar a lista com IA. Tente novamente.')
     } finally {
       setGerandoComIA(false)
     }
@@ -260,8 +276,12 @@ export function Questoes() {
           dificuldades={filtros?.dificuldades ?? []}
           vestibulares={filtros?.vestibulares ?? []}
           enviando={gerandoComIA}
+          erro={erroGeracaoIA}
           onConfirm={handleGerarListaComIA}
-          onClose={() => setModalGerarIAAberto(false)}
+          onClose={() => {
+            setModalGerarIAAberto(false)
+            setErroGeracaoIA(null)
+          }}
         />
       )}
 

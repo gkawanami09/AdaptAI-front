@@ -58,9 +58,10 @@ export function RedacaoProcessando() {
         if (cancelado) return
 
         if (resposta.status === 'concluida') {
+          sessionStorage.removeItem(`redacao-rascunho-${slug}`)
           navigate(`/redacao/${slug}/resultado/${envioId}`)
         } else if (resposta.status === 'erro') {
-          navigate(`/redacao/${slug}`)
+          navigate(`/redacao/${slug}`, { state: { erroCorrecao: true } })
         }
       } catch (err) {
         console.error(err)

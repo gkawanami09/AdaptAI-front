@@ -31,6 +31,31 @@
   color: var(--text-muted);
 }
 
+.errorBanner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid #f5c2c7;
+  background: #fdecea;
+  color: #842029;
+  font-size: 14px;
+}
+
+.errorBannerClose {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  color: inherit;
+  cursor: pointer;
+  padding: 0 2px;
+}
+
 .actions {
   display: flex;
   gap: 10px;

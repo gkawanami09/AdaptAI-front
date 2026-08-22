@@ -20,6 +20,7 @@ type GerarListaIAModalProps = {
   dificuldades: BancoQuestoesFiltroOpcao[]
   vestibulares: BancoQuestoesFiltroOpcao[]
   enviando?: boolean
+  erro?: string | null
   onConfirm: (params: PostGerarListaComIAParams) => void
   onClose: () => void
 }
@@ -34,6 +35,7 @@ export function GerarListaIAModal({
   dificuldades,
   vestibulares,
   enviando,
+  erro,
   onConfirm,
   onClose,
 }: GerarListaIAModalProps) {
@@ -46,6 +48,12 @@ export function GerarListaIAModal({
 
   return (
     <Modal title="Gerar lista com IA" onClose={onClose}>
+      {erro && (
+        <div className={styles.errorBanner} role="alert">
+          {erro}
+        </div>
+      )}
+
       <div className={styles.field}>
         <span className={styles.label}>Quantidade de questões</span>
         <SliderField
