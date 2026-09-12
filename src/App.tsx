@@ -3,6 +3,7 @@ import { Navigate, Outlet, Route, Routes, useLocation, useOutletContext } from '
 
 import { LoginPage } from './pages/Login/LoginPage'
 import { CadastroPage } from './pages/Cadastro/CadastroPage'
+import { HomePage } from './pages/Home/HomePage'
 import { VerificarCodigoPage } from './pages/VerificarCodigo/VerificarCodigoPage'
 import { EsqueciSenhaPage } from './pages/EsqueciSenha/EsqueciSenhaPage'
 import { RedefinirSenhaPage } from './pages/RedefinirSenha/RedefinirSenhaPage'
@@ -153,7 +154,7 @@ function App() {
   return (
     <Routes>
       {/* Rotas públicas */}
-      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/cadastro" element={<CadastroPage />} />
       <Route path="/verificar-codigo" element={<VerificarCodigoPage />} />
