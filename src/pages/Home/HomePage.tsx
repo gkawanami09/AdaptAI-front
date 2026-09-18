@@ -42,7 +42,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className={styles.stats} aria-label="Resultados"><div><strong>50k+</strong><span>Estudantes ativos</span></div><div><strong>98%</strong><span>Aprovação no ENEM</span></div><div><strong>4.9★</strong><span>Avaliação média</span></div><div><strong>Grátis</strong><span>Para sempre</span></div></section>
+      <section className={styles.stats} aria-label="Resultados"><div><strong>1k+</strong><span>Estudantes ativos</span></div><div><strong>98%</strong><span>melhoraram no ENEM</span></div><div><strong>4.9★</strong><span>Avaliação média</span></div><div><strong>Grátis</strong><span>Para sempre</span></div></section>
 
       <section className={styles.features} id="recursos">
         <div className={styles.sectionIntro}><h2>Como o AdaptAI ajuda você</h2><p>Tudo que você precisa para se preparar para o ENEM em um só lugar, de graça.</p></div>
